@@ -5,7 +5,7 @@ using UnityEngine;
 namespace MeteGame.Vehicle
 {
     /// <summary>
-    /// Çocuk dostu arcade sürüş: gaz otomatik, oyuncu sadece yön verir.
+    /// Çocuk dostu arcade sürüş. Basılı tut = gaz, bırak = fren, kaydır = dön.
     /// Çarpışmada ceza yok — araç yavaşlar ve devam eder.
     /// </summary>
     [RequireComponent(typeof(Rigidbody))]
@@ -37,12 +37,19 @@ namespace MeteGame.Vehicle
             float targetSpeed;
             if (DriveInput.Locked)
                 targetSpeed = 0f;
+            else if (DriveInput.Reverse)
+                targetSpeed = -maxReverseSpeed;
+            else if (DriveInput.Throttle)
+                targetSpeed = maxForwardSpeed;
             else
-                targetSpeed = DriveInput.Reverse ? -maxReverseSpeed : maxForwardSpeed;
+                targetSpeed = 0f; // parmak kalkınca fren
 
             bool changingDirection = Mathf.Abs(CurrentSpeed) > 0.2f
+                                     && targetSpeed != 0f
                                      && !Mathf.Approximately(Mathf.Sign(targetSpeed), Mathf.Sign(CurrentSpeed));
-            float rate = DriveInput.Locked || changingDirection ? brakeDeceleration : acceleration;
+            bool shouldBrake = DriveInput.Locked || changingDirection
+                               || (!DriveInput.Throttle && !DriveInput.Reverse);
+            float rate = shouldBrake ? brakeDeceleration : acceleration;
             CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, targetSpeed, rate * dt);
 
             // Düşük hızda az döner; geri giderken direksiyon doğal olarak ters çalışır.

@@ -7,9 +7,8 @@ using UnityEngine.UI;
 namespace MeteGame.UI
 {
     /// <summary>
-    /// Oyun içi arayüz: altın/yıldız sayaçları, görev metni, hedefe dönen ok,
-    /// günlük ilerleme, direksiyon/geri butonları, görev teklifi ve kutlama.
-    /// Tamamı kod ile kurulur.
+    /// Oyun içi arayüz: sayaçlar, büyük görev oku, dokunmatik sürüş yüzeyi,
+    /// korna/geri, görev teklifi ve kutlama.
     /// </summary>
     public class HudController : MonoBehaviour
     {
@@ -22,6 +21,10 @@ namespace MeteGame.UI
         Text _distanceText;
         Text _celebrationText;
         RectTransform _arrow;
+        RectTransform _arrowShadow;
+        WaypointArrow _worldArrow;
+        Text _hintText;
+        float _hintTimer = 10f;
 
         GameObject _offerPanel;
         Text _offerTitle;
@@ -30,20 +33,20 @@ namespace MeteGame.UI
         System.Action _pendingStart;
 
         Vector3? _target;
-        bool _leftHeld;
-        bool _rightHeld;
 
         public static HudController Build(Transform vehicle)
         {
             var canvas = UIFactory.CreateCanvas("HUD");
             var hud = canvas.gameObject.AddComponent<HudController>();
             hud._vehicle = vehicle;
+            hud._worldArrow = WaypointArrow.Attach(vehicle);
             hud.BuildWidgets(canvas.transform);
             return hud;
         }
 
         void BuildWidgets(Transform root)
         {
+            DrivePad.Build(root);
             BuildTopBar(root);
             BuildTargetIndicator(root);
             BuildDriveButtons(root);
@@ -53,39 +56,38 @@ namespace MeteGame.UI
 
         void BuildTopBar(Transform root)
         {
-            // Sol üst: altın ve yıldız
             var panel = UIFactory.CreatePanel("CurrencyPanel", root,
                 new Vector2(0f, 1f), new Vector2(0f, 1f),
                 new Vector2(220f, -65f), new Vector2(400f, 92f),
                 new Color(0f, 0f, 0f, 0.35f));
+            panel.raycastTarget = false;
 
-            UIFactory.CreateIcon("CoinIcon", panel.transform,
+            var coin = UIFactory.CreateIcon("CoinIcon", panel.transform,
                 new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
                 new Vector2(55f, 0f), new Vector2(52f, 52f),
                 UIFactory.CircleSprite, Core.GameConfig.Gold);
+            coin.raycastTarget = false;
             _coinText = UIFactory.CreateText("CoinText", panel.transform,
                 new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
                 new Vector2(135f, 0f), new Vector2(120f, 70f),
                 "0", 44, Color.white, TextAnchor.MiddleLeft);
 
-            // Yıldız ikonu: 45° dönmüş kare = pırlanta/yıldız hissi
             var star = UIFactory.CreatePanel("StarIcon", panel.transform,
                 new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
                 new Vector2(255f, 0f), new Vector2(42f, 42f),
                 new Color(0.55f, 0.78f, 1f));
+            star.raycastTarget = false;
             star.rectTransform.localEulerAngles = new Vector3(0f, 0f, 45f);
             _starText = UIFactory.CreateText("StarText", panel.transform,
                 new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
                 new Vector2(330f, 0f), new Vector2(120f, 70f),
                 "0", 44, Color.white, TextAnchor.MiddleLeft);
 
-            // Üst orta: görev metni
             _missionText = UIFactory.CreateText("MissionText", root,
                 new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
                 new Vector2(0f, -55f), new Vector2(1200f, 74f),
                 "", 46, Color.white);
 
-            // Sağ üst: günlük ilerleme
             _dailyText = UIFactory.CreateText("DailyText", root,
                 new Vector2(1f, 1f), new Vector2(1f, 1f),
                 new Vector2(-190f, -65f), new Vector2(340f, 70f),
@@ -94,74 +96,57 @@ namespace MeteGame.UI
 
         void BuildTargetIndicator(Transform root)
         {
-            _arrow = UIFactory.CreateIcon("TargetArrow", root,
+            var shadow = UIFactory.CreateIcon("TargetArrowShadow", root,
                 new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-                new Vector2(-70f, -145f), new Vector2(72f, 72f),
-                UIFactory.TriangleSprite, new Color(1f, 0.85f, 0.2f)).rectTransform;
+                new Vector2(6f, -178f), new Vector2(150f, 150f),
+                UIFactory.ChevronSprite, new Color(0f, 0f, 0f, 0.85f));
+            shadow.raycastTarget = false;
+            _arrowShadow = shadow.rectTransform;
+
+            var arrow = UIFactory.CreateIcon("TargetArrow", root,
+                new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+                new Vector2(0f, -170f), new Vector2(140f, 140f),
+                UIFactory.ChevronSprite, new Color(1f, 0.92f, 0.15f));
+            arrow.raycastTarget = false;
+            _arrow = arrow.rectTransform;
 
             _distanceText = UIFactory.CreateText("DistanceText", root,
                 new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-                new Vector2(70f, -145f), new Vector2(240f, 64f),
-                "", 42, new Color(1f, 0.85f, 0.2f), TextAnchor.MiddleLeft);
+                new Vector2(0f, -268f), new Vector2(400f, 70f),
+                "", 52, new Color(1f, 0.95f, 0.25f));
 
             _arrow.gameObject.SetActive(false);
+            _arrowShadow.gameObject.SetActive(false);
             _distanceText.gameObject.SetActive(false);
         }
 
         void BuildDriveButtons(Transform root)
         {
-            // Sol alt: sola dönüş
-            var left = UIFactory.CreateIcon("SteerLeft", root,
-                new Vector2(0f, 0f), new Vector2(0f, 0f),
-                new Vector2(180f, 180f), new Vector2(250f, 250f),
-                UIFactory.CircleSprite, new Color(1f, 1f, 1f, 0.32f));
-            var leftIcon = UIFactory.CreateIcon("SteerLeftIcon", left.transform,
-                Vector2.one * 0.5f, Vector2.one * 0.5f,
-                Vector2.zero, new Vector2(110f, 110f),
-                UIFactory.TriangleSprite, new Color(0.15f, 0.2f, 0.3f, 0.85f));
-            leftIcon.rectTransform.localEulerAngles = new Vector3(0f, 0f, 90f);
-            var leftHold = left.gameObject.AddComponent<HoldButton>();
-            leftHold.StateChanged = pressed => { _leftHeld = pressed; PushSteer(); };
-
-            // Sağ alt: sağa dönüş
-            var right = UIFactory.CreateIcon("SteerRight", root,
-                new Vector2(1f, 0f), new Vector2(1f, 0f),
-                new Vector2(-180f, 180f), new Vector2(250f, 250f),
-                UIFactory.CircleSprite, new Color(1f, 1f, 1f, 0.32f));
-            var rightIcon = UIFactory.CreateIcon("SteerRightIcon", right.transform,
-                Vector2.one * 0.5f, Vector2.one * 0.5f,
-                Vector2.zero, new Vector2(110f, 110f),
-                UIFactory.TriangleSprite, new Color(0.15f, 0.2f, 0.3f, 0.85f));
-            rightIcon.rectTransform.localEulerAngles = new Vector3(0f, 0f, -90f);
-            var rightHold = right.gameObject.AddComponent<HoldButton>();
-            rightHold.StateChanged = pressed => { _rightHeld = pressed; PushSteer(); };
-
-            // Alt orta: geri vites
-            var reverse = UIFactory.CreateIcon("ReverseButton", root,
+            _hintText = UIFactory.CreateText("Hint", root,
                 new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-                new Vector2(0f, 130f), new Vector2(190f, 190f),
+                new Vector2(0f, 210f), new Vector2(1400f, 70f),
+                "Bas: gaz   •   Kaydır: dön   •   Bırak: fren", 36,
+                new Color(1f, 1f, 1f, 0.9f));
+
+            var reverse = UIFactory.CreateIcon("ReverseButton", root,
+                new Vector2(0f, 0f), new Vector2(0f, 0f),
+                new Vector2(130f, 130f), new Vector2(140f, 140f),
                 UIFactory.CircleSprite, new Color(0.95f, 0.35f, 0.3f, 0.55f));
             UIFactory.CreateText("ReverseLabel", reverse.transform,
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
-                "GERİ", 44, Color.white);
+                "GERİ", 32, Color.white);
             var reverseHold = reverse.gameObject.AddComponent<HoldButton>();
             reverseHold.StateChanged = pressed => DriveInput.TouchReverse = pressed;
 
-            // Korna: geri butonunun sağında, biraz daha küçük.
             var honk = UIFactory.CreateIcon("HonkButton", root,
-                new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-                new Vector2(210f, 130f), new Vector2(150f, 150f),
+                new Vector2(1f, 0f), new Vector2(1f, 0f),
+                new Vector2(-130f, 130f), new Vector2(140f, 140f),
                 UIFactory.CircleSprite, new Color(1f, 0.82f, 0.2f, 0.72f));
             UIFactory.CreateText("HonkLabel", honk.transform,
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
                 "BİP", 36, new Color(0.2f, 0.15f, 0.05f));
             var honkHold = honk.gameObject.AddComponent<HoldButton>();
             honkHold.StateChanged = pressed => DriveInput.HonkHeld = pressed;
-        }
-
-        void PushSteer()
-        {
-            DriveInput.TouchSteer = (_leftHeld ? -1f : 0f) + (_rightHeld ? 1f : 0f);
         }
 
         void BuildOfferPanel(Transform root)
@@ -217,30 +202,50 @@ namespace MeteGame.UI
         {
             DriveInput.Locked = false;
             DriveInput.HonkHeld = false;
+            DriveInput.TouchThrottle = false;
+            DriveInput.TouchSteer = 0f;
         }
 
         void Update()
         {
+            if (_hintText != null && _hintTimer > 0f)
+            {
+                _hintTimer -= Time.deltaTime;
+                if (_hintTimer <= 0f)
+                    _hintText.gameObject.SetActive(false);
+            }
+
             bool hasTarget = _target.HasValue && _vehicle != null;
             if (hasTarget)
             {
                 Vector3 direction = _target.Value - _vehicle.position;
                 direction.y = 0f;
 
-                // Kamera kuzeyi sabit olduğu için ekran açısı doğrudan dünya açısıdır.
                 float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-                _arrow.localEulerAngles = new Vector3(0f, 0f, -angle);
+                var euler = new Vector3(0f, 0f, -angle);
+                _arrow.localEulerAngles = euler;
+                _arrowShadow.localEulerAngles = euler;
+
+                float pulse = 1f + Mathf.Sin(Time.time * 5f) * 0.08f;
+                _arrow.localScale = Vector3.one * pulse;
+                _arrowShadow.localScale = Vector3.one * pulse;
                 _distanceText.text = Mathf.RoundToInt(direction.magnitude) + " m";
             }
 
             if (_arrow.gameObject.activeSelf != hasTarget)
             {
                 _arrow.gameObject.SetActive(hasTarget);
+                _arrowShadow.gameObject.SetActive(hasTarget);
                 _distanceText.gameObject.SetActive(hasTarget);
             }
         }
 
-        public void SetTarget(Vector3? target) => _target = target;
+        public void SetTarget(Vector3? target)
+        {
+            _target = target;
+            if (_worldArrow != null)
+                _worldArrow.SetTarget(target);
+        }
 
         public void SetMissionText(string text) => _missionText.text = text;
 
@@ -260,6 +265,8 @@ namespace MeteGame.UI
         public void ShowMissionOffer(Mission mission, System.Action onStart)
         {
             DriveInput.Locked = true;
+            DriveInput.TouchThrottle = false;
+            DriveInput.TouchSteer = 0f;
             _pendingStart = onStart;
             _offerTitle.text = mission.Title;
             _offerDescription.text = mission.DropoffText;

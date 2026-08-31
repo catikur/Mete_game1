@@ -13,6 +13,18 @@ namespace MeteGame.UI
         static Font _font;
         static Sprite _circleSprite;
         static Sprite _triangleSprite;
+        static Sprite _chevronSprite;
+
+        /// <summary>Kalın, gövdeli yukarı ok — görev yönü için.</summary>
+        public static Sprite ChevronSprite
+        {
+            get
+            {
+                if (_chevronSprite == null)
+                    _chevronSprite = BuildChevronSprite(128);
+                return _chevronSprite;
+            }
+        }
 
         public static Font DefaultFont
         {
@@ -117,6 +129,7 @@ namespace MeteGame.UI
             text.alignment = alignment;
             text.horizontalOverflow = HorizontalWrapMode.Overflow;
             text.verticalOverflow = VerticalWrapMode.Overflow;
+            text.raycastTarget = false;
 
             if (withOutline)
             {
@@ -156,6 +169,33 @@ namespace MeteGame.UI
                 {
                     float distance = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), center);
                     float alpha = Mathf.Clamp01(radius - distance + 1f);
+                    pixels[y * size + x] = new Color(1f, 1f, 1f, alpha);
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f));
+        }
+
+        static Sprite BuildChevronSprite(int size)
+        {
+            var texture = NewTexture(size);
+            var pixels = new Color32[size * size];
+
+            for (int y = 0; y < size; y++)
+            {
+                float y01 = (y + 0.5f) / size;
+                for (int x = 0; x < size; x++)
+                {
+                    float x01 = (x + 0.5f) / size;
+                    float dx = Mathf.Abs(x01 - 0.5f);
+
+                    // Gövde (alt yarı) + geniş üçgen kafa (üst).
+                    bool shaft = y01 < 0.48f && dx < 0.16f;
+                    float headHalf = Mathf.Lerp(0.48f, 0.02f, Mathf.InverseLerp(0.32f, 1f, y01));
+                    bool head = y01 >= 0.32f && dx < headHalf;
+                    float alpha = (shaft || head) ? 1f : 0f;
                     pixels[y * size + x] = new Color(1f, 1f, 1f, alpha);
                 }
             }

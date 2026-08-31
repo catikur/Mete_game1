@@ -37,8 +37,10 @@ git clone https://github.com/catikur/Mete_game1.git
 
 ### Editörde test kontrolleri
 
-- Direksiyon: **Sol/Sağ ok** veya **A/D**
-- Geri/Fren: **Aşağı ok**, **S** veya **Boşluk**
+- Gaz: **W** veya **Yukarı ok** (Game penceresine tıklayıp basılı tutmak da gazdır)
+- Direksiyon: **A/D** veya ok tuşları; fareyi sağa/sola sürüklemek de döndürür
+- Fren: tuşu / fareyi bırak
+- Geri: **S** veya Aşağı ok
 - Korna: **H**
 - Game penceresinin en-boy oranını **16:9 Landscape** yapmayı unutma.
 
