@@ -24,7 +24,18 @@
 - [x] Kayıt sistemi: JSON (altın, yıldız, günlük sayaç), arka plana geçişte otomatik kayıt
 - [x] Boot sahnesi: ana menü (OYNA butonu, altın/yıldız göstergesi)
 
-## M3 — Garaj 🔜
+## M3 — Şehir Hayatı ✅
+
+- [x] Yaya geçitleri ve kaldırımda park halindeki arabalar
+- [x] Kavşak trafik lambaları (senkron faz, NPC uyar, oyuncu cezalandırılmaz)
+- [x] NPC araçlar: sağ şerit, ışık, mesafe, kavşak dönüşü, yumuşak çarpışma
+- [x] Yayalar: kaldırım döngüsü, yeşilde karşıya geçiş, oyuncudan kaçma
+- [x] Korna (BİP / H) — yayalar zıplar, prosedürel ses
+- [x] Kırmızıda durunca günde bir kez nezaket yıldızı
+- [x] Görev teklifi açıkken oyuncu durur; şehir yaşamaya devam eder
+- [x] Gün değişince (oturum ortası dahil) günlük sayaç yenilenir
+
+## M4 — Garaj 🔜
 
 - [ ] Araç tanımları (katalog: 7 araç, fiyat/hız/boyut)
 - [ ] Garaj sahnesi: podyum, araç seçimi, satın alma
@@ -32,15 +43,14 @@
 - [ ] Kayıt sistemine araç/renk alanlarının bağlanması
 - [ ] Ana menüden ve şehirden garaja geçiş
 
-## M4 — İçerik ve Cila 🔜
+## M5 — İçerik ve Cila 🔜
 
 - [ ] Kenney/Meshy modelleriyle görsel yükseltme (araçlar, binalar, dekorlar)
-- [ ] Ses: müzik, motor sesi, kutlama jingle'ı, korna butonu
+- [ ] Ses: müzik, motor sesi, kutlama jingle'ı
 - [ ] Konfeti/partikül kutlamaları
-- [ ] Trafik araçları ve yayalar (çarpışmasız, dekoratif)
 - [ ] Performans: draw call azaltma (static batching / mesh birleştirme)
 
-## M5 — iOS Yayın 🔜
+## M6 — iOS Yayın 🔜
 
 - [ ] Xcode build doğrulaması, cihaz testleri (iPhone + iPad)
 - [ ] Uygulama ikonu ve açılış ekranı

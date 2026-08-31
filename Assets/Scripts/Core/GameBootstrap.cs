@@ -1,6 +1,8 @@
 using MeteGame.CameraRig;
 using MeteGame.City;
+using MeteGame.Controls;
 using MeteGame.Missions;
+using MeteGame.Traffic;
 using MeteGame.UI;
 using MeteGame.Vehicle;
 using UnityEngine;
@@ -17,6 +19,10 @@ namespace MeteGame.Core
         {
             Application.targetFrameRate = 60;
             SaveManager.RefreshDaily();
+            DriveInput.Locked = false;
+            DriveInput.HonkHeld = false;
+            DriveInput.TouchSteer = 0f;
+            DriveInput.TouchReverse = false;
 
             var layout = CityBuilder.Build(transform);
             var vehicle = VehicleFactory.CreatePlayerVehicle(layout.PlayerSpawnPosition, Quaternion.identity);
@@ -25,6 +31,8 @@ namespace MeteGame.Core
             CreateCamera(vehicle);
 
             var hud = HudController.Build(vehicle.transform);
+
+            TrafficSystem.Spawn(transform, layout, vehicle, hud);
 
             var missions = gameObject.AddComponent<MissionManager>();
             missions.Init(layout, vehicle, hud);
@@ -49,6 +57,7 @@ namespace MeteGame.Core
             camera.fieldOfView = 50f;
             camera.nearClipPlane = 1f;
             camera.farClipPlane = 500f;
+            go.AddComponent<AudioListener>();
 
             var follow = go.AddComponent<FollowCamera>();
             follow.SetTarget(vehicle.transform, vehicle.Body);

@@ -51,16 +51,19 @@ namespace MeteGame.Core
             }
         }
 
-        /// <summary>Gün değiştiyse günlük görev sayacını sıfırlar.</summary>
-        public static void RefreshDaily()
+        /// <summary>Gün değiştiyse günlük görev sayacını sıfırlar. True = yeni gün.</summary>
+        public static bool RefreshDaily()
         {
             string today = DateTime.Now.ToString("yyyy-MM-dd");
             if (Data.dailyDate != today)
             {
                 Data.dailyDate = today;
                 Data.dailyCompleted = 0;
+                Data.courtesyAwarded = false;
                 Save();
+                return true;
             }
+            return false;
         }
 
         /// <summary>Günün görevlerini üretmek için tarihten türetilen tohum.</summary>

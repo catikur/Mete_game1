@@ -24,6 +24,16 @@ namespace MeteGame.Core
         public const float MaxMissionDistance = 160f;
         public const float MarkerTriggerRadius = 5f;
 
+        // Trafik / şehir hayatı
+        public const int TrafficCarCount = 16;
+        public const int PedestrianCount = 24;
+        public const float LaneOffset = 2.4f;
+        public const float NpcSpeed = 8f;
+        public const float PedestrianSpeed = 1.6f;
+        public const float LightGreenSeconds = 6.5f;
+        public const float LightYellowSeconds = 1.6f;
+        public const float StopLinePadding = 1.4f;
+
         // Renkler
         public static readonly Color Grass = FromBytes(112, 173, 92);
         public static readonly Color Road = FromBytes(62, 64, 70);
@@ -36,6 +46,31 @@ namespace MeteGame.Core
         public static readonly Color DropoffColor = FromBytes(88, 214, 104);
         public static readonly Color TaxiYellow = FromBytes(252, 196, 32);
         public static readonly Color Gold = FromBytes(255, 205, 60);
+        public static readonly Color SignalRed = FromBytes(230, 55, 45);
+        public static readonly Color SignalYellow = FromBytes(255, 200, 40);
+        public static readonly Color SignalGreen = FromBytes(50, 210, 90);
+
+        public static readonly Color[] CarPalette =
+        {
+            FromBytes(232, 76, 76),
+            FromBytes(70, 130, 210),
+            FromBytes(90, 175, 95),
+            FromBytes(245, 245, 245),
+            FromBytes(55, 55, 60),
+            FromBytes(255, 140, 60),
+            FromBytes(170, 110, 210),
+            FromBytes(90, 200, 210)
+        };
+
+        public static readonly Color[] ShirtPalette =
+        {
+            FromBytes(230, 90, 90),
+            FromBytes(80, 140, 220),
+            FromBytes(255, 170, 60),
+            FromBytes(90, 190, 130),
+            FromBytes(200, 110, 190),
+            FromBytes(255, 230, 90)
+        };
 
         public static readonly Color[] BuildingPalette =
         {

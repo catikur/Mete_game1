@@ -15,6 +15,8 @@ namespace MeteGame.Core
         public string dailyDate = "";
         public int dailyCompleted;
 
+        public bool courtesyAwarded;
+
         // Garaj alanları (M3'te kullanılacak, şema şimdiden hazır)
         public List<string> unlockedVehicleIds = new List<string> { "taksi" };
         public string selectedVehicleId = "taksi";

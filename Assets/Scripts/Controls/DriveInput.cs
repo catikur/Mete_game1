@@ -14,10 +14,18 @@ namespace MeteGame.Controls
         /// <summary>GERİ butonuna basılı mı?</summary>
         public static bool TouchReverse;
 
+        /// <summary>Korna butonuna basılı mı?</summary>
+        public static bool HonkHeld;
+
+        /// <summary>Görev teklifi açıkken oyuncu aracı durur; şehir yaşamaya devam eder.</summary>
+        public static bool Locked;
+
         public static float Steer
         {
             get
             {
+                if (Locked)
+                    return 0f;
                 float keyboard = 0f;
                 if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
                     keyboard -= 1f;
@@ -28,9 +36,10 @@ namespace MeteGame.Controls
         }
 
         public static bool Reverse =>
-            TouchReverse
-            || Input.GetKey(KeyCode.DownArrow)
-            || Input.GetKey(KeyCode.S)
-            || Input.GetKey(KeyCode.Space);
+            !Locked && (
+                TouchReverse
+                || Input.GetKey(KeyCode.DownArrow)
+                || Input.GetKey(KeyCode.S)
+                || Input.GetKey(KeyCode.Space));
     }
 }

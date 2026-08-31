@@ -8,6 +8,7 @@ iPhone ve iPad'de çalışır, Unity ile Mac üzerinde geliştirilir.
 Rengarenk, low-poly bir şehirde araba sürersin. Şiddet yok, kaybetme yok:
 
 - **Görevler:** Paket teslim et, yolcu taşı, kayıp kediyi sahibine götür, öğrencileri okula bırak... Görevler her gün yenilenir ve hiç bitmez.
+- **Şehir hayatı:** Başka arabalar, yayalar, trafik lambaları, yaya geçitleri. Kırmızıda durmak zorunlu değil; durursan küçük bir yıldız ödülü var.
 - **Ödüller:** Görev tamamladıkça altın ve yıldız kazanırsın.
 - **Garaj:** Kazandığın altınla yeni araçlar açar, renklerini değiştirirsin.
 
@@ -22,10 +23,10 @@ Ayrıntılı kurulum ve iPhone/iPad'e yükleme adımları için: [docs/mac-setup
 
 ## Kontroller
 
-| Platform | Direksiyon | Geri/Fren |
-|---|---|---|
-| iPhone/iPad | Ekranın sol/sağ alt köşesindeki büyük butonlar | Alttaki kırmızı GERİ butonu |
-| Editör (test) | Sol/Sağ ok veya A/D | Aşağı ok, S veya Boşluk |
+| Platform | Direksiyon | Geri/Fren | Korna |
+|---|---|---|---|
+| iPhone/iPad | Ekranın sol/sağ alt köşesindeki büyük butonlar | Alttaki kırmızı GERİ butonu | Sarı BİP butonu |
+| Editör (test) | Sol/Sağ ok veya A/D | Aşağı ok, S veya Boşluk | **H** |
 
 Gaz otomatiktir — çocuk sadece yön verir.
 
@@ -46,6 +47,7 @@ Assets/
 ├── Scripts/
 │   ├── Core/        Oyun başlatma, kayıt sistemi, ayarlar, materyaller
 │   ├── City/        Prosedürel şehir üretimi
+│   ├── Traffic/     Trafik ışıkları, NPC araçlar, yayalar
 │   ├── Vehicle/     Araç fiziği ve araç oluşturma
 │   ├── Controls/    Dokunmatik + klavye girişi
 │   ├── CameraRig/   Takip kamerası

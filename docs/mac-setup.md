@@ -39,6 +39,7 @@ git clone https://github.com/catikur/Mete_game1.git
 
 - Direksiyon: **Sol/Sağ ok** veya **A/D**
 - Geri/Fren: **Aşağı ok**, **S** veya **Boşluk**
+- Korna: **H**
 - Game penceresinin en-boy oranını **16:9 Landscape** yapmayı unutma.
 
 ## 3. İlk Commit'ler Hakkında Not

@@ -42,8 +42,15 @@ namespace MeteGame.Missions
             OfferNext();
         }
 
+        void SyncDailyHud()
+        {
+            if (SaveManager.RefreshDaily())
+                _hud.SetDailyProgress(SaveManager.Data.dailyCompleted, GameConfig.DailyMissionTarget);
+        }
+
         void OfferNext()
         {
+            SyncDailyHud();
             _current = MissionGenerator.Generate(_layout, _vehicle.transform.position, _missionCounter);
             _hud.ShowMissionOffer(_current, StartMission);
         }
@@ -87,6 +94,7 @@ namespace MeteGame.Missions
                          && Time.time - _missionStartTime <= _current.BonusSeconds;
             int stars = bonus ? 2 : 1;
 
+            SyncDailyHud();
             var data = SaveManager.Data;
             data.coins += _current.RewardCoins;
             data.stars += stars;

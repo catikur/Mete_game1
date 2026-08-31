@@ -28,14 +28,21 @@ namespace MeteGame.Vehicle
             Body.collisionDetectionMode = CollisionDetectionMode.Continuous;
         }
 
+        float _hitCooldown;
+
         void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;
 
-            float targetSpeed = DriveInput.Reverse ? -maxReverseSpeed : maxForwardSpeed;
+            float targetSpeed;
+            if (DriveInput.Locked)
+                targetSpeed = 0f;
+            else
+                targetSpeed = DriveInput.Reverse ? -maxReverseSpeed : maxForwardSpeed;
+
             bool changingDirection = Mathf.Abs(CurrentSpeed) > 0.2f
                                      && !Mathf.Approximately(Mathf.Sign(targetSpeed), Mathf.Sign(CurrentSpeed));
-            float rate = changingDirection ? brakeDeceleration : acceleration;
+            float rate = DriveInput.Locked || changingDirection ? brakeDeceleration : acceleration;
             CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, targetSpeed, rate * dt);
 
             // Düşük hızda az döner; geri giderken direksiyon doğal olarak ters çalışır.
@@ -51,7 +58,10 @@ namespace MeteGame.Vehicle
 
         void OnCollisionEnter(Collision collision)
         {
-            CurrentSpeed *= 0.35f;
+            if (Time.time < _hitCooldown)
+                return;
+            _hitCooldown = Time.time + 0.28f;
+            CurrentSpeed *= 0.45f;
         }
     }
 }
