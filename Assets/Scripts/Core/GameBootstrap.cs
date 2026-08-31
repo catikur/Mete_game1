@@ -22,6 +22,7 @@ namespace MeteGame.Core
             DriveInput.Locked = false;
             DriveInput.HonkHeld = false;
             DriveInput.TouchSteer = 0f;
+            DriveInput.TouchThrottle = false;
             DriveInput.TouchReverse = false;
 
             var layout = CityBuilder.Build(transform);

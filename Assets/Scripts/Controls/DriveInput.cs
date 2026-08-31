@@ -3,13 +3,16 @@ using UnityEngine;
 namespace MeteGame.Controls
 {
     /// <summary>
-    /// Sürüş girdisini tek noktada toplar: dokunmatik butonlar (UI'dan yazılır)
-    /// ve editörde test için klavye. Gaz otomatiktir — girdi sadece yön ve geri vites.
+    /// Sürüş girdisi: dokunmatik (bas = gaz, kaydır = dön, bırak = fren)
+    /// ve editörde klavye.
     /// </summary>
     public static class DriveInput
     {
-        /// <summary>UI butonlarının yazdığı direksiyon değeri: -1 sol, +1 sağ.</summary>
+        /// <summary>Kaydırma ile gelen direksiyon: -1 sol, +1 sağ.</summary>
         public static float TouchSteer;
+
+        /// <summary>Ekrana basılı mı? (gaz)</summary>
+        public static bool TouchThrottle;
 
         /// <summary>GERİ butonuna basılı mı?</summary>
         public static bool TouchReverse;
@@ -19,6 +22,18 @@ namespace MeteGame.Controls
 
         /// <summary>Görev teklifi açıkken oyuncu aracı durur; şehir yaşamaya devam eder.</summary>
         public static bool Locked;
+
+        public static bool Throttle
+        {
+            get
+            {
+                if (Locked)
+                    return false;
+                return TouchThrottle
+                       || Input.GetKey(KeyCode.UpArrow)
+                       || Input.GetKey(KeyCode.W);
+            }
+        }
 
         public static float Steer
         {
@@ -39,7 +54,6 @@ namespace MeteGame.Controls
             !Locked && (
                 TouchReverse
                 || Input.GetKey(KeyCode.DownArrow)
-                || Input.GetKey(KeyCode.S)
-                || Input.GetKey(KeyCode.Space));
+                || Input.GetKey(KeyCode.S));
     }
 }

@@ -37,16 +37,15 @@ flowchart LR
 
 | Girdi | Aksiyon |
 |---|---|
-| Sol alt buton (basılı tut) | Sola dön |
-| Sağ alt buton (basılı tut) | Sağa dön |
-| GERİ butonu (basılı tut) | Yavaşla, sonra geri git |
-| BİP butonu (basılı tut) | Korna — yakındaki yayalar zıplar |
-| — | Gaz otomatik: araç kendiliğinden ilerler |
+| Ekrana basılı tut | Gaz |
+| Sağa / sola kaydır | Direksiyon |
+| Parmağı kaldır | Fren |
+| Sol alt GERİ (basılı tut) | Geri vites (sıkışınca) |
+| Sağ alt BİP | Korna — yakındaki yayalar zıplar |
 
-Editörde test için: ok tuşları / A-D / S / Boşluk / **H** (korna).
+Editörde test için: **W / Yukarı ok** gaz, A-D direksiyon, S geri, **H** korna.
 
-Tasarım notu: iki büyük buton, joystick'ten daha güvenilirdir — küçük çocuklar joystick'i
-sürüklerken parmak kaydırıp kaybeder. Butonlar ekranın alt köşelerinde, başparmak boyunda.
+Tasarım notu: tek parmak, tüm ekran. Küçük çocuk joystick aramaz; bastığı yer gaz, kaydırdığı yön dönüş.
 
 ## 5. Kamera
 
@@ -96,8 +95,9 @@ sürüklerken parmak kaydırıp kaybeder. Butonlar ekranın alt köşelerinde, b
 
 ### Yönlendirme
 
-- Ekranın üstünde hedefe dönen **ok** + metre cinsinden mesafe.
-- Hedefte renkli ışık halkası + havada dönen/zıplayan işaret (uzaktan görünür).
+- Ekranın üstünde **büyük sarı ok** (siyah gölgeli, nabız gibi büyür) + metre.
+- Aracın üstünde **3D ok** hedefe döner — kuş bakışı kamerada asıl yön göstergesi.
+- Hedefte geniş halka, ışık sütunu ve büyük zıplayan ikon.
 - Okuma gerektirmez: ok + renk kodu yeterli (alış = turkuaz, bırakış = yeşil).
 
 ## 8. Ekonomi ve Garaj (M3)

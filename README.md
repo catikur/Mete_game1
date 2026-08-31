@@ -23,12 +23,12 @@ Ayrıntılı kurulum ve iPhone/iPad'e yükleme adımları için: [docs/mac-setup
 
 ## Kontroller
 
-| Platform | Direksiyon | Geri/Fren | Korna |
-|---|---|---|---|
-| iPhone/iPad | Ekranın sol/sağ alt köşesindeki büyük butonlar | Alttaki kırmızı GERİ butonu | Sarı BİP butonu |
-| Editör (test) | Sol/Sağ ok veya A/D | Aşağı ok, S veya Boşluk | **H** |
+| Platform | Gaz | Direksiyon | Fren | Geri | Korna |
+|---|---|---|---|---|---|
+| iPhone/iPad | Ekrana basılı tut | Sağa/sola kaydır | Parmağı kaldır | Sol alt GERİ | Sağ alt BİP |
+| Editör (test) | W veya Yukarı ok | A/D veya Sol/Sağ ok | tuşu bırak | S veya Aşağı ok | **H** |
 
-Gaz otomatiktir — çocuk sadece yön verir.
+Tek parmak: bas = gaz, kaydır = dön, bırak = fren.
 
 ## Dokümantasyon
 
