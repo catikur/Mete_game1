@@ -1,0 +1,45 @@
+# Unity tarafından üretilen klasörler
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]serSettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Unity çökme raporları
+sysinfo.txt
+*.stacktrace
+
+# IDE dosyaları
+.vs/
+.vsconfig
+.idea/
+.vscode/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# macOS
+.DS_Store
+
+# Build çıktıları
+*.apk
+*.aab
+*.ipa
+*.app
+ExportedObj/
+
+# Crashlytics vb.
+crashlytics-build.properties
