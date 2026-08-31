@@ -1,5 +1,6 @@
 using System.Collections;
 using MeteGame.Controls;
+using MeteGame.Core;
 using MeteGame.Missions;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +8,7 @@ using UnityEngine.UI;
 namespace MeteGame.UI
 {
     /// <summary>
-    /// Oyun içi arayüz: sayaçlar, büyük görev oku, dokunmatik sürüş yüzeyi,
+    /// Oyun içi arayüz: sayaçlar, görev oku, iki aşamalı süre, dokunmatik sürüş,
     /// korna/geri, görev teklifi ve kutlama.
     /// </summary>
     public class HudController : MonoBehaviour
@@ -17,6 +18,7 @@ namespace MeteGame.UI
         Text _coinText;
         Text _starText;
         Text _dailyText;
+        Text _comboText;
         Text _missionText;
         Text _distanceText;
         Text _celebrationText;
@@ -28,10 +30,24 @@ namespace MeteGame.UI
         GameObject _offerPanel;
         Text _offerTitle;
         Text _offerDescription;
+        Text _offerMeta;
         Text _offerReward;
         System.Action _pendingStart;
 
+        GameObject _timerPanel;
+        Text _timerPhase;
+        Text _timerTime;
+        Text _timerOver;
+        Image _dot1;
+        Image _dot2;
+        bool _timerPulse;
+
+        Coroutine _toast;
+
         Vector3? _target;
+
+        static readonly Color DotOn = new Color(1f, 0.92f, 0.25f, 1f);
+        static readonly Color DotOff = new Color(1f, 1f, 1f, 0.28f);
 
         public static HudController Build(Transform vehicle)
         {
@@ -47,6 +63,7 @@ namespace MeteGame.UI
             DrivePad.Build(root);
             BuildTopBar(root);
             BuildTargetIndicator(root);
+            BuildTimer(root);
             BuildDriveButtons(root);
             BuildOfferPanel(root);
             BuildCelebration(root);
@@ -70,8 +87,14 @@ namespace MeteGame.UI
 
             _dailyText = UIFactory.CreateText("DailyText", root,
                 new Vector2(1f, 1f), new Vector2(1f, 1f),
-                new Vector2(-240f, -72f), new Vector2(440f, 70f),
-                "", 36, Color.white);
+                new Vector2(-240f, -56f), new Vector2(440f, 58f),
+                "", 32, Color.white);
+
+            _comboText = UIFactory.CreateText("ComboText", root,
+                new Vector2(1f, 1f), new Vector2(1f, 1f),
+                new Vector2(-240f, -108f), new Vector2(440f, 48f),
+                "", 30, GameConfig.Gold);
+            _comboText.gameObject.SetActive(false);
         }
 
         static Text BuildStatChip(Transform parent, float x, Sprite icon, string label)
@@ -119,6 +142,46 @@ namespace MeteGame.UI
             _distanceText.gameObject.SetActive(false);
         }
 
+        void BuildTimer(Transform root)
+        {
+            var panel = UIFactory.CreatePanel("TimerPanel", root,
+                new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+                new Vector2(0f, -440f), new Vector2(620f, 96f),
+                new Color(0f, 0f, 0f, 0.55f));
+            panel.raycastTarget = false;
+            _timerPanel = panel.gameObject;
+
+            _timerPhase = UIFactory.CreateText("TimerPhase", panel.transform,
+                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
+                new Vector2(110f, 10f), new Vector2(200f, 48f),
+                "AL", 34, Color.white);
+
+            _dot1 = UIFactory.CreateIcon("Dot1", panel.transform,
+                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
+                new Vector2(70f, -26f), new Vector2(22f, 22f),
+                UIFactory.CircleSprite, DotOn);
+            _dot1.raycastTarget = false;
+
+            _dot2 = UIFactory.CreateIcon("Dot2", panel.transform,
+                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
+                new Vector2(100f, -26f), new Vector2(22f, 22f),
+                UIFactory.CircleSprite, DotOff);
+            _dot2.raycastTarget = false;
+
+            _timerTime = UIFactory.CreateText("TimerTime", panel.transform,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                new Vector2(50f, 0f), new Vector2(280f, 80f),
+                "0:00", 62, Color.white);
+
+            _timerOver = UIFactory.CreateText("TimerOver", panel.transform,
+                new Vector2(1f, 0.5f), new Vector2(1f, 0.5f),
+                new Vector2(-70f, 0f), new Vector2(110f, 56f),
+                "GEÇ", 34, new Color(1f, 0.45f, 0.4f));
+            _timerOver.gameObject.SetActive(false);
+
+            _timerPanel.SetActive(false);
+        }
+
         void BuildDriveButtons(Transform root)
         {
             _hintText = UIFactory.CreateText("Hint", root,
@@ -152,28 +215,34 @@ namespace MeteGame.UI
         {
             var panel = UIFactory.CreatePanel("OfferPanel", root,
                 new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                Vector2.zero, new Vector2(920f, 570f),
+                Vector2.zero, new Vector2(960f, 680f),
                 new Color(0.12f, 0.16f, 0.24f, 0.93f));
             _offerPanel = panel.gameObject;
 
             _offerTitle = UIFactory.CreateText("OfferTitle", panel.transform,
                 new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-                new Vector2(0f, -95f), new Vector2(840f, 95f),
-                "", 64, new Color(1f, 0.85f, 0.2f));
+                new Vector2(0f, -80f), new Vector2(880f, 90f),
+                "", 58, new Color(1f, 0.85f, 0.2f));
 
             _offerDescription = UIFactory.CreateText("OfferDescription", panel.transform,
                 new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                new Vector2(0f, 35f), new Vector2(840f, 130f),
-                "", 46, Color.white);
+                new Vector2(0f, 80f), new Vector2(880f, 110f),
+                "", 40, Color.white);
+            _offerDescription.horizontalOverflow = HorizontalWrapMode.Wrap;
+
+            _offerMeta = UIFactory.CreateText("OfferMeta", panel.transform,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                new Vector2(0f, -20f), new Vector2(880f, 80f),
+                "", 36, Color.white);
 
             _offerReward = UIFactory.CreateText("OfferReward", panel.transform,
                 new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                new Vector2(0f, -55f), new Vector2(840f, 70f),
-                "", 40, Core.GameConfig.Gold);
+                new Vector2(0f, -95f), new Vector2(880f, 70f),
+                "", 34, GameConfig.Gold);
 
             UIFactory.CreateButton("StartButton", panel.transform,
                 new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-                new Vector2(0f, 115f), new Vector2(430f, 135f),
+                new Vector2(0f, 110f), new Vector2(430f, 130f),
                 "BAŞLA!", 58, new Color(0.24f, 0.72f, 0.34f), OnStartClicked);
 
             _offerPanel.SetActive(false);
@@ -183,8 +252,8 @@ namespace MeteGame.UI
         {
             _celebrationText = UIFactory.CreateText("Celebration", root,
                 new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                new Vector2(0f, 130f), new Vector2(1400f, 150f),
-                "", 84, Core.GameConfig.Gold);
+                new Vector2(0f, 130f), new Vector2(1600f, 160f),
+                "", 72, GameConfig.Gold);
             _celebrationText.gameObject.SetActive(false);
         }
 
@@ -215,20 +284,25 @@ namespace MeteGame.UI
             }
 
             bool hasTarget = _target.HasValue && _vehicle != null;
+            float meters = 0f;
             if (hasTarget)
             {
                 Vector3 direction = _target.Value - _vehicle.position;
                 direction.y = 0f;
+                meters = direction.magnitude;
 
                 float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
                 var euler = new Vector3(0f, 0f, -angle);
                 _arrow.localEulerAngles = euler;
                 _arrowShadow.localEulerAngles = euler;
 
-                float pulse = 1f + Mathf.Sin(Time.time * 5f) * 0.08f;
+                float near = meters < 18f ? 1.18f : 1f;
+                float pulse = (1f + Mathf.Sin(Time.time * 5f) * 0.08f) * near;
                 _arrow.localScale = Vector3.one * pulse;
                 _arrowShadow.localScale = Vector3.one * pulse;
-                _distanceText.text = Mathf.RoundToInt(direction.magnitude) + " m";
+                _distanceText.text = meters < 12f
+                    ? "HEMEN YANINDA!"
+                    : Mathf.RoundToInt(meters) + " m";
             }
 
             if (_arrow.gameObject.activeSelf != hasTarget)
@@ -236,6 +310,12 @@ namespace MeteGame.UI
                 _arrow.gameObject.SetActive(hasTarget);
                 _arrowShadow.gameObject.SetActive(hasTarget);
                 _distanceText.gameObject.SetActive(hasTarget);
+            }
+
+            if (_timerPanel != null && _timerPanel.activeSelf)
+            {
+                float scale = _timerPulse ? 1f + Mathf.Sin(Time.time * 8f) * 0.05f : 1f;
+                _timerPanel.transform.localScale = Vector3.one * scale;
             }
         }
 
@@ -259,31 +339,82 @@ namespace MeteGame.UI
                 : "Bugün  " + completed + " / " + target + "  görev";
         }
 
+        public void SetCombo(int streak)
+        {
+            if (streak >= 2)
+            {
+                _comboText.text = "SERİ  ×" + streak;
+                _comboText.gameObject.SetActive(true);
+            }
+            else
+            {
+                _comboText.gameObject.SetActive(false);
+            }
+        }
+
         public void ShowMissionOffer(Mission mission, System.Action onStart)
         {
             DriveInput.Locked = true;
             DriveInput.TouchThrottle = false;
             DriveInput.TouchSteer = 0f;
+            HideTimer();
             _pendingStart = onStart;
             _offerTitle.text = mission.Title;
-            _offerDescription.text = mission.DropoffText;
+            _offerDescription.text = mission.PickupText + "  →  " + mission.DropoffText;
+            _offerMeta.text = mission.DifficultyLabel
+                              + "   •   AL " + MissionClock.Format(mission.PickupSeconds)
+                              + "   •   TESLİM " + MissionClock.Format(mission.DropoffSeconds);
+            _offerMeta.color = MissionClock.DifficultyColor(mission.Difficulty);
             _offerReward.text = "Ödül: " + mission.RewardCoins + " altın"
-                                + (mission.BonusSeconds > 0f ? "  •  Hızlı olursan +1 yıldız!" : "");
+                                + "   •   Zamanında her durakta +1 yıldız";
             _offerPanel.SetActive(true);
+        }
+
+        public void SetTimer(string phaseLabel, int step, float remaining, float duration)
+        {
+            _timerPanel.SetActive(true);
+            _timerPhase.text = phaseLabel;
+            _timerTime.text = MissionClock.Format(remaining);
+            _timerTime.color = MissionClock.Tint(remaining, duration);
+            _timerOver.gameObject.SetActive(remaining < 0f);
+            _timerPulse = MissionClock.IsUrgent(remaining, duration);
+            _dot1.color = step >= 1 ? DotOn : DotOff;
+            _dot2.color = step >= 2 ? DotOn : DotOff;
+        }
+
+        public void HideTimer()
+        {
+            if (_timerPanel != null)
+            {
+                _timerPanel.transform.localScale = Vector3.one;
+                _timerPanel.SetActive(false);
+            }
+            _timerPulse = false;
         }
 
         public void ShowToast(string message)
         {
-            StartCoroutine(CelebrationRoutine(message));
+            PlayBanner(message, 1.35f);
         }
 
-        public void ShowCelebration(int coins, int stars)
+        public void ShowCelebration(int coins, int stars, bool perfect, int streak)
         {
             string message = "+" + coins + " ALTIN   +" + stars + " YILDIZ!";
-            StartCoroutine(CelebrationRoutine(message));
+            if (perfect && streak >= 2)
+                message += "\nSERİ ×" + streak + "!";
+            else if (perfect)
+                message += "\nİKİSİ DE ZAMANINDA!";
+            PlayBanner(message, 2.1f);
         }
 
-        IEnumerator CelebrationRoutine(string message)
+        void PlayBanner(string message, float hold)
+        {
+            if (_toast != null)
+                StopCoroutine(_toast);
+            _toast = StartCoroutine(CelebrationRoutine(message, hold));
+        }
+
+        IEnumerator CelebrationRoutine(string message, float hold)
         {
             _celebrationText.text = message;
             _celebrationText.gameObject.SetActive(true);
@@ -300,8 +431,9 @@ namespace MeteGame.UI
             }
             rect.localScale = Vector3.one;
 
-            yield return new WaitForSeconds(1.8f);
+            yield return new WaitForSeconds(hold);
             _celebrationText.gameObject.SetActive(false);
+            _toast = null;
         }
     }
 }

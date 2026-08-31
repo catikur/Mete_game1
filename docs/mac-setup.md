@@ -35,6 +35,16 @@ git clone https://github.com/catikur/Mete_game1.git
 > Kurulum herhangi bir nedenle çalışmazsa menüden elle tetikleyebilirsin:
 > **Mete Oyunu → Projeyi Kur (Setup)**
 
+### Play ile hızlı test
+
+1. Unity kapalı olsun.
+2. `git checkout main && git pull origin main` (veya denenecek dal).
+3. Unity Hub → **Unity 6.3 LTS** ile aç.
+4. Konsolda pembe malzeme / boş sahne görürsen: **Mete Oyunu → Projeyi Kur (Setup)**.
+5. `City` sahnesi, Game penceresi **16:9 Landscape** → **Play**.
+
+Şehir, araç ve HUD Play'e basınca koddan üretilir; Hierarchy'de neredeyse boş sahne normaldir.
+
 ### Editörde test kontrolleri
 
 - Gaz: **W** veya **Yukarı ok** (Game penceresine tıklayıp basılı tutmak da gazdır)

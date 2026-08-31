@@ -1,5 +1,7 @@
 # Yol Haritası
 
+Bağlam özeti: [progress.md](progress.md). Tasarım: [game-design.md](game-design.md).
+
 ## M0 — Repo ve Proje Kurulumu ✅
 
 - [x] Oyun tasarım dokümanı, kurulum ve asset rehberleri
@@ -10,17 +12,17 @@
 ## M1 — Sürülebilir Prototip ✅
 
 - [x] Prosedürel şehir: yollar, şerit çizgileri, kaldırımlar, binalar, parklar, çevre çiti
-- [x] Arcade araç kontrolcüsü: otomatik gaz, iki butonlu direksiyon, geri vites, yumuşak çarpışma
+- [x] Arcade araç: basılı tut = gaz, kaydır = dön, bırak = fren, geri vites, yumuşak çarpışma
 - [x] Primitive'lerden araç gövdesi (kasa, kabin, tekerlekler, farlar)
-- [x] Kuzeyi sabit, eğimli takip kamerası (look-ahead ile)
-- [x] Dokunmatik butonlar + editörde klavye
+- [x] Kuzeyi sabit, eğimli takip kamerası (look-ahead + hızda FOV)
+- [x] Tam ekran dokunmatik yüzey + editörde klavye (W/A/D/S/H)
 
 ## M2 — Görev Sistemi ✅
 
 - [x] Görev üretici: 5 görev türü, günlük tohum, mesafeye göre ödül
 - [x] Görev akışı: teklif → alış noktası → bırakış noktası → kutlama → yeni görev
-- [x] HUD: altın/yıldız sayaçları, görev metni, hedefe dönen ok + mesafe, günlük ilerleme
-- [x] Hedef işaretleri: ışık halkası + zıplayan ikon + araca binen kargo görseli
+- [x] HUD: ALTIN/YILDIZ etiketli sayaçlar, görev metni, büyük sarı ok + mesafe, günlük ilerleme
+- [x] Hedef işaretleri: ışık halkası + ışık sütunu + zıplayan ikon + çatıda kargo (araç üstü 3D ok yok)
 - [x] Kayıt sistemi: JSON (altın, yıldız, günlük sayaç), arka plana geçişte otomatik kayıt
 - [x] Boot sahnesi: ana menü (OYNA butonu, altın/yıldız göstergesi)
 
@@ -35,7 +37,16 @@
 - [x] Görev teklifi açıkken oyuncu durur; şehir yaşamaya devam eder
 - [x] Gün değişince (oturum ortası dahil) günlük sayaç yenilenir
 
-## M4 — Garaj 🔜
+## M3b — Görev süreleri ve tempo ✅
+
+- [x] Mesafe + tür + Kolay/Orta/Zor ile bacak süreleri (`MissionClock`)
+- [x] İki geri sayım: AL (teklif → ilk adres), TESLİM (alış → bırakış)
+- [x] Süre bitince görev batmaz; GEÇ + zamanında yıldız/altın bonusu
+- [x] Teklif kartında zorluk ve her iki süre
+- [x] Zamanında seri (HUD + kayıt), alış toast, prosedürel ding/akor
+- [x] Çatı kargo zıplaması, hızda kamera FOV
+
+## M4 — Garaj 🔜 *(sıradaki büyük özellik)*
 
 - [ ] Araç tanımları (katalog: 7 araç, fiyat/hız/boyut)
 - [ ] Garaj sahnesi: podyum, araç seçimi, satın alma
@@ -46,7 +57,7 @@
 ## M5 — İçerik ve Cila 🔜
 
 - [ ] Kenney/Meshy modelleriyle görsel yükseltme (araçlar, binalar, dekorlar)
-- [ ] Ses: müzik, motor sesi, kutlama jingle'ı
+- [ ] Ses: müzik, motor sesi, kutlama jingle'ı (prosedürel ding'lerin üzerine)
 - [ ] Konfeti/partikül kutlamaları
 - [ ] Performans: draw call azaltma (static batching / mesh birleştirme)
 

@@ -8,11 +8,15 @@ temalı görevleri tamamlar, altın ve yıldız kazanır, garajında yeni araçl
 
 **Tasarım sütunları:**
 
-1. **Kolay kontrol** — gaz otomatik, çocuk sadece yön verir. Okuma bilmeyen 5 yaş bile oynayabilmeli.
-2. **Kaybetmek yok** — görevler asla "başarısız" olmaz. Süreli görevlerde süre biterse ödül azalmaz,
-   sadece hızlı bitirince bonus yıldız verilir. Çarpışmada ceza yok, araç yavaşlar ve devam eder.
-3. **Sürekli ödül hissi** — kısa görevler (30-90 saniye), her görev sonunda kutlama, görünür ilerleme.
+1. **Kolay kontrol** — ekrana basılı tut = gaz, kaydır = dön, bırak = fren. Okuma bilmeyen
+   5 yaş bile oynayabilmeli.
+2. **Kaybetmek yok** — görevler asla "başarısız" olmaz. Süre bitse de teslim edilir; ödülün
+   zamanında kısmı kaçar, görev batmaz. Çarpışmada ceza yok, araç yavaşlar ve devam eder.
+3. **Sürekli ödül hissi** — kısa görevler (yaklaşık 50-90 saniye, iki bacak), her görev sonunda
+   kutlama, görünür ilerleme, üst üste zamanında bitirme serisi.
 4. **Güvenli içerik** — şiddet yok, reklam yok, satın alma yok, internet gerekmez.
+
+Bağlam özeti ve kod haritası: [progress.md](progress.md).
 
 ## 2. Hedef Kitle ve Oturum
 
@@ -24,9 +28,10 @@ temalı görevleri tamamlar, altın ve yıldız kazanır, garajında yeni araçl
 
 ```mermaid
 flowchart LR
-    Gorev[Yeni gorev teklifi] --> Sur[Sehirde sur]
-    Sur --> Al[Alis noktasi: paket/yolcu al]
-    Al --> Birak[Birakis noktasi: teslim et]
+    Gorev[Yeni gorev teklifi] --> Sur1[Alis suresi]
+    Sur1 --> Al[Alis noktasi]
+    Al --> Sur2[Teslim suresi]
+    Sur2 --> Birak[Birakis noktasi]
     Birak --> Odul[Altin + yildiz + kutlama]
     Odul --> Garaj[Garajda arac ac / ozellestir]
     Odul --> Gorev
@@ -50,8 +55,8 @@ Tasarım notu: tek parmak, tüm ekran. Küçük çocuk joystick aramaz; bastığ
 ## 5. Kamera
 
 - Yukarıdan, ~63° eğimli, kuzeyi sabit (dönmeyen) kamera — GTA 2 hissi ama 3D derinlik görünür.
-- Araç hızlandıkça hafif ileri bakış (look-ahead) — çocuk gideceği yeri görür.
-- Yumuşatılmış takip (SmoothDamp), ani sarsıntı yok.
+- Araç hızlandıkça hafif ileri bakış (look-ahead) ve FOV 50→58 — hız hissi, sarsıntı yok.
+- Yumuşatılmış takip (SmoothDamp).
 
 ## 6. Şehir
 
@@ -71,35 +76,53 @@ Tasarım notu: tek parmak, tüm ekran. Küçük çocuk joystick aramaz; bastığ
 
 ### Görev türleri
 
-| Tür | Akış | Örnek metin |
+| Tür | Akış | Süre karakteri |
 |---|---|---|
-| Kurye | Paketi al → adrese götür | "Paketi fırına teslim et!" |
-| Taksi | Yolcuyu al → evine bırak | "Yolcuyu evine bırak!" |
-| Hayvan kurtarma | Kayıp hayvanı bul → sahibine götür | "Kayıp kediyi sahibine götür!" |
-| Okul servisi | Öğrenciyi al → okula bırak | "Öğrenciyi okula yetiştir!" |
-| Hızlı teslimat | Kurye + süre bonusu | "Hızlı ol, bonus yıldız kazan!" |
+| Kurye | Paketi al → adrese götür | Dengeli |
+| Taksi | Yolcuyu al → evine bırak | Dengeli |
+| Hayvan kurtarma | Kayıp hayvanı bul → sahibine götür | Biraz daha bol süre |
+| Okul servisi | Öğrenciyi al → okula bırak | Biraz daha sıkı |
+| Hızlı teslimat | Paketi al → çabuk götür | En sıkı süre |
+
+### İki aşamalı geri sayım
+
+Her görevde **iki ayrı süre** vardır; BAŞLA'dan sonra ekranda **bir tanesi** görünür:
+
+1. **AL** — görevi aldıktan sonra ilk adrese (alış halkası) kadar. Noktalar: ● ○
+2. **TESLİM** — alıştan sonra teslimat halkasına kadar. Noktalar: ● ●
+
+Süre; bacak mesafesi, görev türü ve **Kolay / Orta / Zor** ile hesaplanır
+(`MissionClock`: ~6 m/s seyir + 18 sn tampon, en az 25 sn, 5'e yuvarlanır).
+Teklif kartında zorluk ve her iki süre de yazılır. Zor görevler +10 altın.
+
+Sayaç yeşil → sarı → kırmızı; süre dolunca **0:00 GEÇ** yazar, nabız atar.
+**Süre bitmek görevi iptal etmez** — çocuk yine teslim eder, o bacak için zamanında yıldızı alamaz.
 
 ### Üretim kuralları
 
-- Görevler **prosedürel** üretilir: tür + rastgele alış/bırakış noktası + mesafeye göre ödül.
-- **Günlük tohum:** her günün görevleri o günün tarihinden türetilen seed ile üretilir —
-  "sürekli değişen görevler" hissi. Günde 5 hedef görev vardır; 5/5 olunca "bonus görevler"
-  başlar, oyun asla durmaz.
-- Alış-bırakış mesafesi 60-160 m aralığında tutulur (30-90 saniyelik görevler).
+- Görevler **prosedürel** üretilir: tür + rastgele alış/bırakış + mesafe/tür/zorluk süresi + ödül.
+- **Günlük tohum:** her günün görevleri o günün tarihinden türetilen seed ile üretilir.
+  Günde 5 hedef görev vardır; 5/5 olunca "bonus görevler" başlar, oyun asla durmaz.
+- Alış-bırakış mesafesi 60-160 m aralığında tutulur.
 
 ### Ödüller
 
-- Altın: `20 + mesafe/10` (5'e yuvarlanır) → tipik 25-40 altın.
-- Yıldız: her görev 1 ⭐; süreli görevde hızlı bitirme +1 ⭐.
-- Görev bitince kutlama: büyük "+25 ALTIN!" yazısı, ileride ses + konfeti (M4).
+- Altın: `20 + toplamMesafe/10` (5'e yuvarlanır); Zor ise +10.
+- Yıldız: her tamamlanan görev **1**; her zamanında bacak **+1** (ikisi de zamanındaysa 3 yıldız).
+- Zamanında bacak: +5 altın. İkisi de zamanındaysa **seri** artar, `+5 × seri` altın daha.
+- Seri bir bacak gecikince sıfırlanır. HUD'da `SERİ ×N` (N≥2), kayıtta `currentStreak` / `bestStreak`.
+- Alışta toast: "ZAMANINDA! ALDIN!" veya "ALDIN!". Teslimatta büyük kutlama yazısı + akor.
 
 ### Yönlendirme
 
 - Ekranın üstünde **büyük sarı ok** (siyah gölgeli, nabız gibi büyür) + metre.
+  12 m içinde yazı **HEMEN YANINDA!** olur.
 - Hedefte geniş halka, ışık sütunu ve büyük zıplayan ikon.
+- Araç üstünde 3D yön oku **yok** (karışıyordu).
 - Okuma gerektirmez: ok + renk kodu yeterli (alış = turkuaz, bırakış = yeşil).
+- Sol üst para: sarı sikke + **ALTIN**, beş köşeli yıldız + **YILDIZ**.
 
-## 8. Ekonomi ve Garaj (M3)
+## 8. Ekonomi ve Garaj (M4)
 
 ### Araç kataloğu (plan)
 
@@ -110,7 +133,7 @@ Tasarım notu: tek parmak, tüm ekran. Küçük çocuk joystick aramaz; bastığ
 | Kamyonet | 600 | Sağlam |
 | Ambulans | 900 | Hızlı |
 | İtfaiye | 1.200 | Büyük ve güçlü |
-| Dondurma Kamyonu | 1.500 | Eğlenceli, müzikli (M4) |
+| Dondurma Kamyonu | 1.500 | Eğlenceli, müzikli (M5) |
 | Yarış Arabası | 2.000 | En hızlı |
 
 - Fiyatlar, günde 5 görev tamamlayan bir çocuğun **2-3 günde bir** yeni araç açabileceği şekilde ayarlıdır.
@@ -120,20 +143,21 @@ Tasarım notu: tek parmak, tüm ekran. Küçük çocuk joystick aramaz; bastığ
 ## 9. Kayıt Sistemi
 
 - Cihazda JSON dosyası (`Application.persistentDataPath/save.json`).
-- Saklananlar: altın, yıldız, toplam görev sayısı, günlük görev sayacı + tarih,
-  açılmış araçlar, seçili araç, araç renkleri.
-- Kayıt anları: görev tamamlanınca, garajda işlem yapılınca, uygulama arka plana geçince.
+- Saklananlar: altın, yıldız, toplam görev, günlük sayaç + tarih, nezaket yıldızı bayrağı,
+  zamanında seri (`currentStreak`, `bestStreak`), açılmış araçlar, seçili araç.
+- Kayıt anları: görev tamamlanınca, nezaket ödülünde, uygulama arka plana geçince.
 - İnternet/hesap yok — çocuk gizliliği açısından en güvenli model.
 
 ## 10. Teknik Mimari
 
 - **Unity 6.3 LTS + URP**, hedef 60 FPS.
-- Sahneler: `Boot` (ana menü) → `City` (oyun) → `Garage` (M3).
+- Sahneler: `Boot` (ana menü) → `City` (oyun) → `Garage` (M4).
 - Sahne dosyaları neredeyse boştur; şehir, araç, kamera ve UI **çalışma zamanında koddan üretilir**.
   Böylece tüm oyun mantığı kod incelemesiyle takip edilebilir ve sahne birleştirme (merge) sorunları yaşanmaz.
 - İlk prototip görselleri Unity primitive'leri (kutu, silindir, küre) ile kurulur;
-  M4'te Kenney/Meshy modelleriyle değiştirilir ([asset-pipeline.md](asset-pipeline.md)).
-- Girdi: eski Input Manager (dokunma UI butonları + klavye) — sıfır yapılandırma; gerekirse M4'te Input System'e geçilir.
+  M5'te Kenney/Meshy modelleriyle değiştirilir ([asset-pipeline.md](asset-pipeline.md)).
+- Girdi: eski Input Manager (dokunma UI + klavye) — sıfır yapılandırma.
+- Cloud Agent Unity Editor çalıştırmaz; görsel playtest Mac'te yapılır.
 
 ## 11. Çocuk Güvenliği ve App Store
 
@@ -142,13 +166,13 @@ Tasarım notu: tek parmak, tüm ekran. Küçük çocuk joystick aramaz; bastığ
   Apple Kids Category kurallarına baştan uygun.
 - Ebeveyn kapısı (parental gate) gerekmez çünkü dışa açılan hiçbir şey yok.
 
-## 12. Ses ve Müzik (M4)
+## 12. Ses ve Müzik
 
-- Neşeli döngü müziği (telifsiz / lisanslı), motor vınlaması (hıza göre pitch),
-  görev tamamlama jingle'ı, korna butonu (çocuklar bayılır).
+Şimdilik dosyasız prosedürel ses: korna (BİP), alış ding, teslimat akoru, BAŞLA tonu.
+M5'te: neşeli döngü müziği, motor vınlaması (hıza göre pitch), konfeti.
 
 ## 13. Erişilebilirlik
 
-- Okuma gerektirmeyen yönlendirme (ok + renk).
+- Okuma gerektirmeyen yönlendirme (ok + renk); süre rakamları büyük.
 - Büyük dokunma hedefleri (min 120 pt).
-- Titreşen/yanıp sönen efekt yok.
+- Titreşen/yanıp sönen efekt yok (sayaç nabzı hafif ölçek, strobe değil).

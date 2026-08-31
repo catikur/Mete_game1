@@ -1,7 +1,7 @@
 # Asset Üretim Akışı (Kenney + Meshy)
 
 İlk prototip tamamen Unity primitive'leriyle (kutu, silindir, küre) çalışır — hiçbir model
-dosyası gerekmez. Bu doküman, M4'te görselleri gerçek 3D modellerle değiştirme akışını anlatır.
+dosyası gerekmez. Bu doküman, **M5**'te görselleri gerçek 3D modellerle değiştirme akışını anlatır.
 
 ## Strateji
 
@@ -56,7 +56,7 @@ rounded edges, simple flat shading, game-ready asset, single mesh, no background
 5. Ölçek kontrolü: araç uzunluğu ~4 m olacak şekilde import Scale Factor ayarla
    (sahneye at, primitive taksiyle karşılaştır).
 
-## 3. Modellerin Oyuna Bağlanması (M4'te yapılacak)
+## 3. Modellerin Oyuna Bağlanması (M5'te yapılacak)
 
 Plan şu şekilde:
 

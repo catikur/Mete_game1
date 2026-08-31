@@ -24,6 +24,13 @@ namespace MeteGame.Core
         public const float MaxMissionDistance = 160f;
         public const float MarkerTriggerRadius = 5f;
 
+        // İki aşamalı görev süresi (çocuklar için bol; bitince görev batmaz)
+        public const float TimerCruiseSpeed = 6f;   // tahmini ortalama m/s
+        public const float TimerLegBuffer = 18f;    // dönüş + ışık payı
+        public const int MinLegSeconds = 25;
+        public const float TimerSoonRatio = 0.40f;
+        public const float TimerUrgentRatio = 0.18f;
+
         // Trafik / şehir hayatı
         public const int TrafficCarCount = 16;
         public const int PedestrianCount = 24;

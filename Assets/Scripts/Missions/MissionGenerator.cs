@@ -23,11 +23,19 @@ namespace MeteGame.Missions
             Vector3 pickup = layout.RandomRoadPointAwayFrom(rng, playerPosition, 40f, GameConfig.MaxMissionDistance);
             Vector3 dropoff = layout.RandomRoadPointAwayFrom(rng, pickup, GameConfig.MinMissionDistance, GameConfig.MaxMissionDistance);
 
+            float pickupDistance = Vector3.Distance(playerPosition, pickup);
+            float dropoffDistance = Vector3.Distance(pickup, dropoff);
+            var difficulty = MissionClock.RollDifficulty(rng, type, pickupDistance + dropoffDistance);
+
             var mission = new Mission
             {
                 Type = type,
+                Difficulty = difficulty,
                 PickupPoint = pickup,
-                DropoffPoint = dropoff
+                DropoffPoint = dropoff,
+                PickupDistance = pickupDistance,
+                PickupSeconds = MissionClock.SecondsForLeg(pickupDistance, type, difficulty),
+                DropoffSeconds = MissionClock.SecondsForLeg(dropoffDistance, type, difficulty)
             };
 
             string place = Places[rng.Next(Places.Length)];
@@ -75,11 +83,10 @@ namespace MeteGame.Missions
             }
 
             // Ödül, toplam sürüş mesafesiyle orantılı ve 5'e yuvarlanır.
-            float totalDistance = Vector3.Distance(playerPosition, pickup) + mission.Distance;
+            float totalDistance = pickupDistance + dropoffDistance;
             mission.RewardCoins = Mathf.Max(15, Mathf.RoundToInt((20f + totalDistance / 10f) / 5f) * 5);
-
-            if (type == MissionType.TimedDelivery)
-                mission.BonusSeconds = totalDistance / 7f + 15f; // Rahat ama heyecanlı bir hedef.
+            if (difficulty == MissionDifficulty.Hard)
+                mission.RewardCoins += 10;
 
             return mission;
         }
