@@ -254,13 +254,13 @@ namespace MeteGame.City
                     float cz = layout.RoadZs[j] + road / 2f + block / 2f;
 
                     TryPark(root, rng, new Vector3(cx - block / 2f + 1.5f, 0f, cz + RandomAlong(rng, block)),
-                        Compass.North, wheel);
+                        CardinalDir.North, wheel);
                     TryPark(root, rng, new Vector3(cx + block / 2f - 1.5f, 0f, cz + RandomAlong(rng, block)),
-                        Compass.South, wheel);
+                        CardinalDir.South, wheel);
                     TryPark(root, rng, new Vector3(cx + RandomAlong(rng, block), 0f, cz - block / 2f + 1.5f),
-                        Compass.East, wheel);
+                        CardinalDir.East, wheel);
                     TryPark(root, rng, new Vector3(cx + RandomAlong(rng, block), 0f, cz + block / 2f - 1.5f),
-                        Compass.West, wheel);
+                        CardinalDir.West, wheel);
                 }
             }
         }
@@ -270,7 +270,7 @@ namespace MeteGame.City
             return Mathf.Lerp(-block / 2f + 5f, block / 2f - 5f, (float)rng.NextDouble());
         }
 
-        static void TryPark(Transform parent, System.Random rng, Vector3 pos, Compass facing, Color wheel)
+        static void TryPark(Transform parent, System.Random rng, Vector3 pos, CardinalDir facing, Color wheel)
         {
             if (rng.NextDouble() > 0.42)
                 return;
@@ -278,7 +278,7 @@ namespace MeteGame.City
             Color body = GameConfig.CarPalette[rng.Next(GameConfig.CarPalette.Length)];
             var car = new GameObject("ParkedCar");
             car.transform.SetParent(parent, false);
-            car.transform.SetPositionAndRotation(pos + Vector3.up * 0.36f, CompassUtil.Rotation(facing));
+            car.transform.SetPositionAndRotation(pos + Vector3.up * 0.36f, CardinalUtil.Rotation(facing));
 
             var box = car.AddComponent<BoxCollider>();
             box.size = new Vector3(1.8f, 1.1f, 4.0f);

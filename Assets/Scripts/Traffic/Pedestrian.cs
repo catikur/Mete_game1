@@ -112,7 +112,7 @@ namespace MeteGame.Traffic
         {
             // Köşe 0 GB, 1 GD, 2 KD, 3 KB.
             // 0 ve 1 güney kenar → güneye (j-1) veya 0/3 batı kenar → i-1, vs.
-            Compass walk;
+            CardinalDir walk;
             int ni = _blockI;
             int nj = _blockJ;
             int arriveCorner = _corner;
@@ -120,20 +120,20 @@ namespace MeteGame.Traffic
             switch (_corner)
             {
                 case 0: // GB: güney veya batı
-                    if (Random.value < 0.5f) { walk = Compass.South; nj--; arriveCorner = 3; }
-                    else { walk = Compass.West; ni--; arriveCorner = 1; }
+                    if (Random.value < 0.5f) { walk = CardinalDir.South; nj--; arriveCorner = 3; }
+                    else { walk = CardinalDir.West; ni--; arriveCorner = 1; }
                     break;
                 case 1: // GD
-                    if (Random.value < 0.5f) { walk = Compass.South; nj--; arriveCorner = 2; }
-                    else { walk = Compass.East; ni++; arriveCorner = 0; }
+                    if (Random.value < 0.5f) { walk = CardinalDir.South; nj--; arriveCorner = 2; }
+                    else { walk = CardinalDir.East; ni++; arriveCorner = 0; }
                     break;
                 case 2: // KD
-                    if (Random.value < 0.5f) { walk = Compass.North; nj++; arriveCorner = 1; }
-                    else { walk = Compass.East; ni++; arriveCorner = 3; }
+                    if (Random.value < 0.5f) { walk = CardinalDir.North; nj++; arriveCorner = 1; }
+                    else { walk = CardinalDir.East; ni++; arriveCorner = 3; }
                     break;
                 default: // KB
-                    if (Random.value < 0.5f) { walk = Compass.North; nj++; arriveCorner = 0; }
-                    else { walk = Compass.West; ni--; arriveCorner = 2; }
+                    if (Random.value < 0.5f) { walk = CardinalDir.North; nj++; arriveCorner = 0; }
+                    else { walk = CardinalDir.West; ni--; arriveCorner = 2; }
                     break;
             }
 

@@ -36,26 +36,26 @@ namespace MeteGame.City
             return new Vector3(RoadXs[ix], 0f, RoadZs[iz]);
         }
 
-        public bool HasRoad(int ix, int iz, Compass dir)
+        public bool HasRoad(int ix, int iz, CardinalDir dir)
         {
             switch (dir)
             {
-                case Compass.North: return iz + 1 < RoadZs.Length;
-                case Compass.East: return ix + 1 < RoadXs.Length;
-                case Compass.South: return iz - 1 >= 0;
+                case CardinalDir.North: return iz + 1 < RoadZs.Length;
+                case CardinalDir.East: return ix + 1 < RoadXs.Length;
+                case CardinalDir.South: return iz - 1 >= 0;
                 default: return ix - 1 >= 0;
             }
         }
 
-        public bool TryAdvance(int ix, int iz, Compass dir, out int nx, out int nz)
+        public bool TryAdvance(int ix, int iz, CardinalDir dir, out int nx, out int nz)
         {
             nx = ix;
             nz = iz;
             switch (dir)
             {
-                case Compass.North: nz = iz + 1; break;
-                case Compass.East: nx = ix + 1; break;
-                case Compass.South: nz = iz - 1; break;
+                case CardinalDir.North: nz = iz + 1; break;
+                case CardinalDir.East: nx = ix + 1; break;
+                case CardinalDir.South: nz = iz - 1; break;
                 default: nx = ix - 1; break;
             }
             return nx >= 0 && nz >= 0 && nx < RoadXs.Length && nz < RoadZs.Length;
@@ -64,31 +64,31 @@ namespace MeteGame.City
         /// <summary>
         /// Sağ şeritte, kavşağa yaklaşırken dur çizgisi (ışık arkası).
         /// </summary>
-        public Vector3 StopLine(int ix, int iz, Compass heading)
+        public Vector3 StopLine(int ix, int iz, CardinalDir heading)
         {
             float dist = GameConfig.RoadWidth / 2f + GameConfig.StopLinePadding;
             Vector3 center = IntersectionCenter(ix, iz);
             return center
-                   - CompassUtil.Forward(heading) * dist
-                   + CompassUtil.Right(heading) * GameConfig.LaneOffset
+                   - CardinalUtil.Forward(heading) * dist
+                   + CardinalUtil.Right(heading) * GameConfig.LaneOffset
                    + Vector3.up * 0.5f;
         }
 
         /// <summary>Kavşağı terk ederken sağ şeridin çıkış noktası.</summary>
-        public Vector3 ExitPoint(int ix, int iz, Compass heading)
+        public Vector3 ExitPoint(int ix, int iz, CardinalDir heading)
         {
             float dist = GameConfig.RoadWidth / 2f + GameConfig.StopLinePadding;
             Vector3 center = IntersectionCenter(ix, iz);
             return center
-                   + CompassUtil.Forward(heading) * dist
-                   + CompassUtil.Right(heading) * GameConfig.LaneOffset
+                   + CardinalUtil.Forward(heading) * dist
+                   + CardinalUtil.Right(heading) * GameConfig.LaneOffset
                    + Vector3.up * 0.5f;
         }
 
         /// <summary>
         /// Şerit üzerinde iki kavşak arasındaki bir nokta (t = 0 çıkış, t = 1 dur çizgisi).
         /// </summary>
-        public Vector3 LanePoint(int fromIx, int fromIz, Compass heading, float t)
+        public Vector3 LanePoint(int fromIx, int fromIz, CardinalDir heading, float t)
         {
             if (!TryAdvance(fromIx, fromIz, heading, out int toIx, out int toIz))
                 return ExitPoint(fromIx, fromIz, heading);
