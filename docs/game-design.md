@@ -40,9 +40,10 @@ flowchart LR
 | Sol alt buton (basılı tut) | Sola dön |
 | Sağ alt buton (basılı tut) | Sağa dön |
 | GERİ butonu (basılı tut) | Yavaşla, sonra geri git |
+| BİP butonu (basılı tut) | Korna — yakındaki yayalar zıplar |
 | — | Gaz otomatik: araç kendiliğinden ilerler |
 
-Editörde test için: ok tuşları / A-D / S / Boşluk.
+Editörde test için: ok tuşları / A-D / S / Boşluk / **H** (korna).
 
 Tasarım notu: iki büyük buton, joystick'ten daha güvenilirdir — küçük çocuklar joystick'i
 sürüklerken parmak kaydırıp kaybeder. Butonlar ekranın alt köşelerinde, başparmak boyunda.
@@ -56,11 +57,16 @@ sürüklerken parmak kaydırıp kaybeder. Butonlar ekranın alt köşelerinde, b
 ## 6. Şehir
 
 - Grid tabanlı prosedürel şehir: 6×6 blok, ~226 m × 226 m.
-- Yollar, kaldırımlar, şerit çizgileri, pastel renkli binalar, ağaçlı parklar.
+- Yollar (sağ şerit), kaldırımlar, şerit çizgileri, yaya geçitleri, pastel binalar, parklar.
+- Kavşaklarda trafik lambaları: tüm kavşaklar aynı fazı paylaşır (kuzey-güney yeşil, sonra doğu-batı). NPC'ler durur; oyuncu durmak zorunda değildir. İlk kez kırmızıda yavaşça durursa günde bir kez "+1 yıldız, dikkatli sürüş" ödülü.
+- ~16 NPC araç şerit takip eder, ışığa uyar, birbirine ve oyuncuya mesafe bırakır, kavşakta döner. Çarpınca kaza/takla yok — oyuncu yavaşlar, onlar yoluna devam eder.
+- ~24 yaya kaldırımda yürür, yeşil yanınca karşıya geçer. Oyuncu yaklaşınca kenara zıplar. Çarpmak oyunu bitirmez.
+- Kaldırım kenarında park halindeki arabalar (şeridi tıkamaz).
 - Şehrin çevresi çit/çalı ile kapalı — düşmek veya kaybolmak imkânsız.
 - Sabit tohum (seed) ile üretilir: şehir her oyunda aynı kalır, çocuk yolları ezberleyip
   "benim şehrim" hissi yaşar. (İleride yeni bölgeler yeni seed ile eklenebilir.)
-- Yol ağı verisi görev üreticisine açılır: alış/bırakış noktaları her zaman yol üzerindedir.
+- Yol ağı verisi görev üreticisine ve trafik AI'sine açılır: alış/bırakış noktaları her zaman yol üzerindedir.
+- Görev teklifi açıkken oyuncu aracı durur; şehir (trafik ve yayalar) yaşamaya devam eder.
 
 ## 7. Görev Sistemi
 

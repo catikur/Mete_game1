@@ -41,7 +41,10 @@ namespace MeteGame.City
             BuildBlocks(cityRoot, xs, zs, blocks, block, road, rng);
             BuildBoundary(cityRoot, half);
 
-            return new CityLayout { RoadXs = xs, RoadZs = zs, HalfExtent = half };
+            var layout = new CityLayout { RoadXs = xs, RoadZs = zs, HalfExtent = half };
+            BuildCrosswalks(cityRoot, layout);
+            BuildParkedCars(cityRoot, layout, rng);
+            return layout;
         }
 
         static void BuildRoads(Transform cityRoot, float[] xs, float[] zs, float extent, float road)
@@ -183,6 +186,120 @@ namespace MeteGame.City
             foreach (var wall in walls)
                 PartFactory.Create(PrimitiveType.Cube, wall.name, cityRoot,
                     wall.pos, wall.scale, GameConfig.Hedge, withBoxCollider: true);
+        }
+
+        static void BuildCrosswalks(Transform cityRoot, CityLayout layout)
+        {
+            var root = new GameObject("Crosswalks").transform;
+            root.SetParent(cityRoot, false);
+
+            int n = layout.RoadCount;
+            float road = GameConfig.RoadWidth;
+            const int stripes = 5;
+            const float stripeW = 0.55f;
+            const float stripeLen = 2.2f;
+
+            for (int ix = 0; ix < n; ix++)
+            {
+                for (int iz = 0; iz < n; iz++)
+                {
+                    Vector3 c = layout.IntersectionCenter(ix, iz);
+                    PlaceZebra(root, c, northSouthWalk: true, +1, road, stripes, stripeW, stripeLen);
+                    PlaceZebra(root, c, northSouthWalk: true, -1, road, stripes, stripeW, stripeLen);
+                    PlaceZebra(root, c, northSouthWalk: false, +1, road, stripes, stripeW, stripeLen);
+                    PlaceZebra(root, c, northSouthWalk: false, -1, road, stripes, stripeW, stripeLen);
+                }
+            }
+        }
+
+        static void PlaceZebra(Transform parent, Vector3 center, bool northSouthWalk, int sign,
+            float road, int stripes, float stripeW, float stripeLen)
+        {
+            float offset = road / 2f + 1.15f;
+            Vector3 origin = northSouthWalk
+                ? center + new Vector3(0f, 0.09f, sign * offset)
+                : center + new Vector3(sign * offset, 0.09f, 0f);
+
+            float span = road - 1.6f;
+            for (int s = 0; s < stripes; s++)
+            {
+                float t = (s + 0.5f) / stripes;
+                float along = Mathf.Lerp(-span / 2f, span / 2f, t);
+                Vector3 pos = northSouthWalk
+                    ? origin + new Vector3(along, 0f, 0f)
+                    : origin + new Vector3(0f, 0f, along);
+                Vector3 scale = northSouthWalk
+                    ? new Vector3(stripeW, 0.02f, stripeLen)
+                    : new Vector3(stripeLen, 0.02f, stripeW);
+                PartFactory.Create(PrimitiveType.Cube, "Zebra", parent, pos, scale,
+                    GameConfig.RoadMarking, castShadows: false);
+            }
+        }
+
+        static void BuildParkedCars(Transform cityRoot, CityLayout layout, System.Random rng)
+        {
+            var root = new GameObject("ParkedCars").transform;
+            root.SetParent(cityRoot, false);
+
+            int blocks = GameConfig.CityBlocks;
+            float road = GameConfig.RoadWidth;
+            float block = GameConfig.BlockSize;
+            Color wheel = new Color(0.14f, 0.14f, 0.16f);
+
+            for (int i = 0; i < blocks; i++)
+            {
+                for (int j = 0; j < blocks; j++)
+                {
+                    float cx = layout.RoadXs[i] + road / 2f + block / 2f;
+                    float cz = layout.RoadZs[j] + road / 2f + block / 2f;
+
+                    TryPark(root, rng, new Vector3(cx - block / 2f + 1.5f, 0f, cz + RandomAlong(rng, block)),
+                        Compass.North, wheel);
+                    TryPark(root, rng, new Vector3(cx + block / 2f - 1.5f, 0f, cz + RandomAlong(rng, block)),
+                        Compass.South, wheel);
+                    TryPark(root, rng, new Vector3(cx + RandomAlong(rng, block), 0f, cz - block / 2f + 1.5f),
+                        Compass.East, wheel);
+                    TryPark(root, rng, new Vector3(cx + RandomAlong(rng, block), 0f, cz + block / 2f - 1.5f),
+                        Compass.West, wheel);
+                }
+            }
+        }
+
+        static float RandomAlong(System.Random rng, float block)
+        {
+            return Mathf.Lerp(-block / 2f + 5f, block / 2f - 5f, (float)rng.NextDouble());
+        }
+
+        static void TryPark(Transform parent, System.Random rng, Vector3 pos, Compass facing, Color wheel)
+        {
+            if (rng.NextDouble() > 0.42)
+                return;
+
+            Color body = GameConfig.CarPalette[rng.Next(GameConfig.CarPalette.Length)];
+            var car = new GameObject("ParkedCar");
+            car.transform.SetParent(parent, false);
+            car.transform.SetPositionAndRotation(pos + Vector3.up * 0.36f, CompassUtil.Rotation(facing));
+
+            var box = car.AddComponent<BoxCollider>();
+            box.size = new Vector3(1.8f, 1.1f, 4.0f);
+            box.center = new Vector3(0f, 0.2f, 0f);
+
+            PartFactory.Create(PrimitiveType.Cube, "Body", car.transform,
+                new Vector3(0f, 0.2f, 0f), new Vector3(1.7f, 0.55f, 3.8f), body);
+            PartFactory.Create(PrimitiveType.Cube, "Cabin", car.transform,
+                new Vector3(0f, 0.65f, -0.2f), new Vector3(1.5f, 0.45f, 1.8f),
+                new Color(0.25f, 0.33f, 0.42f));
+            CreateParkedWheel(car.transform, new Vector3(-0.85f, -0.05f, 1.2f), wheel);
+            CreateParkedWheel(car.transform, new Vector3(0.85f, -0.05f, 1.2f), wheel);
+            CreateParkedWheel(car.transform, new Vector3(-0.85f, -0.05f, -1.2f), wheel);
+            CreateParkedWheel(car.transform, new Vector3(0.85f, -0.05f, -1.2f), wheel);
+        }
+
+        static void CreateParkedWheel(Transform parent, Vector3 localPosition, Color color)
+        {
+            var wheel = PartFactory.Create(PrimitiveType.Cylinder, "Wheel", parent,
+                localPosition, new Vector3(0.6f, 0.14f, 0.6f), color);
+            wheel.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
         }
     }
 }

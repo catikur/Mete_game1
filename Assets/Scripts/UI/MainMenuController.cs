@@ -20,6 +20,7 @@ namespace MeteGame.UI
             var camera = go.AddComponent<Camera>();
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = new Color(0.42f, 0.75f, 0.94f); // Gökyüzü
+            go.AddComponent<AudioListener>();
         }
 
         void BuildMenu()

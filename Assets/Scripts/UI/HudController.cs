@@ -146,6 +146,17 @@ namespace MeteGame.UI
                 "GERİ", 44, Color.white);
             var reverseHold = reverse.gameObject.AddComponent<HoldButton>();
             reverseHold.StateChanged = pressed => DriveInput.TouchReverse = pressed;
+
+            // Korna: geri butonunun sağında, biraz daha küçük.
+            var honk = UIFactory.CreateIcon("HonkButton", root,
+                new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+                new Vector2(210f, 130f), new Vector2(150f, 150f),
+                UIFactory.CircleSprite, new Color(1f, 0.82f, 0.2f, 0.72f));
+            UIFactory.CreateText("HonkLabel", honk.transform,
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
+                "BİP", 36, new Color(0.2f, 0.15f, 0.05f));
+            var honkHold = honk.gameObject.AddComponent<HoldButton>();
+            honkHold.StateChanged = pressed => DriveInput.HonkHeld = pressed;
         }
 
         void PushSteer()
@@ -195,10 +206,17 @@ namespace MeteGame.UI
 
         void OnStartClicked()
         {
+            DriveInput.Locked = false;
             _offerPanel.SetActive(false);
             var start = _pendingStart;
             _pendingStart = null;
             start?.Invoke();
+        }
+
+        void OnDisable()
+        {
+            DriveInput.Locked = false;
+            DriveInput.HonkHeld = false;
         }
 
         void Update()
@@ -241,12 +259,18 @@ namespace MeteGame.UI
 
         public void ShowMissionOffer(Mission mission, System.Action onStart)
         {
+            DriveInput.Locked = true;
             _pendingStart = onStart;
             _offerTitle.text = mission.Title;
             _offerDescription.text = mission.DropoffText;
             _offerReward.text = "Ödül: " + mission.RewardCoins + " altın"
                                 + (mission.BonusSeconds > 0f ? "  •  Hızlı olursan +1 yıldız!" : "");
             _offerPanel.SetActive(true);
+        }
+
+        public void ShowToast(string message)
+        {
+            StartCoroutine(CelebrationRoutine(message));
         }
 
         public void ShowCelebration(int coins, int stars)
