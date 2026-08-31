@@ -14,6 +14,8 @@ namespace MeteGame.UI
         static Sprite _circleSprite;
         static Sprite _triangleSprite;
         static Sprite _chevronSprite;
+        static Sprite _coinSprite;
+        static Sprite _starSprite;
 
         /// <summary>Kalın, gövdeli yukarı ok — görev yönü için.</summary>
         public static Sprite ChevronSprite
@@ -23,6 +25,28 @@ namespace MeteGame.UI
                 if (_chevronSprite == null)
                     _chevronSprite = BuildChevronSprite(128);
                 return _chevronSprite;
+            }
+        }
+
+        /// <summary>Renkli altın sikke (tint etme — Image.color = beyaz bırak).</summary>
+        public static Sprite CoinSprite
+        {
+            get
+            {
+                if (_coinSprite == null)
+                    _coinSprite = BuildCoinSprite(128);
+                return _coinSprite;
+            }
+        }
+
+        /// <summary>Beş köşeli sarı yıldız.</summary>
+        public static Sprite StarSprite
+        {
+            get
+            {
+                if (_starSprite == null)
+                    _starSprite = BuildStarSprite(128);
+                return _starSprite;
             }
         }
 
@@ -203,6 +227,123 @@ namespace MeteGame.UI
             texture.SetPixels32(pixels);
             texture.Apply();
             return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f));
+        }
+
+        static Sprite BuildCoinSprite(int size)
+        {
+            var texture = NewTexture(size);
+            var pixels = new Color32[size * size];
+            var center = new Vector2(size / 2f, size / 2f);
+            float r = size / 2f - 2f;
+            var rim = new Color32(176, 110, 18, 255);
+            var gold = new Color32(255, 205, 50, 255);
+            var face = new Color32(255, 224, 96, 255);
+            var shine = new Color32(255, 255, 230, 255);
+
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    var p = new Vector2(x + 0.5f, y + 0.5f);
+                    float d = Vector2.Distance(p, center);
+                    float a = Mathf.Clamp01(r - d + 1.5f);
+                    if (a <= 0.01f)
+                    {
+                        pixels[y * size + x] = new Color32(0, 0, 0, 0);
+                        continue;
+                    }
+
+                    Color32 c;
+                    if (d > r * 0.84f)
+                        c = rim;
+                    else if (d > r * 0.72f)
+                        c = gold;
+                    else
+                        c = face;
+
+                    var shineCenter = center + new Vector2(-r * 0.22f, r * 0.28f);
+                    float sd = Vector2.Distance(p, shineCenter);
+                    if (sd < r * 0.22f)
+                        c = (Color32)Color.Lerp(c, shine, 0.55f);
+
+                    c.a = (byte)Mathf.RoundToInt(255f * a);
+                    pixels[y * size + x] = c;
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f));
+        }
+
+        static Sprite BuildStarSprite(int size)
+        {
+            var texture = NewTexture(size);
+            var pixels = new Color32[size * size];
+            float cx = size / 2f;
+            float cy = size / 2f;
+            var poly = new Vector2[10];
+            for (int i = 0; i < 10; i++)
+            {
+                float ang = -Mathf.PI / 2f + i * Mathf.PI / 5f;
+                float rad = (i % 2 == 0) ? size * 0.46f : size * 0.18f;
+                poly[i] = new Vector2(cx + Mathf.Cos(ang) * rad, cy + Mathf.Sin(ang) * rad);
+            }
+
+            var fill = new Color32(255, 214, 40, 255);
+            var edge = new Color32(180, 90, 12, 255);
+
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    var p = new Vector2(x + 0.5f, y + 0.5f);
+                    if (!PointInPolygon(p, poly))
+                    {
+                        pixels[y * size + x] = new Color32(0, 0, 0, 0);
+                        continue;
+                    }
+
+                    bool border = false;
+                    for (int oy = -2; oy <= 2 && !border; oy++)
+                    {
+                        for (int ox = -2; ox <= 2; ox++)
+                        {
+                            if (!PointInPolygon(p + new Vector2(ox, oy), poly))
+                            {
+                                border = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    pixels[y * size + x] = border ? edge : fill;
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f));
+        }
+
+        static bool PointInPolygon(Vector2 point, Vector2[] poly)
+        {
+            bool inside = false;
+            int j = poly.Length - 1;
+            for (int i = 0; i < poly.Length; i++)
+            {
+                if ((poly[i].y > point.y) != (poly[j].y > point.y))
+                {
+                    float den = poly[j].y - poly[i].y;
+                    if (Mathf.Abs(den) < 0.0001f)
+                        den = 0.0001f;
+                    float x = (poly[j].x - poly[i].x) * (point.y - poly[i].y) / den + poly[i].x;
+                    if (point.x < x)
+                        inside = !inside;
+                }
+                j = i;
+            }
+            return inside;
         }
 
         static Sprite BuildTriangleSprite(int size)

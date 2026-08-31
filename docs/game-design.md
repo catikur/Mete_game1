@@ -96,7 +96,6 @@ Tasarım notu: tek parmak, tüm ekran. Küçük çocuk joystick aramaz; bastığ
 ### Yönlendirme
 
 - Ekranın üstünde **büyük sarı ok** (siyah gölgeli, nabız gibi büyür) + metre.
-- Aracın üstünde **3D ok** hedefe döner — kuş bakışı kamerada asıl yön göstergesi.
 - Hedefte geniş halka, ışık sütunu ve büyük zıplayan ikon.
 - Okuma gerektirmez: ok + renk kodu yeterli (alış = turkuaz, bırakış = yeşil).
 

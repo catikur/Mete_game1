@@ -22,7 +22,6 @@ namespace MeteGame.UI
         Text _celebrationText;
         RectTransform _arrow;
         RectTransform _arrowShadow;
-        WaypointArrow _worldArrow;
         Text _hintText;
         float _hintTimer = 10f;
 
@@ -39,7 +38,6 @@ namespace MeteGame.UI
             var canvas = UIFactory.CreateCanvas("HUD");
             var hud = canvas.gameObject.AddComponent<HudController>();
             hud._vehicle = vehicle;
-            hud._worldArrow = WaypointArrow.Attach(vehicle);
             hud.BuildWidgets(canvas.transform);
             return hud;
         }
@@ -58,61 +56,62 @@ namespace MeteGame.UI
         {
             var panel = UIFactory.CreatePanel("CurrencyPanel", root,
                 new Vector2(0f, 1f), new Vector2(0f, 1f),
-                new Vector2(220f, -65f), new Vector2(400f, 92f),
-                new Color(0f, 0f, 0f, 0.35f));
+                new Vector2(390f, -72f), new Vector2(740f, 110f),
+                new Color(0f, 0f, 0f, 0.42f));
             panel.raycastTarget = false;
 
-            var coin = UIFactory.CreateIcon("CoinIcon", panel.transform,
-                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
-                new Vector2(55f, 0f), new Vector2(52f, 52f),
-                UIFactory.CircleSprite, Core.GameConfig.Gold);
-            coin.raycastTarget = false;
-            _coinText = UIFactory.CreateText("CoinText", panel.transform,
-                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
-                new Vector2(135f, 0f), new Vector2(120f, 70f),
-                "0", 44, Color.white, TextAnchor.MiddleLeft);
-
-            var star = UIFactory.CreatePanel("StarIcon", panel.transform,
-                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
-                new Vector2(255f, 0f), new Vector2(42f, 42f),
-                new Color(0.55f, 0.78f, 1f));
-            star.raycastTarget = false;
-            star.rectTransform.localEulerAngles = new Vector3(0f, 0f, 45f);
-            _starText = UIFactory.CreateText("StarText", panel.transform,
-                new Vector2(0f, 0.5f), new Vector2(0f, 0.5f),
-                new Vector2(330f, 0f), new Vector2(120f, 70f),
-                "0", 44, Color.white, TextAnchor.MiddleLeft);
+            _coinText = BuildStatChip(panel.transform, -175f, UIFactory.CoinSprite, "ALTIN");
+            _starText = BuildStatChip(panel.transform, 175f, UIFactory.StarSprite, "YILDIZ");
 
             _missionText = UIFactory.CreateText("MissionText", root,
                 new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-                new Vector2(0f, -55f), new Vector2(1200f, 74f),
+                new Vector2(0f, -148f), new Vector2(1200f, 74f),
                 "", 46, Color.white);
 
             _dailyText = UIFactory.CreateText("DailyText", root,
                 new Vector2(1f, 1f), new Vector2(1f, 1f),
-                new Vector2(-190f, -65f), new Vector2(340f, 70f),
-                "", 40, Color.white);
+                new Vector2(-240f, -72f), new Vector2(440f, 70f),
+                "", 36, Color.white);
+        }
+
+        static Text BuildStatChip(Transform parent, float x, Sprite icon, string label)
+        {
+            var iconImage = UIFactory.CreateIcon(label + "Icon", parent,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                new Vector2(x - 110f, 0f), new Vector2(64f, 64f),
+                icon, Color.white);
+            iconImage.raycastTarget = false;
+
+            UIFactory.CreateText(label + "Caption", parent,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                new Vector2(x + 8f, 22f), new Vector2(180f, 32f),
+                label, 22, new Color(1f, 0.92f, 0.55f), TextAnchor.MiddleLeft);
+
+            return UIFactory.CreateText(label + "Value", parent,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                new Vector2(x + 8f, -18f), new Vector2(180f, 48f),
+                "0", 44, Color.white, TextAnchor.MiddleLeft);
         }
 
         void BuildTargetIndicator(Transform root)
         {
             var shadow = UIFactory.CreateIcon("TargetArrowShadow", root,
                 new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-                new Vector2(6f, -178f), new Vector2(150f, 150f),
+                new Vector2(6f, -258f), new Vector2(150f, 150f),
                 UIFactory.ChevronSprite, new Color(0f, 0f, 0f, 0.85f));
             shadow.raycastTarget = false;
             _arrowShadow = shadow.rectTransform;
 
             var arrow = UIFactory.CreateIcon("TargetArrow", root,
                 new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-                new Vector2(0f, -170f), new Vector2(140f, 140f),
+                new Vector2(0f, -250f), new Vector2(140f, 140f),
                 UIFactory.ChevronSprite, new Color(1f, 0.92f, 0.15f));
             arrow.raycastTarget = false;
             _arrow = arrow.rectTransform;
 
             _distanceText = UIFactory.CreateText("DistanceText", root,
                 new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-                new Vector2(0f, -268f), new Vector2(400f, 70f),
+                new Vector2(0f, -348f), new Vector2(400f, 70f),
                 "", 52, new Color(1f, 0.95f, 0.25f));
 
             _arrow.gameObject.SetActive(false);
@@ -243,8 +242,6 @@ namespace MeteGame.UI
         public void SetTarget(Vector3? target)
         {
             _target = target;
-            if (_worldArrow != null)
-                _worldArrow.SetTarget(target);
         }
 
         public void SetMissionText(string text) => _missionText.text = text;
@@ -258,8 +255,8 @@ namespace MeteGame.UI
         public void SetDailyProgress(int completed, int target)
         {
             _dailyText.text = completed >= target
-                ? "Bonus görevler!"
-                : "Görev " + completed + "/" + target;
+                ? "Bugün görevler bitti!"
+                : "Bugün  " + completed + " / " + target + "  görev";
         }
 
         public void ShowMissionOffer(Mission mission, System.Action onStart)
