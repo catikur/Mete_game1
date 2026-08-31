@@ -61,10 +61,13 @@ namespace MeteGame.UI
                 () => SceneManager.LoadScene("City"));
 
             var data = SaveManager.Data;
+            string wallet = "Altın: " + data.coins + "      Yıldız: " + data.stars;
+            if (data.bestStreak >= 2)
+                wallet += "      Seri rekoru: ×" + data.bestStreak;
             UIFactory.CreateText("Wallet", root,
                 new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-                new Vector2(0f, 80f), new Vector2(1000f, 64f),
-                "Altın: " + data.coins + "      Yıldız: " + data.stars, 42, Color.white);
+                new Vector2(0f, 80f), new Vector2(1400f, 64f),
+                wallet, 42, Color.white);
         }
     }
 }

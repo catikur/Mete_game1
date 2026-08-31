@@ -17,7 +17,11 @@ namespace MeteGame.Core
 
         public bool courtesyAwarded;
 
-        // Garaj alanları (M3'te kullanılacak, şema şimdiden hazır)
+        // Üst üste iki bacağı da zamanında bitirme serisi
+        public int currentStreak;
+        public int bestStreak;
+
+        // Garaj alanları (M4'te kullanılacak, şema şimdiden hazır)
         public List<string> unlockedVehicleIds = new List<string> { "taksi" };
         public string selectedVehicleId = "taksi";
     }
