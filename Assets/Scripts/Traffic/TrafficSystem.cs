@@ -48,20 +48,20 @@ namespace MeteGame.Traffic
             return system;
         }
 
-        public bool IsGreen(Compass heading)
+        public bool IsGreen(CardinalDir heading)
         {
-            bool ns = CompassUtil.IsNorthSouth(heading);
+            bool ns = CardinalUtil.IsNorthSouth(heading);
             return ns ? _phase == Phase.NsGreen : _phase == Phase.EwGreen;
         }
 
-        public bool IsRed(Compass heading)
+        public bool IsRed(CardinalDir heading)
         {
-            bool ns = CompassUtil.IsNorthSouth(heading);
+            bool ns = CardinalUtil.IsNorthSouth(heading);
             if (ns) return _phase == Phase.EwGreen || _phase == Phase.EwYellow;
             return _phase == Phase.NsGreen || _phase == Phase.NsYellow;
         }
 
-        public bool PedestriansMayWalk(Compass walkDir) => IsGreen(walkDir);
+        public bool PedestriansMayWalk(CardinalDir walkDir) => IsGreen(walkDir);
 
         public float GapAhead(Vector3 pos, Vector3 forward, float maxDist, Transform ignore)
         {
@@ -199,9 +199,9 @@ namespace MeteGame.Traffic
             {
                 for (int iz = 0; iz < n; iz++)
                 {
-                    foreach (Compass heading in new[] { Compass.North, Compass.East, Compass.South, Compass.West })
+                    foreach (CardinalDir heading in new[] { CardinalDir.North, CardinalDir.East, CardinalDir.South, CardinalDir.West })
                     {
-                        if (!_layout.HasRoad(ix, iz, CompassUtil.Opposite(heading)))
+                        if (!_layout.HasRoad(ix, iz, CardinalUtil.Opposite(heading)))
                             continue;
                         if (!IsRed(heading))
                             continue;
@@ -238,20 +238,20 @@ namespace MeteGame.Traffic
                 for (int iz = 0; iz < n; iz++)
                 {
                     Vector3 c = _layout.IntersectionCenter(ix, iz);
-                    PlaceSignal(root, c, Compass.North, road, _nsLamps);
-                    PlaceSignal(root, c, Compass.South, road, _nsLamps);
-                    PlaceSignal(root, c, Compass.East, road, _ewLamps);
-                    PlaceSignal(root, c, Compass.West, road, _ewLamps);
+                    PlaceSignal(root, c, CardinalDir.North, road, _nsLamps);
+                    PlaceSignal(root, c, CardinalDir.South, road, _nsLamps);
+                    PlaceSignal(root, c, CardinalDir.East, road, _ewLamps);
+                    PlaceSignal(root, c, CardinalDir.West, road, _ewLamps);
                 }
             }
         }
 
-        static void PlaceSignal(Transform parent, Vector3 center, Compass heading, float road, List<MeshRenderer> lamps)
+        static void PlaceSignal(Transform parent, Vector3 center, CardinalDir heading, float road, List<MeshRenderer> lamps)
         {
             // Direk, yaklaşan şeridin sağında, dur çizgisinin yanında.
             Vector3 pos = center
-                          - CompassUtil.Forward(heading) * (road / 2f + 0.9f)
-                          + CompassUtil.Right(heading) * (GameConfig.LaneOffset + 1.7f);
+                          - CardinalUtil.Forward(heading) * (road / 2f + 0.9f)
+                          + CardinalUtil.Right(heading) * (GameConfig.LaneOffset + 1.7f);
 
             PartFactory.Create(PrimitiveType.Cylinder, "Pole", parent,
                 pos + Vector3.up * 1.4f, new Vector3(0.18f, 1.4f, 0.18f),
@@ -275,7 +275,7 @@ namespace MeteGame.Traffic
             {
                 int fromIx = rng.Next(n);
                 int fromIz = rng.Next(n);
-                Compass heading = (Compass)rng.Next(4);
+                CardinalDir heading = (CardinalDir)rng.Next(4);
                 if (!_layout.TryAdvance(fromIx, fromIz, heading, out int toIx, out int toIz))
                     continue;
 
@@ -298,7 +298,7 @@ namespace MeteGame.Traffic
 
                 Color color = GameConfig.CarPalette[rng.Next(GameConfig.CarPalette.Length)];
                 int body = rng.Next(3);
-                var go = VehicleFactory.CreateNpcCar(pos, CompassUtil.Rotation(heading), color, body);
+                var go = VehicleFactory.CreateNpcCar(pos, CardinalUtil.Rotation(heading), color, body);
                 go.transform.SetParent(root, true);
                 var car = go.AddComponent<TrafficCar>();
                 car.Init(this, _layout, toIx, toIz, heading);

@@ -19,7 +19,7 @@ namespace MeteGame.Traffic
 
         int _destIx;
         int _destIz;
-        Compass _heading;
+        CardinalDir _heading;
         Mode _mode;
         float _speed;
 
@@ -29,7 +29,7 @@ namespace MeteGame.Traffic
         float _curveT;
         float _curveLength = 1f;
 
-        public void Init(TrafficSystem system, CityLayout layout, int destIx, int destIz, Compass heading)
+        public void Init(TrafficSystem system, CityLayout layout, int destIx, int destIz, CardinalDir heading)
         {
             _system = system;
             _layout = layout;
@@ -73,7 +73,7 @@ namespace MeteGame.Traffic
             float desired = DesiredSpeed(dist);
             _speed = Mathf.MoveTowards(_speed, desired, 10f * dt);
 
-            Vector3 look = tangent.sqrMagnitude > 0.05f ? tangent.normalized : CompassUtil.Forward(_heading);
+            Vector3 look = tangent.sqrMagnitude > 0.05f ? tangent.normalized : CardinalUtil.Forward(_heading);
             Quaternion want = Quaternion.LookRotation(look, Vector3.up);
             Quaternion rot = Quaternion.Slerp(transform.rotation, want, 1f - Mathf.Exp(-8f * dt));
 
@@ -109,7 +109,7 @@ namespace MeteGame.Traffic
             if (_system.GapAhead(transform.position, transform.forward, 6f, transform) < 3.5f)
                 return;
 
-            Compass next = PickTurn();
+            CardinalDir next = PickTurn();
             if (!_layout.TryAdvance(_destIx, _destIz, next, out int nx, out int nz))
                 return;
 
@@ -117,8 +117,8 @@ namespace MeteGame.Traffic
             _curveC = _layout.ExitPoint(_destIx, _destIz, next);
             Vector3 center = _layout.IntersectionCenter(_destIx, _destIz) + Vector3.up * 0.5f;
             _curveB = center
-                      + CompassUtil.Right(_heading) * GameConfig.LaneOffset * 0.45f
-                      + CompassUtil.Right(next) * GameConfig.LaneOffset * 0.45f;
+                      + CardinalUtil.Right(_heading) * GameConfig.LaneOffset * 0.45f
+                      + CardinalUtil.Right(next) * GameConfig.LaneOffset * 0.45f;
             _curveLength = Mathf.Max(4f, Vector3.Distance(_curveA, _curveC) * (next == _heading ? 1.05f : 1.35f));
             _curveT = 0f;
             _heading = next;
@@ -127,10 +127,10 @@ namespace MeteGame.Traffic
             _mode = Mode.Crossing;
         }
 
-        Compass PickTurn()
+        CardinalDir PickTurn()
         {
             // Düz 50, sağ 30, sol 20 — yoksa mevcut olanlar arasında.
-            Compass[] ranked = { _heading, CompassUtil.RightOf(_heading), CompassUtil.LeftOf(_heading) };
+            CardinalDir[] ranked = { _heading, CardinalUtil.RightOf(_heading), CardinalUtil.LeftOf(_heading) };
             int[] weights = { 5, 3, 2 };
             int total = 0;
             for (int i = 0; i < 3; i++)
@@ -142,8 +142,8 @@ namespace MeteGame.Traffic
 
             if (total == 0)
             {
-                if (_layout.HasRoad(_destIx, _destIz, CompassUtil.Opposite(_heading)))
-                    return CompassUtil.Opposite(_heading);
+                if (_layout.HasRoad(_destIx, _destIz, CardinalUtil.Opposite(_heading)))
+                    return CardinalUtil.Opposite(_heading);
                 return _heading;
             }
 
