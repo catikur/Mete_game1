@@ -12,10 +12,10 @@ Bağlam özeti: [progress.md](progress.md). Tasarım: [game-design.md](game-desi
 ## M1 — Sürülebilir Prototip ✅
 
 - [x] Prosedürel şehir: yollar, şerit çizgileri, kaldırımlar, binalar, parklar, çevre çiti
-- [x] Arcade araç: basılı tut = gaz, kaydır = dön, bırak = fren, geri vites, yumuşak çarpışma
+- [x] Arcade araç: GAZ basılı = hızlan, bırak = fren; joystick ile yön; geri vites; yumuşak çarpışma
 - [x] Primitive'lerden araç gövdesi (kasa, kabin, tekerlekler, farlar)
 - [x] Kuzeyi sabit, eğimli takip kamerası (look-ahead + hızda FOV)
-- [x] Tam ekran dokunmatik yüzey + editörde klavye (W/A/D/S/H)
+- [x] Sol alt GAZ / GERİ / BİP + sağ alt şeffaf yön joystick'i (ekran yönü = araç burnu); editörde klavye
 
 ## M2 — Görev Sistemi ✅
 

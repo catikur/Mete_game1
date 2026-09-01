@@ -20,10 +20,7 @@ namespace MeteGame.Core
             Application.targetFrameRate = 60;
             SaveManager.RefreshDaily();
             DriveInput.Locked = false;
-            DriveInput.HonkHeld = false;
-            DriveInput.TouchSteer = 0f;
-            DriveInput.TouchThrottle = false;
-            DriveInput.TouchReverse = false;
+            DriveInput.ResetTouch();
 
             var layout = CityBuilder.Build(transform);
             var vehicle = VehicleFactory.CreatePlayerVehicle(layout.PlayerSpawnPosition, Quaternion.identity);

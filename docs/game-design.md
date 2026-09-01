@@ -2,14 +2,14 @@
 
 ## 1. Vizyon
 
-5-12 yaş arası çocukların **tek parmakla** oynayabildiği, yukarıdan bakışlı (GTA 2 kamera tarzı,
+5-12 yaş arası çocukların **iki başparmakla** oynayabildiği, yukarıdan bakışlı (GTA 2 kamera tarzı,
 ama tamamen çocuk dostu) bir şehir sürüş oyunu. Oyuncu şehirde araba sürer, yardımseverlik
 temalı görevleri tamamlar, altın ve yıldız kazanır, garajında yeni araçlar açar.
 
 **Tasarım sütunları:**
 
-1. **Kolay kontrol** — ekrana basılı tut = gaz, kaydır = dön, bırak = fren. Okuma bilmeyen
-   5 yaş bile oynayabilmeli.
+1. **Kolay kontrol** — sol başparmak gaz/geri, sağ başparmak yön (şeffaf joystick).
+   Okuma bilmeyen 5 yaş bile oynayabilmeli.
 2. **Kaybetmek yok** — görevler asla "başarısız" olmaz. Süre bitse de teslim edilir; ödülün
    zamanında kısmı kaçar, görev batmaz. Çarpışmada ceza yok, araç yavaşlar ve devam eder.
 3. **Sürekli ödül hissi** — kısa görevler (yaklaşık 50-90 saniye, iki bacak), her görev sonunda
@@ -42,15 +42,14 @@ flowchart LR
 
 | Girdi | Aksiyon |
 |---|---|
-| Ekrana basılı tut | Gaz |
-| Sağa / sola kaydır | Direksiyon |
-| Parmağı kaldır | Fren |
-| Sol alt GERİ (basılı tut) | Geri vites (sıkışınca) |
-| Sağ alt BİP | Korna — yakındaki yayalar zıplar |
+| Sol alt **GAZ** (basılı tut) | Hızlan. Bırakınca yavaşlayıp durur. |
+| Sol alt **GERİ** (basılı tut) | Geri git. Bırakınca çabuk durur. |
+| Sol alt **BİP** | Korna — yakındaki yayalar zıplar |
+| Sağ alt **joystick** (şeffaf) | Çubuğu yukarı/aşağı/sağ/sol it: araç burnu o yöne döner (ekran yukarı = kuzey). İleride aynı yere direksiyon konabilir. |
 
-Editörde test için: **W / Yukarı ok** gaz, A-D direksiyon, S geri, **H** korna.
+Editörde test için: **W / Yukarı ok** gaz, A-D direksiyon, S geri, **H** korna. Game görünümünde sağ alttaki joystick de fareyle sürüklenir.
 
-Tasarım notu: tek parmak, tüm ekran. Küçük çocuk joystick aramaz; bastığı yer gaz, kaydırdığı yön dönüş.
+Tasarım notu: iki başparmak, yatay telefon. Tam ekran kaydırarak dönmek iPhone'da zordu; gaz ve yön ayrıldı.
 
 ## 5. Kamera
 

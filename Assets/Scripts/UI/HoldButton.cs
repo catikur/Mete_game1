@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace MeteGame.UI
 {
     /// <summary>
-    /// Basılı tutulduğu sürece aktif olan dokunmatik buton (direksiyon ve geri vites için).
+    /// Basılı tutulduğu sürece aktif olan dokunmatik buton (gaz, geri, korna).
     /// Basılıyken hafifçe parlar.
     /// </summary>
     public class HoldButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
@@ -14,6 +14,8 @@ namespace MeteGame.UI
 
         Image _image;
         float _normalAlpha;
+        int _pointerId = int.MinValue;
+        bool _pressed;
 
         void Awake()
         {
@@ -22,14 +24,34 @@ namespace MeteGame.UI
                 _normalAlpha = _image.color.a;
         }
 
-        public void OnPointerDown(PointerEventData eventData) => SetPressed(true);
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (_pointerId != int.MinValue)
+                return;
+            _pointerId = eventData.pointerId;
+            SetPressed(true);
+        }
 
-        public void OnPointerUp(PointerEventData eventData) => SetPressed(false);
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            if (eventData.pointerId != _pointerId)
+                return;
+            Release();
+        }
 
-        void OnDisable() => SetPressed(false);
+        void OnDisable() => Release();
+
+        void Release()
+        {
+            _pointerId = int.MinValue;
+            SetPressed(false);
+        }
 
         void SetPressed(bool pressed)
         {
+            if (_pressed == pressed)
+                return;
+            _pressed = pressed;
             StateChanged?.Invoke(pressed);
             if (_image != null)
             {
