@@ -2,7 +2,7 @@
 
 Bu dosya, Mete'nin Oyunu'nun **şu ana kadarki tüm kararlarını, kod durumunu ve Mac test döngüsünü** tek yerde tutar. Yeni bir oturum / ajan buradan başlayabilir.
 
-Son güncelleme: **2026-08-31** — iki aşamalı görev süreleri, zorluk, seri, kamera FOV, prosedürel ding.
+Son güncelleme: **2026-09-01** — iPhone kontrolleri: sol GAZ/GERİ/BİP, sağ şeffaf yön joystick'i.
 
 Repo: `https://github.com/catikur/Mete_game1`  
 Dal şablonu: `cursor/<kısa-ad>-26ab`  
@@ -57,13 +57,14 @@ Editör kontrolleri: **W** gaz, **A/D** direksiyon, **S** geri, **H** korna. Gam
 
 | Girdi | Aksiyon |
 |---|---|
-| Ekrana basılı tut | Gaz |
-| Sağa / sola kaydır | Direksiyon |
-| Parmağı kaldır | Fren |
-| Sol alt **GERİ** | Geri vites (sıkışınca) |
-| Sağ alt **BİP** | Korna — yakındaki yayalar zıplar |
+| Sol alt **GAZ** | Basılı tut = hızlan, bırak = yavaşlayıp dur |
+| Sol alt **GERİ** | Basılı tut = geri git, bırak = çabuk dur |
+| Sol alt **BİP** | Korna — yakındaki yayalar zıplar |
+| Sağ alt şeffaf **joystick** | Yukarı/aşağı/sağ/sol: araç o yöne döner (ekran yukarı = kuzey) |
 
-Eski tasarım "gaz otomatik + joystick butonları" idi; playtest sonrası değişti. HUD ipucu: `Bas: gaz • Kaydır: dön • Bırak: fren`.
+Playtest: tam ekran kaydırarak dönmek iPhone'da zordu; gaz ve yön ayrıldı. İleride sağ alta direksiyon da konabilir. HUD ipucu: `Sol: gaz / geri / bip • Sağ: yön`.
+
+Editör: **W** gaz, **A/D** dönüş, **S** geri, **H** korna. Game görünümünde joystick fareyle de sürüklenir.
 
 ---
 
@@ -143,7 +144,7 @@ Assets/Scripts/
   Controls/     DriveInput
   CameraRig/    FollowCamera
   Missions/     Mission, MissionClock, MissionGenerator, MissionManager, MissionMarker, CargoBob
-  UI/           HudController, DrivePad, HoldButton, UIFactory, MainMenuController
+  UI/           HudController, SteerJoystick, HoldButton, UIFactory, MainMenuController
 Assets/Editor/  ProjectSetup.cs
 docs/           game-design, roadmap, mac-setup, asset-pipeline, progress (bu dosya)
 ```
@@ -161,24 +162,24 @@ Sahneler Play'de koddan: `Boot` menü, `City` oyun. `GameRoot` + `GameBootstrap`
 | #3 | CS0104: `Compass` → `CardinalDir` |
 | #4 | Dokunmatik sürüş + büyük HUD oku + iri görev işaretleri |
 | #5 | Araç üstü ok kaldırıldı; ALTIN / YILDIZ etiketli ikonlar |
+| #6 | İki aşamalı görev süreleri, zorluk, seri, tempo |
 
-Playtest sırası: boş şehir → Compass hatası → görev oku görünmüyor → dokunmatik gaz/fren → ikonlar belirsiz → **süre isteği (bu dal)**.
+Playtest sırası: boş şehir → Compass hatası → görev oku görünmüyor → dokunmatik gaz/fren → ikonlar belirsiz → süreler → **iPhone'da kaydırarak dönmek zor (bu dal: gaz butonu + joystick)**.
 
 ---
 
 ## Bilinçli olarak henüz yok
 
 - Garaj sahnesi ve 7 araç (sıradaki büyük iş, M4)
+- Sağ altta direksiyon (şimdilik joystick; istenince değiştirilir)
 - Kenney/Meshy modeller, müzik, motor sesi, konfeti (M5)
 - TestFlight / Made for Kids başvurusu (M6)
 - Görev başarısızlığı, can, kaza fiziği, kırmızı ışık cezası — **yapılmayacak**
 
 ---
 
-## Bu dalda değişen dosyalar (görev süreleri)
+## Bu dalda değişen dosyalar (gaz + yön joystick)
 
-- `Mission.cs` / `MissionClock.cs` / `MissionGenerator.cs` / `MissionManager.cs` / `CargoBob.cs`
-- `HudController.cs` (sayaç, teklif metni, seri)
-- `GameConfig.cs`, `SaveData.cs`, `Sfx.cs`
-- `FollowCamera.cs`, `MainMenuController.cs`
-- Bu doküman + `game-design.md`, `roadmap.md`, `README.md`
+- `DrivePad.cs` kaldırıldı (tam ekran kaydırma)
+- `SteerJoystick.cs`, `DriveInput.cs`, `VehicleController.cs`, `HoldButton.cs`, `HudController.cs`
+- Kontroller: sol GAZ/GERİ/BİP, sağ şeffaf joystick (ekran yönü = araç burnu)

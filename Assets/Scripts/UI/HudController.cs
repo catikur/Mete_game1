@@ -8,8 +8,8 @@ using UnityEngine.UI;
 namespace MeteGame.UI
 {
     /// <summary>
-    /// Oyun içi arayüz: sayaçlar, görev oku, iki aşamalı süre, dokunmatik sürüş,
-    /// korna/geri, görev teklifi ve kutlama.
+    /// Oyun içi arayüz: sayaçlar, görev oku, iki aşamalı süre,
+    /// sol gaz/geri/bip, sağ yön joystick'i, görev teklifi ve kutlama.
     /// </summary>
     public class HudController : MonoBehaviour
     {
@@ -60,7 +60,6 @@ namespace MeteGame.UI
 
         void BuildWidgets(Transform root)
         {
-            DrivePad.Build(root);
             BuildTopBar(root);
             BuildTargetIndicator(root);
             BuildTimer(root);
@@ -186,14 +185,15 @@ namespace MeteGame.UI
         {
             _hintText = UIFactory.CreateText("Hint", root,
                 new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-                new Vector2(0f, 210f), new Vector2(1400f, 70f),
-                "Bas: gaz   •   Kaydır: dön   •   Bırak: fren", 36,
+                new Vector2(0f, 430f), new Vector2(1500f, 70f),
+                "Sol: gaz / geri / bip    •    Sağ: yön", 36,
                 new Color(1f, 1f, 1f, 0.9f));
 
+            // Sol alt küme: GERİ + BİP üstte, büyük GAZ altta.
             var reverse = UIFactory.CreateIcon("ReverseButton", root,
                 new Vector2(0f, 0f), new Vector2(0f, 0f),
-                new Vector2(130f, 130f), new Vector2(140f, 140f),
-                UIFactory.CircleSprite, new Color(0.95f, 0.35f, 0.3f, 0.55f));
+                new Vector2(108f, 360f), new Vector2(150f, 150f),
+                UIFactory.CircleSprite, new Color(0.95f, 0.35f, 0.3f, 0.58f));
             UIFactory.CreateText("ReverseLabel", reverse.transform,
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
                 "GERİ", 32, Color.white);
@@ -201,14 +201,26 @@ namespace MeteGame.UI
             reverseHold.StateChanged = pressed => DriveInput.TouchReverse = pressed;
 
             var honk = UIFactory.CreateIcon("HonkButton", root,
-                new Vector2(1f, 0f), new Vector2(1f, 0f),
-                new Vector2(-130f, 130f), new Vector2(140f, 140f),
+                new Vector2(0f, 0f), new Vector2(0f, 0f),
+                new Vector2(278f, 360f), new Vector2(150f, 150f),
                 UIFactory.CircleSprite, new Color(1f, 0.82f, 0.2f, 0.72f));
             UIFactory.CreateText("HonkLabel", honk.transform,
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
-                "BİP", 36, new Color(0.2f, 0.15f, 0.05f));
+                "BİP", 34, new Color(0.2f, 0.15f, 0.05f));
             var honkHold = honk.gameObject.AddComponent<HoldButton>();
             honkHold.StateChanged = pressed => DriveInput.HonkHeld = pressed;
+
+            var gas = UIFactory.CreateIcon("GasButton", root,
+                new Vector2(0f, 0f), new Vector2(0f, 0f),
+                new Vector2(192f, 158f), new Vector2(260f, 260f),
+                UIFactory.CircleSprite, new Color(0.24f, 0.78f, 0.38f, 0.62f));
+            UIFactory.CreateText("GasLabel", gas.transform,
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
+                "GAZ", 56, Color.white);
+            var gasHold = gas.gameObject.AddComponent<HoldButton>();
+            gasHold.StateChanged = pressed => DriveInput.TouchThrottle = pressed;
+
+            SteerJoystick.Build(root);
         }
 
         void BuildOfferPanel(Transform root)
@@ -269,9 +281,7 @@ namespace MeteGame.UI
         void OnDisable()
         {
             DriveInput.Locked = false;
-            DriveInput.HonkHeld = false;
-            DriveInput.TouchThrottle = false;
-            DriveInput.TouchSteer = 0f;
+            DriveInput.ResetTouch();
         }
 
         void Update()
@@ -355,8 +365,7 @@ namespace MeteGame.UI
         public void ShowMissionOffer(Mission mission, System.Action onStart)
         {
             DriveInput.Locked = true;
-            DriveInput.TouchThrottle = false;
-            DriveInput.TouchSteer = 0f;
+            DriveInput.ResetTouch();
             HideTimer();
             _pendingStart = onStart;
             _offerTitle.text = mission.Title;

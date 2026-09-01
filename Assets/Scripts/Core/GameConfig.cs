@@ -16,7 +16,7 @@ namespace MeteGame.Core
         public const float MaxReverseSpeed = 5f;
         public const float Acceleration = 9f;
         public const float BrakeDeceleration = 22f;
-        public const float MaxSteerDegPerSec = 150f;
+        public const float MaxSteerDegPerSec = 180f;
 
         // Görevler
         public const int DailyMissionTarget = 5;
