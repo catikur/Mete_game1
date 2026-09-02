@@ -2,7 +2,7 @@
 
 Bu dosya, Mete'nin Oyunu'nun **şu ana kadarki tüm kararlarını, kod durumunu ve Mac test döngüsünü** tek yerde tutar. Yeni bir oturum / ajan buradan başlayabilir.
 
-Son güncelleme: **2026-09-02** — Garaj: 8. araç **polis** + yalnızca poliste **hırsız kovalama** görevi.
+Son güncelleme: **2026-09-02** — Duraklatma **MENÜ**, ana menüye çıkış, kaldığın yerden **DEVAM ET**.
 
 Repo: `https://github.com/catikur/Mete_game1`  
 Dal şablonu: `cursor/<kısa-ad>-26ab`  
@@ -62,11 +62,12 @@ Editör kontrolleri: **W** gaz, **A/D** direksiyon, **S** geri, **H** korna. Gam
 | Sol alt **GAZ** | Basılı tut = hızlan, bırak = yavaşlayıp dur |
 | Sol alt **GERİ** | Basılı tut = geri git, bırak = çabuk dur |
 | Sol alt **BİP** | Korna — yakındaki yayalar zıplar |
+| Sağ üst **MENÜ** | Duraklat → **DEVAM** veya **ANA MENÜ** (kayıt) |
 | Sağ alt şeffaf **joystick** | Yukarı/aşağı/sağ/sol: araç o yöne döner (ekran yukarı = kuzey) |
 
 Playtest: tam ekran kaydırarak dönmek iPhone'da zordu; gaz ve yön ayrıldı. İleride sağ alta direksiyon da konabilir. HUD ipucu: `Sol: gaz / geri / bip • Sağ: yön`.
 
-Editör: **W** gaz, **A/D** dönüş, **S** geri, **H** korna. Game görünümünde joystick fareyle de sürüklenir.
+Editör: **W** gaz, **A/D** dönüş, **S** geri, **H** korna, **Esc** duraklat. Game görünümünde joystick fareyle de sürüklenir.
 
 ---
 
@@ -141,7 +142,7 @@ Menüde turuncu **GARAJ**, şehirde sağ üst **GARAJ**. Görev sırasında şeh
 
 ## Kayıt şeması (`SaveData`)
 
-`coins`, `stars`, `totalMissionsCompleted`, `dailyDate`, `dailyCompleted`, `courtesyAwarded`, `currentStreak`, `bestStreak`, `unlockedVehicleIds`, `selectedVehicleId`, `paints` (araç id + renk + açılmış boyalar).
+`coins`, `stars`, `totalMissionsCompleted`, `dailyDate`, `dailyCompleted`, `courtesyAwarded`, `currentStreak`, `bestStreak`, `unlockedVehicleIds`, `selectedVehicleId`, `paints` (araç id + renk + açılmış boyalar), `city` (konum + yarım görev).
 
 ---
 
@@ -200,3 +201,14 @@ Playtest sırası: boş şehir → Compass → ok → dokunmatik → ikonlar →
 - `ProjectSetup` Garage sahnesi
 - `MissionType.ThiefChase`, `ThiefCar`, `MissionManager` kovalama ayağı
 - `CityLayout.SnapToLane`
+
+---
+
+## Duraklatma ve devam (bu dal)
+
+Oynarken uygulamayı öldürmek zorunda kalınmasın:
+
+- Sağ üst **MENÜ** → duraklatma (şehir ve süre durur). **DEVAM** veya **ANA MENÜ**.
+- Ana menüde oturum varsa **DEVAM ET**; araç konumu + yarım görev (kovalama dahil) geri gelir.
+- Garaja çıkınca konum kaydolur; **SÜR!** aynı yerden devam.
+- iPhone ana ekrana alınca da oturum yazılır.

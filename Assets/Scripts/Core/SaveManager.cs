@@ -30,6 +30,8 @@ namespace MeteGame.Core
                     var data = JsonUtility.FromJson<SaveData>(File.ReadAllText(FilePath));
                     if (data != null)
                     {
+                        if (data.city == null)
+                            data.city = new CitySession();
                         GarageShop.Normalize(data);
                         return data;
                     }
@@ -40,6 +42,8 @@ namespace MeteGame.Core
                 Debug.LogWarning("[Mete Oyunu] Kayıt okunamadı, yeni kayıt açılıyor: " + e.Message);
             }
             var fresh = new SaveData();
+            if (fresh.city == null)
+                fresh.city = new CitySession();
             GarageShop.Normalize(fresh);
             return fresh;
         }

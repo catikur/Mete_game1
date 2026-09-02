@@ -53,11 +53,21 @@ namespace MeteGame.UI
                 new Vector2(0f, -320f), new Vector2(1500f, 76f),
                 "Şehirde sür, görevleri tamamla, garajını doldur!", 46, Color.white);
 
+            var data = SaveManager.Data;
+            bool resume = data.city != null && data.city.active;
             UIFactory.CreateButton("PlayButton", root,
                 new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
                 new Vector2(0f, -20f), new Vector2(470f, 155f),
-                "OYNA!", 66, new Color(0.24f, 0.72f, 0.34f),
+                resume ? "DEVAM ET" : "OYNA!", 66, new Color(0.24f, 0.72f, 0.34f),
                 SceneFlow.OpenCity);
+
+            if (resume)
+            {
+                UIFactory.CreateText("ResumeHint", root,
+                    new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                    new Vector2(0f, 110f), new Vector2(900f, 48f),
+                    "Kaldığın yerden devam", 34, new Color(1f, 0.95f, 0.7f));
+            }
 
             UIFactory.CreateButton("GarageButton", root,
                 new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
@@ -65,7 +75,6 @@ namespace MeteGame.UI
                 "GARAJ", 58, new Color(0.95f, 0.55f, 0.18f),
                 () => SceneFlow.OpenGarage("Boot"));
 
-            var data = SaveManager.Data;
             string wallet = "Altın: " + data.coins + "      Yıldız: " + data.stars;
             if (data.bestStreak >= 2)
                 wallet += "      Seri rekoru: ×" + data.bestStreak;

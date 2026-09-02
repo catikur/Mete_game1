@@ -22,9 +22,23 @@ namespace MeteGame.Core
             GarageShop.Normalize(SaveManager.Data);
             DriveInput.Locked = false;
             DriveInput.ResetTouch();
+            SceneFlow.ResumeTime();
 
             var layout = CityBuilder.Build(transform);
-            var vehicle = VehicleFactory.CreatePlayerVehicle(layout.PlayerSpawnPosition, Quaternion.identity);
+            Vector3 spawn = layout.PlayerSpawnPosition;
+            Quaternion facing = Quaternion.identity;
+            var session = SaveManager.Data.city;
+            if (session != null && session.active)
+            {
+                float h = layout.HalfExtent - 6f;
+                spawn = new Vector3(
+                    Mathf.Clamp(session.x, -h, h),
+                    0.5f,
+                    Mathf.Clamp(session.z, -h, h));
+                facing = Quaternion.Euler(0f, session.yaw, 0f);
+            }
+
+            var vehicle = VehicleFactory.CreatePlayerVehicle(spawn, facing);
 
             CreateSun();
             CreateCamera(vehicle);
@@ -35,6 +49,13 @@ namespace MeteGame.Core
 
             var missions = gameObject.AddComponent<MissionManager>();
             missions.Init(layout, vehicle, hud);
+            hud.SetSessionHandlers(
+                missions.CaptureSession,
+                () =>
+                {
+                    missions.CaptureSession();
+                    SceneFlow.OpenMenu();
+                });
             hud.SetGarageHandler(() =>
             {
                 if (missions.IsOnDuty)
@@ -42,6 +63,7 @@ namespace MeteGame.Core
                     hud.ShowToast("Önce görevi bitir!");
                     return;
                 }
+                missions.CaptureSession();
                 SceneFlow.OpenGarage("City");
             });
         }
@@ -74,11 +96,25 @@ namespace MeteGame.Core
         void OnApplicationPause(bool paused)
         {
             if (paused)
-                SaveManager.Save();
+                Persist();
+        }
+
+        void OnApplicationFocus(bool focused)
+        {
+            if (!focused)
+                Persist();
         }
 
         void OnApplicationQuit()
         {
+            Persist();
+        }
+
+        void Persist()
+        {
+            var missions = GetComponent<MissionManager>();
+            if (missions != null)
+                missions.CaptureSession();
             SaveManager.Save();
         }
     }

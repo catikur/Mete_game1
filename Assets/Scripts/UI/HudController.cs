@@ -46,8 +46,19 @@ namespace MeteGame.UI
 
         Vector3? _target;
         System.Action _onGarage;
+        System.Action _onSave;
+        System.Action _onMenu;
+
+        bool _paused;
+        GameObject _pausePanel;
+        bool _lockedBeforePause;
 
         public void SetGarageHandler(System.Action onGarage) => _onGarage = onGarage;
+        public void SetSessionHandlers(System.Action onSave, System.Action onMenu)
+        {
+            _onSave = onSave;
+            _onMenu = onMenu;
+        }
 
         static readonly Color DotOn = new Color(1f, 0.92f, 0.25f, 1f);
         static readonly Color DotOff = new Color(1f, 1f, 1f, 0.28f);
@@ -69,6 +80,7 @@ namespace MeteGame.UI
             BuildDriveButtons(root);
             BuildOfferPanel(root);
             BuildCelebration(root);
+            BuildPausePanel(root);
         }
 
         void BuildTopBar(Transform root)
@@ -98,9 +110,14 @@ namespace MeteGame.UI
                 "", 30, GameConfig.Gold);
             _comboText.gameObject.SetActive(false);
 
-            UIFactory.CreateButton("GarageButton", root,
+            UIFactory.CreateButton("MenuButton", root,
                 new Vector2(1f, 1f), new Vector2(1f, 1f),
                 new Vector2(-240f, -172f), new Vector2(220f, 64f),
+                "MENÜ", 32, new Color(0.32f, 0.38f, 0.52f), TogglePause);
+
+            UIFactory.CreateButton("GarageButton", root,
+                new Vector2(1f, 1f), new Vector2(1f, 1f),
+                new Vector2(-240f, -244f), new Vector2(220f, 64f),
                 "GARAJ", 32, new Color(0.95f, 0.55f, 0.18f), OnGarageClicked);
         }
 
@@ -277,6 +294,43 @@ namespace MeteGame.UI
             _celebrationText.gameObject.SetActive(false);
         }
 
+        void BuildPausePanel(Transform root)
+        {
+            var dim = UIFactory.CreatePanel("PauseDim", root,
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
+                new Color(0.05f, 0.07f, 0.12f, 0.72f));
+            dim.raycastTarget = true;
+            _pausePanel = dim.gameObject;
+
+            var card = UIFactory.CreatePanel("PauseCard", dim.transform,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                Vector2.zero, new Vector2(820f, 560f),
+                new Color(0.12f, 0.16f, 0.24f, 0.96f));
+            card.raycastTarget = true;
+
+            UIFactory.CreateText("PauseTitle", card.transform,
+                new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
+                new Vector2(0f, -90f), new Vector2(760f, 90f),
+                "DURAKLAMA", 58, GameConfig.Gold);
+
+            UIFactory.CreateText("PauseHint", card.transform,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                new Vector2(0f, 70f), new Vector2(720f, 80f),
+                "Kaldığın yer kaydedilir.", 36, Color.white);
+
+            UIFactory.CreateButton("ResumeButton", card.transform,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                new Vector2(0f, -40f), new Vector2(480f, 130f),
+                "DEVAM", 56, new Color(0.24f, 0.72f, 0.34f), ResumePlay);
+
+            UIFactory.CreateButton("QuitButton", card.transform,
+                new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+                new Vector2(0f, 90f), new Vector2(480f, 120f),
+                "ANA MENÜ", 48, new Color(0.35f, 0.4f, 0.5f), GoToMenu);
+
+            _pausePanel.SetActive(false);
+        }
+
         void OnStartClicked()
         {
             DriveInput.Locked = false;
@@ -286,16 +340,70 @@ namespace MeteGame.UI
             start?.Invoke();
         }
 
-        void OnGarageClicked() => _onGarage?.Invoke();
+        void OnGarageClicked()
+        {
+            if (_paused)
+                return;
+            _onGarage?.Invoke();
+        }
+
+        void TogglePause()
+        {
+            if (_paused)
+                ResumePlay();
+            else
+                PausePlay();
+        }
+
+        void PausePlay()
+        {
+            if (_paused)
+                return;
+            _paused = true;
+            _lockedBeforePause = DriveInput.Locked;
+            DriveInput.Locked = true;
+            DriveInput.ResetTouch();
+            _onSave?.Invoke();
+            Time.timeScale = 0f;
+            _pausePanel.SetActive(true);
+            _pausePanel.transform.SetAsLastSibling();
+        }
+
+        void ResumePlay()
+        {
+            if (!_paused)
+                return;
+            _paused = false;
+            Time.timeScale = 1f;
+            DriveInput.Locked = _lockedBeforePause || (_offerPanel != null && _offerPanel.activeSelf);
+            DriveInput.ResetTouch();
+            if (_pausePanel != null)
+                _pausePanel.SetActive(false);
+        }
+
+        void GoToMenu()
+        {
+            Time.timeScale = 1f;
+            _paused = false;
+            DriveInput.Locked = false;
+            _onSave?.Invoke();
+            _onMenu?.Invoke();
+        }
 
         void OnDisable()
         {
+            Time.timeScale = 1f;
             DriveInput.Locked = false;
             DriveInput.ResetTouch();
         }
 
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Escape))
+                TogglePause();
+
+            if (_paused)
+                return;
             if (_hintText != null && _hintTimer > 0f)
             {
                 _hintTimer -= Time.deltaTime;
