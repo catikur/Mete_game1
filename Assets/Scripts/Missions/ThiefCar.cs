@@ -35,7 +35,22 @@ namespace MeteGame.Missions
         public static ThiefCar Spawn(CityLayout layout, Transform player, Vector3 preferred)
         {
             layout.SnapToLane(preferred, out Vector3 pos, out int destIx, out int destIz, out CardinalDir heading);
-            var go = VehicleFactory.CreateThiefCar(pos, CardinalUtil.Rotation(heading));
+            return Attach(VehicleFactory.CreateThiefCar(pos, CardinalUtil.Rotation(heading)),
+                layout, player, destIx, destIz, heading);
+        }
+
+        public static ThiefCar SpawnAt(CityLayout layout, Transform player, Vector3 world, float yaw)
+        {
+            layout.SnapToLane(world, out _, out int destIx, out int destIz, out CardinalDir heading);
+            var pos = world;
+            pos.y = 0.5f;
+            var rot = Quaternion.Euler(0f, yaw, 0f);
+            return Attach(VehicleFactory.CreateThiefCar(pos, rot), layout, player, destIx, destIz, heading);
+        }
+
+        static ThiefCar Attach(GameObject go, CityLayout layout, Transform player,
+            int destIx, int destIz, CardinalDir heading)
+        {
             var thief = go.AddComponent<ThiefCar>();
             thief._layout = layout;
             thief._player = player;

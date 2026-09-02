@@ -53,6 +53,7 @@ Bağlam özeti: [progress.md](progress.md). Tasarım: [game-design.md](game-desi
 - [x] Renk özelleştirme (8 renk paleti, 50 altın/renk)
 - [x] Kayıt: açılmış araçlar, seçili araç, boyalar
 - [x] Ana menüden ve şehirden garaja geçiş (görev sırasında kilitli)
+- [x] Oynarken **MENÜ** / duraklatma, ana menüye çıkış, kaldığın yerden devam
 
 ## M5 — İçerik ve Cila 🔜 *(sıradaki büyük özellik)*
 

@@ -45,9 +45,10 @@ flowchart LR
 | Sol alt **GAZ** (basılı tut) | Hızlan. Bırakınca yavaşlayıp durur. |
 | Sol alt **GERİ** (basılı tut) | Geri git. Bırakınca çabuk durur. |
 | Sol alt **BİP** | Korna — yakındaki yayalar zıplar |
+| Sağ üst **MENÜ** | Duraklat. **DEVAM** veya **ANA MENÜ** (kaldığın yer kaydolur). |
 | Sağ alt **joystick** (şeffaf) | Çubuğu yukarı/aşağı/sağ/sol it: araç burnu o yöne döner (ekran yukarı = kuzey). İleride aynı yere direksiyon konabilir. |
 
-Editörde test için: **W / Yukarı ok** gaz, A-D direksiyon, S geri, **H** korna. Game görünümünde sağ alttaki joystick de fareyle sürüklenir.
+Editörde test için: **W / Yukarı ok** gaz, A-D direksiyon, S geri, **H** korna, **Esc** duraklatma. Game görünümünde sağ alttaki joystick de fareyle sürüklenir.
 
 Tasarım notu: iki başparmak, yatay telefon. Tam ekran kaydırarak dönmek iPhone'da zordu; gaz ve yön ayrıldı.
 
@@ -149,8 +150,11 @@ Satın alınca seçilir. 8 boya; aracın varsayılan rengi ücretsiz, diğerleri
 
 - Cihazda JSON dosyası (`Application.persistentDataPath/save.json`).
 - Saklananlar: altın, yıldız, toplam görev, günlük sayaç + tarih, nezaket yıldızı bayrağı,
-  zamanında seri (`currentStreak`, `bestStreak`), açılmış araçlar, seçili araç.
-- Kayıt anları: görev tamamlanınca, nezaket ödülünde, uygulama arka plana geçince.
+  zamanında seri (`currentStreak`, `bestStreak`), açılmış araçlar, seçili araç,
+  **şehir oturumu** (araç konumu + yarım kalan görev).
+- Kayıt anları: görev tamamlanınca, nezaket ödülünde, **MENÜ / ANA MENÜ**, garaja geçiş,
+  uygulama arka plana geçince.
+- Ana menüde kayıtlı oturum varsa **DEVAM ET**; şehir aynı yerden ve aynı görevden açılır.
 - İnternet/hesap yok — çocuk gizliliği açısından en güvenli model.
 
 ## 10. Teknik Mimari

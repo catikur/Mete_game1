@@ -22,6 +22,18 @@ namespace MeteGame.Vehicle
         public float CurrentSpeed { get; private set; }
         public Transform CargoAnchor { get; private set; }
 
+        public void Warp(Vector3 position, Quaternion rotation)
+        {
+            CurrentSpeed = 0f;
+            transform.SetPositionAndRotation(position, rotation);
+            if (Body == null)
+                return;
+            Body.position = position;
+            Body.rotation = rotation;
+            Body.linearVelocity = Vector3.zero;
+            Body.angularVelocity = Vector3.zero;
+        }
+
         public void ApplySpec(VehicleDef def, Transform cargoAnchor)
         {
             CargoAnchor = cargoAnchor;

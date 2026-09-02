@@ -13,6 +13,7 @@ namespace MeteGame.Core
         public static void OpenGarage(string returnScene)
         {
             AfterGarage = string.IsNullOrEmpty(returnScene) ? "Boot" : returnScene;
+            ResumeTime();
             SaveManager.Save();
             DriveInputReset();
             if (ApplicationCanLoad("Garage"))
@@ -26,6 +27,7 @@ namespace MeteGame.Core
 
         public static void LeaveGarage()
         {
+            ResumeTime();
             SaveManager.Save();
             DriveInputReset();
             string target = string.IsNullOrEmpty(AfterGarage) ? "Boot" : AfterGarage;
@@ -37,6 +39,7 @@ namespace MeteGame.Core
 
         public static void OpenCity()
         {
+            ResumeTime();
             SaveManager.Save();
             DriveInputReset();
             SceneManager.LoadScene("City");
@@ -44,9 +47,15 @@ namespace MeteGame.Core
 
         public static void OpenMenu()
         {
+            ResumeTime();
             SaveManager.Save();
             DriveInputReset();
             SceneManager.LoadScene("Boot");
+        }
+
+        public static void ResumeTime()
+        {
+            Time.timeScale = 1f;
         }
 
         static bool ApplicationCanLoad(string sceneName)

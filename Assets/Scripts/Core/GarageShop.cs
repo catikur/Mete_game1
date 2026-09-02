@@ -29,6 +29,9 @@ namespace MeteGame.Core
             {
                 data.selectedVehicleId = "taksi";
             }
+
+            if (data.city == null)
+                data.city = new CitySession();
         }
 
         public static bool IsUnlocked(string id) =>
