@@ -121,23 +121,26 @@ Sayaç yeşil → sarı → kırmızı; süre dolunca **0:00 GEÇ** yazar, nabı
 - Okuma gerektirmez: ok + renk kodu yeterli (alış = turkuaz, bırakış = yeşil).
 - Sol üst para: sarı sikke + **ALTIN**, beş köşeli yıldız + **YILDIZ**.
 
-## 8. Ekonomi ve Garaj (M4)
+## 8. Ekonomi ve Garaj
 
-### Araç kataloğu (plan)
+Menüde **GARAJ**, şehirde sağ üst **GARAJ** (görev varken “Önce görevi bitir”).
+Podyumda araç döner; oklarla gezilir. Kilitli araçlar koyu siluet + fiyat.
+Satın alınca seçilir. 8 boya; aracın varsayılan rengi ücretsiz, diğerleri **50 altın**.
+
+### Araç kataloğu
 
 | Araç | Fiyat | Özellik |
 |---|---|---|
-| Taksi | Başlangıç aracı | Dengeli |
+| Taksi | Başlangıç | Dengeli |
 | Minibüs | 300 | Geniş, yavaş |
-| Kamyonet | 600 | Sağlam |
+| Kamyonet | 600 | Sağlam, açık kasa |
 | Ambulans | 900 | Hızlı |
 | İtfaiye | 1.200 | Büyük ve güçlü |
-| Dondurma Kamyonu | 1.500 | Eğlenceli, müzikli (M5) |
+| Dondurma Kamyonu | 1.500 | Eğlenceli |
 | Yarış Arabası | 2.000 | En hızlı |
 
-- Fiyatlar, günde 5 görev tamamlayan bir çocuğun **2-3 günde bir** yeni araç açabileceği şekilde ayarlıdır.
-- **Özelleştirme:** renk paleti (8 renk, 50 altın/renk), ileride tekerlek ve çıkartmalar.
-- Garaj ekranı: araçlar podyumda döner, kilitli araçlar silüet + fiyat gösterir.
+- Fiyatlar, günde 5 görev tamamlayan bir çocuğun **2–3 günde bir** yeni araç açabileceği şekilde ayarlıdır.
+- Şehirde seçili araç spawn olur (hız/kütle/siluet katalogdan).
 
 ## 9. Kayıt Sistemi
 
@@ -150,7 +153,7 @@ Sayaç yeşil → sarı → kırmızı; süre dolunca **0:00 GEÇ** yazar, nabı
 ## 10. Teknik Mimari
 
 - **Unity 6.3 LTS + URP**, hedef 60 FPS.
-- Sahneler: `Boot` (ana menü) → `City` (oyun) → `Garage` (M4).
+- Sahneler: `Boot` (ana menü) → `City` (oyun) → `Garage` (garaj).
 - Sahne dosyaları neredeyse boştur; şehir, araç, kamera ve UI **çalışma zamanında koddan üretilir**.
   Böylece tüm oyun mantığı kod incelemesiyle takip edilebilir ve sahne birleştirme (merge) sorunları yaşanmaz.
 - İlk prototip görselleri Unity primitive'leri (kutu, silindir, küre) ile kurulur;

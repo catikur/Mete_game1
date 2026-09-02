@@ -1,6 +1,5 @@
 using MeteGame.Core;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace MeteGame.UI
 {
@@ -56,9 +55,15 @@ namespace MeteGame.UI
 
             UIFactory.CreateButton("PlayButton", root,
                 new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                new Vector2(0f, -70f), new Vector2(470f, 155f),
+                new Vector2(0f, -20f), new Vector2(470f, 155f),
                 "OYNA!", 66, new Color(0.24f, 0.72f, 0.34f),
-                () => SceneManager.LoadScene("City"));
+                SceneFlow.OpenCity);
+
+            UIFactory.CreateButton("GarageButton", root,
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                new Vector2(0f, -200f), new Vector2(470f, 130f),
+                "GARAJ", 58, new Color(0.95f, 0.55f, 0.18f),
+                () => SceneFlow.OpenGarage("Boot"));
 
             var data = SaveManager.Data;
             string wallet = "Altın: " + data.coins + "      Yıldız: " + data.stars;

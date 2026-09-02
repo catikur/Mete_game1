@@ -13,7 +13,7 @@ Rengarenk, low-poly bir şehirde araba sürersin. Şiddet yok, kaybetme yok:
 - **Süre:** Her görevde iki geri sayım vardır (ilk adrese, sonra teslime). Süre bitince görev batmaz; zamanında gidersen ekstra yıldız alırsın.
 - **Şehir hayatı:** Başka arabalar, yayalar, trafik lambaları, yaya geçitleri. Kırmızıda durmak zorunlu değil; durursan küçük bir yıldız ödülü var.
 - **Ödüller:** Altın, yıldız, zamanında seri.
-- **Garaj:** Kazandığın altınla yeni araçlar açacaksın (henüz yapılmadı — sıradaki büyük iş).
+- **Garaj:** Altınla 7 araç aç, renk seç, şehirde onunla sür.
 
 ## Hızlı Başlangıç (Mac)
 
@@ -58,8 +58,9 @@ Assets/
 │   ├── Controls/    Dokunmatik + klavye girişi
 │   ├── CameraRig/   Takip kamerası (look-ahead + hız FOV)
 │   ├── Missions/    Görev üretici, iki aşamalı süre, işaretler
+│   ├── Garage/      Garaj: podyum, satın al, boya
 │   └── UI/          Kod ile üretilen arayüz (HUD, menü, butonlar)
-├── Scenes/          Boot (menü) ve City (oyun) — otomatik oluşturulur
+├── Scenes/          Boot, City, Garage — otomatik oluşturulur
 └── Settings/        URP render ayarları — otomatik oluşturulur
 docs/                Tasarım, ilerleme ve kurulum dokümanları
 ```

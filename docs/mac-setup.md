@@ -52,6 +52,7 @@ git clone https://github.com/catikur/Mete_game1.git
 - Fren: gazı / W'yu bırak
 - Geri: **S** veya Aşağı ok, ya da **GERİ** butonu
 - Korna: **H** veya **BİP**
+- Garaj: ana menü **GARAJ** veya şehirde sağ üst. Oklar: A/D, Esc geri, Space satın al/seç
 - Game penceresinin en-boy oranını **16:9 Landscape** yapmayı unutma.
 
 ## 3. İlk Commit'ler Hakkında Not

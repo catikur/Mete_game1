@@ -21,8 +21,9 @@ namespace MeteGame.Core
         public int currentStreak;
         public int bestStreak;
 
-        // Garaj alanları (M4'te kullanılacak, şema şimdiden hazır)
+        // Garaj
         public List<string> unlockedVehicleIds = new List<string> { "taksi" };
         public string selectedVehicleId = "taksi";
+        public List<VehiclePaint> paints = new List<VehiclePaint>();
     }
 }

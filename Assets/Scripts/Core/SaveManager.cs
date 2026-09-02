@@ -29,14 +29,19 @@ namespace MeteGame.Core
                 {
                     var data = JsonUtility.FromJson<SaveData>(File.ReadAllText(FilePath));
                     if (data != null)
+                    {
+                        GarageShop.Normalize(data);
                         return data;
+                    }
                 }
             }
             catch (Exception e)
             {
                 Debug.LogWarning("[Mete Oyunu] Kayıt okunamadı, yeni kayıt açılıyor: " + e.Message);
             }
-            return new SaveData();
+            var fresh = new SaveData();
+            GarageShop.Normalize(fresh);
+            return fresh;
         }
 
         public static void Save()

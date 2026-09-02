@@ -46,15 +46,15 @@ Bağlam özeti: [progress.md](progress.md). Tasarım: [game-design.md](game-desi
 - [x] Zamanında seri (HUD + kayıt), alış toast, prosedürel ding/akor
 - [x] Çatı kargo zıplaması, hızda kamera FOV
 
-## M4 — Garaj 🔜 *(sıradaki büyük özellik)*
+## M4 — Garaj ✅
 
-- [ ] Araç tanımları (katalog: 7 araç, fiyat/hız/boyut)
-- [ ] Garaj sahnesi: podyum, araç seçimi, satın alma
-- [ ] Renk özelleştirme (8 renk paleti)
-- [ ] Kayıt sistemine araç/renk alanlarının bağlanması
-- [ ] Ana menüden ve şehirden garaja geçiş
+- [x] Araç tanımları (katalog: 7 araç, fiyat/hız/boyut/siluet)
+- [x] Garaj sahnesi: podyum, araç seçimi, satın alma
+- [x] Renk özelleştirme (8 renk paleti, 50 altın/renk)
+- [x] Kayıt: açılmış araçlar, seçili araç, boyalar
+- [x] Ana menüden ve şehirden garaja geçiş (görev sırasında kilitli)
 
-## M5 — İçerik ve Cila 🔜
+## M5 — İçerik ve Cila 🔜 *(sıradaki büyük özellik)*
 
 - [ ] Kenney/Meshy modelleriyle görsel yükseltme (araçlar, binalar, dekorlar)
 - [ ] Ses: müzik, motor sesi, kutlama jingle'ı (prosedürel ding'lerin üzerine)

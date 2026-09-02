@@ -23,6 +23,7 @@ namespace MeteGame.Missions
         int _missionCounter;
 
         MissionLeg _leg = MissionLeg.None;
+        public bool IsOnDuty => _leg != MissionLeg.None;
         float _legStartTime;
         float _legDuration;
         bool _pickupOnTime;
@@ -83,8 +84,12 @@ namespace MeteGame.Missions
             _pickupOnTime = Remaining() >= 0f;
             Destroy(_activeMarker.gameObject);
 
-            _cargo = PartFactory.Create(_current.CargoShape, "Cargo", _vehicle.transform,
-                new Vector3(0f, 1.95f, -0.25f), Vector3.one * 0.8f, _current.CargoColor);
+            Transform cargoParent = _vehicle.CargoAnchor != null ? _vehicle.CargoAnchor : _vehicle.transform;
+            Vector3 cargoLocal = _vehicle.CargoAnchor != null
+                ? Vector3.zero
+                : new Vector3(0f, 1.95f, -0.25f);
+            _cargo = PartFactory.Create(_current.CargoShape, "Cargo", cargoParent,
+                cargoLocal, Vector3.one * 0.8f, _current.CargoColor);
             _cargo.AddComponent<CargoBob>();
 
             _activeMarker = MissionMarker.Spawn("DropoffMarker", _current.DropoffPoint,

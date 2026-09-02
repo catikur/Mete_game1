@@ -20,6 +20,18 @@ namespace MeteGame.Vehicle
 
         public Rigidbody Body { get; private set; }
         public float CurrentSpeed { get; private set; }
+        public Transform CargoAnchor { get; private set; }
+
+        public void ApplySpec(VehicleDef def, Transform cargoAnchor)
+        {
+            CargoAnchor = cargoAnchor;
+            maxForwardSpeed = def.MaxForwardSpeed;
+            maxReverseSpeed = def.MaxReverseSpeed;
+            acceleration = def.Acceleration;
+            maxSteerDegPerSec = def.MaxSteerDegPerSec;
+            if (Body != null)
+                Body.mass = def.Mass;
+        }
 
         void Awake()
         {

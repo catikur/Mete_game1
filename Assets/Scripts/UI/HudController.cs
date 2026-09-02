@@ -45,6 +45,9 @@ namespace MeteGame.UI
         Coroutine _toast;
 
         Vector3? _target;
+        System.Action _onGarage;
+
+        public void SetGarageHandler(System.Action onGarage) => _onGarage = onGarage;
 
         static readonly Color DotOn = new Color(1f, 0.92f, 0.25f, 1f);
         static readonly Color DotOff = new Color(1f, 1f, 1f, 0.28f);
@@ -94,6 +97,11 @@ namespace MeteGame.UI
                 new Vector2(-240f, -108f), new Vector2(440f, 48f),
                 "", 30, GameConfig.Gold);
             _comboText.gameObject.SetActive(false);
+
+            UIFactory.CreateButton("GarageButton", root,
+                new Vector2(1f, 1f), new Vector2(1f, 1f),
+                new Vector2(-240f, -172f), new Vector2(220f, 64f),
+                "GARAJ", 32, new Color(0.95f, 0.55f, 0.18f), OnGarageClicked);
         }
 
         static Text BuildStatChip(Transform parent, float x, Sprite icon, string label)
@@ -277,6 +285,8 @@ namespace MeteGame.UI
             _pendingStart = null;
             start?.Invoke();
         }
+
+        void OnGarageClicked() => _onGarage?.Invoke();
 
         void OnDisable()
         {
