@@ -1,5 +1,6 @@
 using MeteGame.City;
 using MeteGame.Core;
+using MeteGame.Vehicle;
 using UnityEngine;
 
 namespace MeteGame.Missions
@@ -18,9 +19,11 @@ namespace MeteGame.Missions
         public static Mission Generate(CityLayout layout, Vector3 playerPosition, int missionIndex)
         {
             var rng = new System.Random(SaveManager.TodaySeed() * 100 + missionIndex);
-            var type = (MissionType)rng.Next(System.Enum.GetValues(typeof(MissionType)).Length);
+            var type = RollType(rng);
 
-            Vector3 pickup = layout.RandomRoadPointAwayFrom(rng, playerPosition, 40f, GameConfig.MaxMissionDistance);
+            Vector3 pickup = type == MissionType.ThiefChase
+                ? layout.RandomRoadPointAwayFrom(rng, playerPosition, 50f, 140f)
+                : layout.RandomRoadPointAwayFrom(rng, playerPosition, 40f, GameConfig.MaxMissionDistance);
             Vector3 dropoff = layout.RandomRoadPointAwayFrom(rng, pickup, GameConfig.MinMissionDistance, GameConfig.MaxMissionDistance);
 
             float pickupDistance = Vector3.Distance(playerPosition, pickup);
@@ -73,6 +76,14 @@ namespace MeteGame.Missions
                     mission.CargoColor = new Color(0.95f, 0.80f, 0.30f);
                     break;
 
+                case MissionType.ThiefChase:
+                    mission.Title = "Hırsız Kovalama!";
+                    mission.PickupText = "Hırsızı yakala!";
+                    mission.DropoffText = "Hırsızı karakola götür!";
+                    mission.CargoShape = PrimitiveType.Capsule;
+                    mission.CargoColor = new Color(0.32f, 0.28f, 0.35f);
+                    break;
+
                 default: // TimedDelivery
                     mission.Title = "Hızlı Teslimat!";
                     mission.PickupText = "Paketi al!";
@@ -87,8 +98,29 @@ namespace MeteGame.Missions
             mission.RewardCoins = Mathf.Max(15, Mathf.RoundToInt((20f + totalDistance / 10f) / 5f) * 5);
             if (difficulty == MissionDifficulty.Hard)
                 mission.RewardCoins += 10;
+            if (type == MissionType.ThiefChase)
+                mission.RewardCoins += 10;
 
             return mission;
+        }
+
+        static readonly MissionType[] EverydayTypes =
+        {
+            MissionType.Delivery,
+            MissionType.Taxi,
+            MissionType.AnimalRescue,
+            MissionType.SchoolRun,
+            MissionType.TimedDelivery
+        };
+
+        static MissionType RollType(System.Random rng)
+        {
+            // Hırsız kovalama yalnızca polis seçiliyken; diğer araçlara sızmasın.
+            bool police = VehicleCatalog.Selected != null && VehicleCatalog.Selected.Id == "polis";
+            if (police && rng.Next(100) < 60)
+                return MissionType.ThiefChase;
+
+            return EverydayTypes[rng.Next(EverydayTypes.Length)];
         }
     }
 }

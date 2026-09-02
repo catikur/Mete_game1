@@ -2,7 +2,7 @@
 
 Bu dosya, Mete'nin Oyunu'nun **şu ana kadarki tüm kararlarını, kod durumunu ve Mac test döngüsünü** tek yerde tutar. Yeni bir oturum / ajan buradan başlayabilir.
 
-Son güncelleme: **2026-09-01** — iPhone kontrolleri: sol GAZ/GERİ/BİP, sağ şeffaf yön joystick'i.
+Son güncelleme: **2026-09-02** — Garaj: 8. araç **polis** + yalnızca poliste **hırsız kovalama** görevi.
 
 Repo: `https://github.com/catikur/Mete_game1`  
 Dal şablonu: `cursor/<kısa-ad>-26ab`  
@@ -14,13 +14,13 @@ Sahip: catikur. Dil: Türkçe (oyuncu metinleri ve bu dokümanlar).
 
 5–12 yaş (ağırlık 6–9) için **iPhone / iPad**, yatay ekran, GTA 2 tarzı kuş bakışı şehir sürüşü. Şiddet yok, kaybetme yok, reklam/IAP/internet yok. Made for Kids hedefi.
 
-Çocuk şehirde araba sürer, yardımsever görevleri tamamlar, altın ve yıldız kazanır. Garaj (henüz yok) ile araç açılacak.
+Çocuk şehirde araba sürer, yardımsever görevleri tamamlar, altın ve yıldız kazanır, garajda araç açar ve boyar.
 
 **Tasarım sütunları (değişmez):**
 
-1. Tek parmak kontrol — okuma bilmeyen 5 yaş oynayabilmeli.
+1. İki başparmak kontrol (sol gaz, sağ yön) — okuma bilmeyen 5 yaş oynayabilmeli.
 2. Görev asla başarısız olmaz. Süre bitince de teslim edilir; bonus kaçar, ceza yok.
-3. Kısa döngü, sürekli ödül (kutlama yazısı, ses, yıldız).
+3. Kısa döngü, sürekli ödül (kutlama yazısı, ses, yıldız, yeni araç).
 4. Güvenli içerik.
 
 ---
@@ -47,7 +47,9 @@ Cloud Agent **Unity açamaz**. Değişiklikler kod + doküman; görsel doğrulam
 2. `git checkout main && git pull origin main` (veya ilgili PR dalı).
 3. Unity Hub → **Unity 6.3 LTS** ile aç.
 4. Pembe/boş sahne: **Mete Oyunu → Projeyi Kur**.
-5. `City` sahnesi, Game view **16:9 landscape**, **Play**.
+4. `City` sahnesi, Game view **16:9 landscape**, **Play**. Ana menüden **GARAJ** veya şehirde sağ üst.
+
+İlk açılışta Garage sahnesi yoksa **Mete Oyunu → Projeyi Kur** (otomatik de ekler). Sahne olmasa bile garaj koddan kurulur.
 
 Editör kontrolleri: **W** gaz, **A/D** direksiyon, **S** geri, **H** korna. Game penceresine tıklayıp basılı tutmak da gazdır.
 
@@ -83,7 +85,7 @@ Editör: **W** gaz, **A/D** dönüş, **S** geri, **H** korna. Game görünümü
 
 ## Görevler
 
-Türler: **Kurye, Taksi, Kayıp hayvan, Okul servisi, Hızlı teslimat**.
+Türler: **Kurye, Taksi, Kayıp hayvan, Okul servisi, Hızlı teslimat**. Polis seçiliyken ayrıca **Hırsız kovalama** (~%60): kaçan koyu araba (turuncu tavan ışığı, kırmızı ışığa uymaz, ~11.5 m/s). Yaklaşınca (~9 m) yakalanır — çarpışma/şiddet yok. Sonra karakol halkasına teslim. HUD süre etiketleri **YAKALA** / **KARAKOL**. Diğer araçlara bu tür sızmaz.
 
 Akış: teklif (BAŞLA) → alış halkası → kargo çatıya biner → bırakış halkası → kutlama → yeni teklif.
 
@@ -110,9 +112,21 @@ Formül (`MissionClock` / `GameConfig`):
 - İkisi de zamanında: **seri** artar, `+5 × seri` altın. Bir bacak gecikirse seri sıfırlanır.
 - HUD sağ üst: `SERİ ×N` (N≥2). Ana menüde rekor seri.
 
-Alışta toast: `ZAMANINDA! ALDIN!` veya `ALDIN!`. Başlangıçta `HADİ!` + ding.
+Alışta toast: `ZAMANINDA! ALDIN!` veya `ALDIN!` (kovalamada `YAKALADIN!`). Başlangıçta `HADİ!` + ding.
 
 Yönlendirme: büyük sarı HUD oku + metre; 12 m içinde `HEMEN YANINDA!`. Hedefte halka + ışık sütunu. Araç üstünde 3D ok **yok** (karışıyordu). Sol üst: sikke + **ALTIN**, yıldız + **YILDIZ**.
+
+---
+
+## Garaj (M4)
+
+Menüde turuncu **GARAJ**, şehirde sağ üst **GARAJ**. Görev sırasında şehirden çıkılmaz (“Önce görevi bitir”).
+
+- 8 araç: taksi (ücretsiz), minibüs 300, kamyonet 600, ambulans 900, **polis 1000**, itfaiye 1200, dondurma 1500, yarış 2000. Polisin tavan lambası kırmızı/mavi yanıp söner.
+- Podyumda döner; oklarla gez; kilitli koyu siluet.
+- **SATIN AL / SEÇ / SEÇİLİ**. **SÜR!** şehre seçili araçla gider.
+- 8 renk; varsayılan ücretsiz, ekstra **50 altın**.
+- Şehir spawn’ı `VehicleCatalog.Selected` + kayıtlı boya; hız/kütle/siluet araca göre.
 
 ---
 
@@ -127,9 +141,7 @@ Yönlendirme: büyük sarı HUD oku + metre; 12 m içinde `HEMEN YANINDA!`. Hede
 
 ## Kayıt şeması (`SaveData`)
 
-`coins`, `stars`, `totalMissionsCompleted`, `dailyDate`, `dailyCompleted`, `courtesyAwarded`, `currentStreak`, `bestStreak`, `unlockedVehicleIds` (şimdilik `taksi`), `selectedVehicleId`.
-
-Garaj henüz bağlı değil; alanlar hazır.
+`coins`, `stars`, `totalMissionsCompleted`, `dailyDate`, `dailyCompleted`, `courtesyAwarded`, `currentStreak`, `bestStreak`, `unlockedVehicleIds`, `selectedVehicleId`, `paints` (araç id + renk + açılmış boyalar).
 
 ---
 
@@ -137,19 +149,20 @@ Garaj henüz bağlı değil; alanlar hazır.
 
 ```
 Assets/Scripts/
-  Core/         GameBootstrap, GameConfig, SaveManager, SaveData, PartFactory, MaterialLibrary, Sfx
+  Core/         GameBootstrap, GameConfig, SaveManager, SaveData, GarageShop, SceneFlow, PartFactory, MaterialLibrary, Sfx
   City/         CityBuilder, CityLayout, CardinalDir (UnityEngine.Compass ile çakışmasın diye Compass değil)
   Traffic/      TrafficSystem, TrafficCar, Pedestrian
-  Vehicle/      VehicleController, VehicleFactory
+  Vehicle/      VehicleDef, VehicleCatalog, VehicleController, VehicleFactory
   Controls/     DriveInput
   CameraRig/    FollowCamera
-  Missions/     Mission, MissionClock, MissionGenerator, MissionManager, MissionMarker, CargoBob
+  Missions/     Mission, MissionClock, MissionGenerator, MissionManager, MissionMarker, CargoBob, ThiefCar
+  Garage/       GarageBootstrap
   UI/           HudController, SteerJoystick, HoldButton, UIFactory, MainMenuController
-Assets/Editor/  ProjectSetup.cs
+Assets/Editor/  ProjectSetup.cs (Boot + City + Garage sahneleri)
 docs/           game-design, roadmap, mac-setup, asset-pipeline, progress (bu dosya)
 ```
 
-Sahneler Play'de koddan: `Boot` menü, `City` oyun. `GameRoot` + `GameBootstrap`.
+Sahneler Play'de koddan: `Boot` menü, `City` oyun, `Garage` podyum. Sahne yoksa garaj yerinde kurulur.
 
 ---
 
@@ -163,14 +176,14 @@ Sahneler Play'de koddan: `Boot` menü, `City` oyun. `GameRoot` + `GameBootstrap`
 | #4 | Dokunmatik sürüş + büyük HUD oku + iri görev işaretleri |
 | #5 | Araç üstü ok kaldırıldı; ALTIN / YILDIZ etiketli ikonlar |
 | #6 | İki aşamalı görev süreleri, zorluk, seri, tempo |
+| #7 | Sol GAZ/GERİ/BİP + sağ şeffaf yön joystick’i |
 
-Playtest sırası: boş şehir → Compass hatası → görev oku görünmüyor → dokunmatik gaz/fren → ikonlar belirsiz → süreler → **iPhone'da kaydırarak dönmek zor (bu dal: gaz butonu + joystick)**.
+Playtest sırası: boş şehir → Compass → ok → dokunmatik → ikonlar → süreler → joystick → **garaj + polis kovalama (bu dal)**.
 
 ---
 
 ## Bilinçli olarak henüz yok
 
-- Garaj sahnesi ve 7 araç (sıradaki büyük iş, M4)
 - Sağ altta direksiyon (şimdilik joystick; istenince değiştirilir)
 - Kenney/Meshy modeller, müzik, motor sesi, konfeti (M5)
 - TestFlight / Made for Kids başvurusu (M6)
@@ -178,8 +191,12 @@ Playtest sırası: boş şehir → Compass hatası → görev oku görünmüyor 
 
 ---
 
-## Bu dalda değişen dosyalar (gaz + yön joystick)
+## Bu dalda değişen dosyalar (garaj + polis)
 
-- `DrivePad.cs` kaldırıldı (tam ekran kaydırma)
-- `SteerJoystick.cs`, `DriveInput.cs`, `VehicleController.cs`, `HoldButton.cs`, `HudController.cs`
-- Kontroller: sol GAZ/GERİ/BİP, sağ şeffaf joystick (ekran yönü = araç burnu)
+- `VehicleCatalog` / `VehicleDef` / `VehicleFactory` siluetleri (polis, hırsız arabası)
+- `LightBarBlink`, `BeaconPulse`
+- `GarageShop`, `SceneFlow`, `GarageBootstrap`
+- Menü + HUD **GARAJ**, kayıt `paints`
+- `ProjectSetup` Garage sahnesi
+- `MissionType.ThiefChase`, `ThiefCar`, `MissionManager` kovalama ayağı
+- `CityLayout.SnapToLane`

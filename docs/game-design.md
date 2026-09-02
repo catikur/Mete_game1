@@ -82,13 +82,14 @@ Tasarım notu: iki başparmak, yatay telefon. Tam ekran kaydırarak dönmek iPho
 | Hayvan kurtarma | Kayıp hayvanı bul → sahibine götür | Biraz daha bol süre |
 | Okul servisi | Öğrenciyi al → okula bırak | Biraz daha sıkı |
 | Hızlı teslimat | Paketi al → çabuk götür | En sıkı süre |
+| Hırsız kovalama | Kaçan arabayı yakala → karakola götür | Yalnızca **polis** seçiliyken (~%60). Hareketli hedef; süre biraz bol. Şiddet/kaza yok. |
 
 ### İki aşamalı geri sayım
 
 Her görevde **iki ayrı süre** vardır; BAŞLA'dan sonra ekranda **bir tanesi** görünür:
 
-1. **AL** — görevi aldıktan sonra ilk adrese (alış halkası) kadar. Noktalar: ● ○
-2. **TESLİM** — alıştan sonra teslimat halkasına kadar. Noktalar: ● ●
+1. **AL** / **YAKALA** — görevi aldıktan sonra ilk hedefe kadar. Noktalar: ● ○
+2. **TESLİM** / **KARAKOL** — alıştan (veya yakalamadan) sonra teslimat halkasına kadar. Noktalar: ● ●
 
 Süre; bacak mesafesi, görev türü ve **Kolay / Orta / Zor** ile hesaplanır
 (`MissionClock`: ~6 m/s seyir + 18 sn tampon, en az 25 sn, 5'e yuvarlanır).
@@ -100,17 +101,18 @@ Sayaç yeşil → sarı → kırmızı; süre dolunca **0:00 GEÇ** yazar, nabı
 ### Üretim kuralları
 
 - Görevler **prosedürel** üretilir: tür + rastgele alış/bırakış + mesafe/tür/zorluk süresi + ödül.
+- Hırsız kovalama **yalnızca garajda polis seçiliyken** üretilir; diğer araçlara karışmaz.
 - **Günlük tohum:** her günün görevleri o günün tarihinden türetilen seed ile üretilir.
   Günde 5 hedef görev vardır; 5/5 olunca "bonus görevler" başlar, oyun asla durmaz.
 - Alış-bırakış mesafesi 60-160 m aralığında tutulur.
 
 ### Ödüller
 
-- Altın: `20 + toplamMesafe/10` (5'e yuvarlanır); Zor ise +10.
+- Altın: `20 + toplamMesafe/10` (5'e yuvarlanır); Zor ise +10; hırsız kovalama +10.
 - Yıldız: her tamamlanan görev **1**; her zamanında bacak **+1** (ikisi de zamanındaysa 3 yıldız).
 - Zamanında bacak: +5 altın. İkisi de zamanındaysa **seri** artar, `+5 × seri` altın daha.
 - Seri bir bacak gecikince sıfırlanır. HUD'da `SERİ ×N` (N≥2), kayıtta `currentStreak` / `bestStreak`.
-- Alışta toast: "ZAMANINDA! ALDIN!" veya "ALDIN!". Teslimatta büyük kutlama yazısı + akor.
+- Alışta toast: "ZAMANINDA! ALDIN!" / "ALDIN!" (kovalamada "YAKALADIN!"). Teslimatta büyük kutlama yazısı + akor.
 
 ### Yönlendirme
 
@@ -121,23 +123,27 @@ Sayaç yeşil → sarı → kırmızı; süre dolunca **0:00 GEÇ** yazar, nabı
 - Okuma gerektirmez: ok + renk kodu yeterli (alış = turkuaz, bırakış = yeşil).
 - Sol üst para: sarı sikke + **ALTIN**, beş köşeli yıldız + **YILDIZ**.
 
-## 8. Ekonomi ve Garaj (M4)
+## 8. Ekonomi ve Garaj
 
-### Araç kataloğu (plan)
+Menüde **GARAJ**, şehirde sağ üst **GARAJ** (görev varken “Önce görevi bitir”).
+Podyumda araç döner; oklarla gezilir. Kilitli araçlar koyu siluet + fiyat.
+Satın alınca seçilir. 8 boya; aracın varsayılan rengi ücretsiz, diğerleri **50 altın**.
+
+### Araç kataloğu
 
 | Araç | Fiyat | Özellik |
 |---|---|---|
-| Taksi | Başlangıç aracı | Dengeli |
+| Taksi | Başlangıç | Dengeli |
 | Minibüs | 300 | Geniş, yavaş |
-| Kamyonet | 600 | Sağlam |
+| Kamyonet | 600 | Sağlam, açık kasa |
 | Ambulans | 900 | Hızlı |
+| Polis | 1.000 | Çevik; hırsız kovalama görevleri |
 | İtfaiye | 1.200 | Büyük ve güçlü |
-| Dondurma Kamyonu | 1.500 | Eğlenceli, müzikli (M5) |
+| Dondurma Kamyonu | 1.500 | Eğlenceli |
 | Yarış Arabası | 2.000 | En hızlı |
 
-- Fiyatlar, günde 5 görev tamamlayan bir çocuğun **2-3 günde bir** yeni araç açabileceği şekilde ayarlıdır.
-- **Özelleştirme:** renk paleti (8 renk, 50 altın/renk), ileride tekerlek ve çıkartmalar.
-- Garaj ekranı: araçlar podyumda döner, kilitli araçlar silüet + fiyat gösterir.
+- Fiyatlar, günde 5 görev tamamlayan bir çocuğun **2–3 günde bir** yeni araç açabileceği şekilde ayarlıdır.
+- Şehirde seçili araç spawn olur (hız/kütle/siluet katalogdan).
 
 ## 9. Kayıt Sistemi
 
@@ -150,7 +156,7 @@ Sayaç yeşil → sarı → kırmızı; süre dolunca **0:00 GEÇ** yazar, nabı
 ## 10. Teknik Mimari
 
 - **Unity 6.3 LTS + URP**, hedef 60 FPS.
-- Sahneler: `Boot` (ana menü) → `City` (oyun) → `Garage` (M4).
+- Sahneler: `Boot` (ana menü) → `City` (oyun) → `Garage` (garaj).
 - Sahne dosyaları neredeyse boştur; şehir, araç, kamera ve UI **çalışma zamanında koddan üretilir**.
   Böylece tüm oyun mantığı kod incelemesiyle takip edilebilir ve sahne birleştirme (merge) sorunları yaşanmaz.
 - İlk prototip görselleri Unity primitive'leri (kutu, silindir, küre) ile kurulur;

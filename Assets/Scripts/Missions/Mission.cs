@@ -8,7 +8,8 @@ namespace MeteGame.Missions
         Taxi,          // Taksi
         AnimalRescue,  // Kayıp hayvan
         SchoolRun,     // Okul servisi
-        TimedDelivery  // Hızlı teslimat (daha sıkı süre)
+        TimedDelivery, // Hızlı teslimat (daha sıkı süre)
+        ThiefChase     // Polis: hırsız kovala → karakol (şiddet yok)
     }
 
     public enum MissionDifficulty
@@ -58,5 +59,9 @@ namespace MeteGame.Missions
             MissionDifficulty.Hard => "Zor",
             _ => "Orta"
         };
+
+        public string PickupPhaseLabel => Type == MissionType.ThiefChase ? "YAKALA" : "AL";
+        public string DropoffPhaseLabel => Type == MissionType.ThiefChase ? "KARAKOL" : "TESLİM";
+        public bool IsChase => Type == MissionType.ThiefChase;
     }
 }

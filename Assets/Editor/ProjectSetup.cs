@@ -1,5 +1,6 @@
 using System.IO;
 using MeteGame.Core;
+using MeteGame.Garage;
 using MeteGame.UI;
 using UnityEditor;
 using UnityEditor.Build;
@@ -20,6 +21,7 @@ namespace MeteGame.EditorTools
         const string ScenesDir = "Assets/Scenes";
         const string BootScenePath = ScenesDir + "/Boot.unity";
         const string CityScenePath = ScenesDir + "/City.unity";
+        const string GarageScenePath = ScenesDir + "/Garage.unity";
         const string SettingsDir = "Assets/Settings";
         const string RendererPath = SettingsDir + "/MeteURPRenderer.asset";
         const string PipelinePath = SettingsDir + "/MeteURP.asset";
@@ -46,6 +48,7 @@ namespace MeteGame.EditorTools
         {
             return File.Exists(CityScenePath)
                    && File.Exists(BootScenePath)
+                   && File.Exists(GarageScenePath)
                    && GraphicsSettings.defaultRenderPipeline != null;
         }
 
@@ -138,6 +141,14 @@ namespace MeteGame.EditorTools
                 gameRoot.AddComponent<GameBootstrap>();
                 EditorSceneManager.SaveScene(cityScene, CityScenePath);
             }
+
+            if (!File.Exists(GarageScenePath))
+            {
+                var garageScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                var garageRoot = new GameObject("GarageRoot");
+                garageRoot.AddComponent<GarageBootstrap>();
+                EditorSceneManager.SaveScene(garageScene, GarageScenePath);
+            }
         }
 
         static void SetupBuildScenes()
@@ -145,7 +156,8 @@ namespace MeteGame.EditorTools
             EditorBuildSettings.scenes = new[]
             {
                 new EditorBuildSettingsScene(BootScenePath, true),
-                new EditorBuildSettingsScene(CityScenePath, true)
+                new EditorBuildSettingsScene(CityScenePath, true),
+                new EditorBuildSettingsScene(GarageScenePath, true)
             };
         }
 

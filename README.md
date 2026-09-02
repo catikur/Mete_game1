@@ -9,11 +9,11 @@ iPhone ve iPad'de çalışır, Unity ile Mac üzerinde geliştirilir.
 
 Rengarenk, low-poly bir şehirde araba sürersin. Şiddet yok, kaybetme yok:
 
-- **Görevler:** Paket teslim et, yolcu taşı, kayıp kediyi sahibine götür, öğrencileri okula bırak. Görevler her gün yenilenir ve hiç bitmez.
+- **Görevler:** Paket teslim et, yolcu taşı, kayıp kediyi sahibine götür, öğrencileri okula bırak. Polis arabasıyla hırsız kovala (yakala, karakola götür — şiddet yok). Görevler her gün yenilenir ve hiç bitmez.
 - **Süre:** Her görevde iki geri sayım vardır (ilk adrese, sonra teslime). Süre bitince görev batmaz; zamanında gidersen ekstra yıldız alırsın.
 - **Şehir hayatı:** Başka arabalar, yayalar, trafik lambaları, yaya geçitleri. Kırmızıda durmak zorunlu değil; durursan küçük bir yıldız ödülü var.
 - **Ödüller:** Altın, yıldız, zamanında seri.
-- **Garaj:** Kazandığın altınla yeni araçlar açacaksın (henüz yapılmadı — sıradaki büyük iş).
+- **Garaj:** Altınla 8 araç aç (polis dahil), renk seç, şehirde onunla sür.
 
 ## Hızlı Başlangıç (Mac)
 
@@ -41,7 +41,7 @@ Sol el: gaz / geri / bip. Sağ el: yön. Tam ekran kaydırma yok.
 |---|---|
 | [docs/progress.md](docs/progress.md) | **Bağlam özeti:** kararlar, PR geçmişi, kod haritası, test döngüsü |
 | [docs/game-design.md](docs/game-design.md) | Oyun tasarımı: görevler, süreler, ekonomi, güvenlik |
-| [docs/roadmap.md](docs/roadmap.md) | Yol haritası (M0–M3b bitti, sırada garaj) |
+| [docs/roadmap.md](docs/roadmap.md) | Yol haritası (M0–M4 bitti, sırada cila) |
 | [docs/mac-setup.md](docs/mac-setup.md) | Mac kurulumu, iOS build ve TestFlight |
 | [docs/asset-pipeline.md](docs/asset-pipeline.md) | Kenney ve Meshy ile 3D model üretim akışı |
 
@@ -58,8 +58,9 @@ Assets/
 │   ├── Controls/    Dokunmatik + klavye girişi
 │   ├── CameraRig/   Takip kamerası (look-ahead + hız FOV)
 │   ├── Missions/    Görev üretici, iki aşamalı süre, işaretler
+│   ├── Garage/      Garaj: podyum, satın al, boya
 │   └── UI/          Kod ile üretilen arayüz (HUD, menü, butonlar)
-├── Scenes/          Boot (menü) ve City (oyun) — otomatik oluşturulur
+├── Scenes/          Boot, City, Garage — otomatik oluşturulur
 └── Settings/        URP render ayarları — otomatik oluşturulur
 docs/                Tasarım, ilerleme ve kurulum dokümanları
 ```

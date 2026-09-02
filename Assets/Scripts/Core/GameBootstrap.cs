@@ -19,6 +19,7 @@ namespace MeteGame.Core
         {
             Application.targetFrameRate = 60;
             SaveManager.RefreshDaily();
+            GarageShop.Normalize(SaveManager.Data);
             DriveInput.Locked = false;
             DriveInput.ResetTouch();
 
@@ -34,6 +35,15 @@ namespace MeteGame.Core
 
             var missions = gameObject.AddComponent<MissionManager>();
             missions.Init(layout, vehicle, hud);
+            hud.SetGarageHandler(() =>
+            {
+                if (missions.IsOnDuty)
+                {
+                    hud.ShowToast("Önce görevi bitir!");
+                    return;
+                }
+                SceneFlow.OpenGarage("City");
+            });
         }
 
         static void CreateSun()

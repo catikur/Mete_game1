@@ -36,6 +36,8 @@ namespace MeteGame.Core
         public const int PedestrianCount = 24;
         public const float LaneOffset = 2.4f;
         public const float NpcSpeed = 8f;
+        public const float ThiefSpeed = 11.5f;
+        public const float ThiefCatchRadius = 9f;
         public const float PedestrianSpeed = 1.6f;
         public const float LightGreenSeconds = 6.5f;
         public const float LightYellowSeconds = 1.6f;
@@ -57,16 +59,18 @@ namespace MeteGame.Core
         public static readonly Color SignalYellow = FromBytes(255, 200, 40);
         public static readonly Color SignalGreen = FromBytes(50, 210, 90);
 
+        public const int PaintPrice = 50;
+
         public static readonly Color[] CarPalette =
         {
-            FromBytes(232, 76, 76),
-            FromBytes(70, 130, 210),
-            FromBytes(90, 175, 95),
-            FromBytes(245, 245, 245),
-            FromBytes(55, 55, 60),
-            FromBytes(255, 140, 60),
-            FromBytes(170, 110, 210),
-            FromBytes(90, 200, 210)
+            FromBytes(232, 76, 76),   // kırmızı
+            FromBytes(70, 130, 210),  // mavi
+            FromBytes(90, 175, 95),   // yeşil
+            FromBytes(252, 196, 32),  // sarı (taksi)
+            FromBytes(245, 245, 245), // beyaz
+            FromBytes(255, 140, 60),  // turuncu
+            FromBytes(170, 110, 210), // mor
+            FromBytes(55, 55, 60)     // siyah
         };
 
         public static readonly Color[] ShirtPalette =
