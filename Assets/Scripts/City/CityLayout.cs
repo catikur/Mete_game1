@@ -139,6 +139,90 @@ namespace MeteGame.City
             return best;
         }
 
+        /// <summary>
+        /// Dünya noktasını en yakın yola yapıştırır ve gidiş kavşağını hesaplar
+        /// (hırsız / şerit spawn için).
+        /// </summary>
+        public void SnapToLane(Vector3 world, out Vector3 pos, out int destIx, out int destIz, out CardinalDir heading)
+        {
+            int ix = ClosestIndex(RoadXs, world.x);
+            int iz = ClosestIndex(RoadZs, world.z);
+            bool vertical = Mathf.Abs(world.x - RoadXs[ix]) <= Mathf.Abs(world.z - RoadZs[iz]);
+
+            if (vertical)
+            {
+                destIx = ix;
+                int north = NextIndexAlong(RoadZs, world.z, +1);
+                if (north >= 0)
+                {
+                    heading = CardinalDir.North;
+                    destIz = north;
+                }
+                else
+                {
+                    heading = CardinalDir.South;
+                    destIz = NextIndexAlong(RoadZs, world.z, -1);
+                    if (destIz < 0)
+                        destIz = iz;
+                }
+
+                pos = new Vector3(RoadXs[ix], 0.5f, world.z)
+                      + CardinalUtil.Right(heading) * GameConfig.LaneOffset;
+            }
+            else
+            {
+                destIz = iz;
+                int east = NextIndexAlong(RoadXs, world.x, +1);
+                if (east >= 0)
+                {
+                    heading = CardinalDir.East;
+                    destIx = east;
+                }
+                else
+                {
+                    heading = CardinalDir.West;
+                    destIx = NextIndexAlong(RoadXs, world.x, -1);
+                    if (destIx < 0)
+                        destIx = ix;
+                }
+
+                pos = new Vector3(world.x, 0.5f, RoadZs[iz])
+                      + CardinalUtil.Right(heading) * GameConfig.LaneOffset;
+            }
+        }
+
+        static int ClosestIndex(float[] values, float sample)
+        {
+            int best = 0;
+            float bestErr = Mathf.Abs(values[0] - sample);
+            for (int i = 1; i < values.Length; i++)
+            {
+                float err = Mathf.Abs(values[i] - sample);
+                if (err < bestErr)
+                {
+                    bestErr = err;
+                    best = i;
+                }
+            }
+            return best;
+        }
+
+        static int NextIndexAlong(float[] values, float sample, int sign)
+        {
+            int best = -1;
+            float bestDist = float.MaxValue;
+            for (int i = 0; i < values.Length; i++)
+            {
+                float d = (values[i] - sample) * sign;
+                if (d > 0.25f && d < bestDist)
+                {
+                    bestDist = d;
+                    best = i;
+                }
+            }
+            return best;
+        }
+
         /// <summary>Kaldırım üzerindeki yürüme döngüsünün dört köşesi (saat yönü, y = 0).</summary>
         public void BlockWalkCorners(int blockI, int blockJ, Vector3[] corners)
         {

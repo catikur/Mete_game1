@@ -381,8 +381,8 @@ namespace MeteGame.UI
             _offerTitle.text = mission.Title;
             _offerDescription.text = mission.PickupText + "  →  " + mission.DropoffText;
             _offerMeta.text = mission.DifficultyLabel
-                              + "   •   AL " + MissionClock.Format(mission.PickupSeconds)
-                              + "   •   TESLİM " + MissionClock.Format(mission.DropoffSeconds);
+                              + "   •   " + mission.PickupPhaseLabel + " " + MissionClock.Format(mission.PickupSeconds)
+                              + "   •   " + mission.DropoffPhaseLabel + " " + MissionClock.Format(mission.DropoffSeconds);
             _offerMeta.color = MissionClock.DifficultyColor(mission.Difficulty);
             _offerReward.text = "Ödül: " + mission.RewardCoins + " altın"
                                 + "   •   Zamanında her durakta +1 yıldız";

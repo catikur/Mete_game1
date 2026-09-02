@@ -20,6 +20,7 @@ namespace MeteGame.Missions
         Mission _current;
         MissionMarker _activeMarker;
         GameObject _cargo;
+        ThiefCar _thief;
         int _missionCounter;
 
         MissionLeg _leg = MissionLeg.None;
@@ -59,6 +60,7 @@ namespace MeteGame.Missions
         {
             SyncDailyHud();
             StopClock();
+            ClearThief();
             _current = MissionGenerator.Generate(_layout, _vehicle.transform.position, _missionCounter);
             _hud.ShowMissionOffer(_current, StartMission);
         }
@@ -68,6 +70,17 @@ namespace MeteGame.Missions
             _pickupOnTime = false;
             _dropoffOnTime = false;
 
+            if (_current.IsChase)
+                StartChase();
+            else
+                StartPickupMarker();
+
+            Sfx.Go(_vehicle.transform.position);
+            _hud.ShowToast("HADİ!");
+        }
+
+        void StartPickupMarker()
+        {
             _activeMarker = MissionMarker.Spawn("PickupMarker", _current.PickupPoint,
                 GameConfig.PickupColor, _current.CargoShape);
             _activeMarker.Reached = OnPickupReached;
@@ -75,14 +88,41 @@ namespace MeteGame.Missions
             _hud.SetMissionText(_current.PickupText);
             _hud.SetTarget(_current.PickupPoint);
             BeginLeg(MissionLeg.Pickup, _current.PickupSeconds);
-            Sfx.Go(_vehicle.transform.position);
-            _hud.ShowToast("HADİ!");
+        }
+
+        void StartChase()
+        {
+            _thief = ThiefCar.Spawn(_layout, _vehicle.transform, _current.PickupPoint);
+            _hud.SetMissionText(_current.PickupText);
+            _hud.SetTarget(_thief.transform.position);
+            BeginLeg(MissionLeg.Pickup, _current.PickupSeconds);
+        }
+
+        void TryCatchThief()
+        {
+            if (_thief == null || _thief.Caught)
+                return;
+
+            Vector3 a = _vehicle.transform.position;
+            Vector3 b = _thief.transform.position;
+            a.y = 0f;
+            b.y = 0f;
+            if (Vector3.Distance(a, b) > GameConfig.ThiefCatchRadius)
+                return;
+
+            OnPickupReached();
         }
 
         void OnPickupReached()
         {
+            if (_leg != MissionLeg.Pickup)
+                return;
+
             _pickupOnTime = Remaining() >= 0f;
-            Destroy(_activeMarker.gameObject);
+            if (_thief != null)
+                _thief.StopFleeing();
+            if (_activeMarker != null)
+                Destroy(_activeMarker.gameObject);
 
             Transform cargoParent = _vehicle.CargoAnchor != null ? _vehicle.CargoAnchor : _vehicle.transform;
             Vector3 cargoLocal = _vehicle.CargoAnchor != null
@@ -100,8 +140,13 @@ namespace MeteGame.Missions
             _hud.SetTarget(_current.DropoffPoint);
             BeginLeg(MissionLeg.Dropoff, _current.DropoffSeconds);
 
+            ClearThief();
+
             Sfx.Ding(_vehicle.transform.position);
-            _hud.ShowToast(_pickupOnTime ? "ZAMANINDA! ALDIN!" : "ALDIN!");
+            string caught = _current.IsChase
+                ? (_pickupOnTime ? "ZAMANINDA! YAKALADIN!" : "YAKALADIN!")
+                : (_pickupOnTime ? "ZAMANINDA! ALDIN!" : "ALDIN!");
+            _hud.ShowToast(caught);
         }
 
         void OnDropoffReached()
@@ -156,6 +201,7 @@ namespace MeteGame.Missions
             _hud.SetCombo(data.currentStreak);
             _hud.SetTarget(null);
             _hud.SetMissionText("");
+            ClearThief();
 
             Sfx.Success(_vehicle.transform.position);
             _hud.ShowCelebration(coins, stars, perfect, data.currentStreak);
@@ -183,14 +229,31 @@ namespace MeteGame.Missions
         {
             if (_leg == MissionLeg.None)
                 return;
+
+            if (_leg == MissionLeg.Pickup && _current != null && _current.IsChase && _thief != null)
+            {
+                _hud.SetTarget(_thief.transform.position);
+                TryCatchThief();
+            }
+
             PushTimer();
         }
 
         void PushTimer()
         {
-            string label = _leg == MissionLeg.Pickup ? "AL" : "TESLİM";
+            string label = _leg == MissionLeg.Pickup
+                ? _current.PickupPhaseLabel
+                : _current.DropoffPhaseLabel;
             int step = _leg == MissionLeg.Pickup ? 1 : 2;
             _hud.SetTimer(label, step, Remaining(), _legDuration);
+        }
+
+        void ClearThief()
+        {
+            if (_thief == null)
+                return;
+            Destroy(_thief.gameObject);
+            _thief = null;
         }
     }
 }

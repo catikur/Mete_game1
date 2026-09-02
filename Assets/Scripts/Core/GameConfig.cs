@@ -36,6 +36,8 @@ namespace MeteGame.Core
         public const int PedestrianCount = 24;
         public const float LaneOffset = 2.4f;
         public const float NpcSpeed = 8f;
+        public const float ThiefSpeed = 11.5f;
+        public const float ThiefCatchRadius = 9f;
         public const float PedestrianSpeed = 1.6f;
         public const float LightGreenSeconds = 6.5f;
         public const float LightYellowSeconds = 1.6f;

@@ -35,6 +35,10 @@ namespace MeteGame.Missions
                     easyMax = 55;
                     mediumMax = 88;
                     break;
+                case MissionType.ThiefChase:
+                    easyMax = 30;
+                    mediumMax = 68;
+                    break;
                 default:
                     easyMax = 42;
                     mediumMax = 82;
@@ -96,6 +100,7 @@ namespace MeteGame.Missions
             type switch
             {
                 MissionType.AnimalRescue => 1.10f,
+                MissionType.ThiefChase => 1.18f,
                 MissionType.SchoolRun => 0.92f,
                 MissionType.TimedDelivery => 0.88f,
                 _ => 1f

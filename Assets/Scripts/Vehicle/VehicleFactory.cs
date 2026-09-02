@@ -49,6 +49,35 @@ namespace MeteGame.Vehicle
             return root;
         }
 
+        public static GameObject CreateThiefCar(Vector3 position, Quaternion rotation)
+        {
+            var root = new GameObject("ThiefCar");
+            root.transform.SetPositionAndRotation(position, rotation);
+
+            var body = root.AddComponent<Rigidbody>();
+            body.isKinematic = true;
+            body.useGravity = false;
+            body.interpolation = RigidbodyInterpolation.Interpolate;
+
+            var collider = root.AddComponent<BoxCollider>();
+            collider.size = new Vector3(1.9f, 1.15f, 4.1f);
+            collider.center = new Vector3(0f, 0.65f, 0f);
+
+            Color paint = new Color(0.18f, 0.16f, 0.2f);
+            BuildBasicCar(root.transform, paint, 4.0f, 0.62f, 0.5f, taxiSign: false);
+            PartFactory.Create(PrimitiveType.Cube, "Stripe", root.transform,
+                new Vector3(0f, 0.72f, 0f), new Vector3(1.98f, 0.16f, 3.6f),
+                new Color(0.55f, 0.12f, 0.14f));
+            var beacon = PartFactory.Create(PrimitiveType.Sphere, "Beacon", root.transform,
+                new Vector3(0f, 1.7f, -0.15f), Vector3.one * 0.55f,
+                new Color(1f, 0.55f, 0.12f));
+            beacon.AddComponent<BeaconPulse>();
+            PartFactory.Create(PrimitiveType.Cylinder, "ChaseBeam", root.transform,
+                new Vector3(0f, 6.2f, 0f), new Vector3(0.85f, 6f, 0.85f),
+                new Color(1f, 0.62f, 0.12f), castShadows: false);
+            return root;
+        }
+
         public static GameObject CreateNpcCar(Vector3 position, Quaternion rotation, Color color, int bodyType)
         {
             var root = new GameObject("NpcCar");
@@ -79,6 +108,9 @@ namespace MeteGame.Vehicle
                     break;
                 case VehicleStyle.Ambulance:
                     BuildAmbulance(parent, bodyColor);
+                    break;
+                case VehicleStyle.Police:
+                    BuildPolice(parent, bodyColor);
                     break;
                 case VehicleStyle.FireTruck:
                     BuildFireTruck(parent, bodyColor);
@@ -153,6 +185,39 @@ namespace MeteGame.Vehicle
                 new Color(0.2f, 0.45f, 0.95f));
             AddWheels(parent, length * 0.32f, 0.95f);
             AddLights(parent, length / 2f, 0.7f);
+        }
+
+        static void BuildPolice(Transform parent, Color bodyColor)
+        {
+            const float length = 4.3f;
+            PartFactory.Create(PrimitiveType.Cube, "Body", parent,
+                new Vector3(0f, 0.62f, 0f), new Vector3(1.95f, 0.65f, length), bodyColor);
+            PartFactory.Create(PrimitiveType.Cube, "Cabin", parent,
+                new Vector3(0f, 1.18f, -0.15f), new Vector3(1.75f, 0.55f, length * 0.48f), Window);
+            PartFactory.Create(PrimitiveType.Cube, "Stripe", parent,
+                new Vector3(0f, 0.72f, 0f), new Vector3(2.02f, 0.18f, length * 0.88f),
+                new Color(0.18f, 0.38f, 0.92f));
+            PartFactory.Create(PrimitiveType.Cube, "Bullbar", parent,
+                new Vector3(0f, 0.55f, 2.2f), new Vector3(1.55f, 0.28f, 0.12f),
+                new Color(0.35f, 0.38f, 0.42f));
+            PartFactory.Create(PrimitiveType.Cube, "Antenna", parent,
+                new Vector3(0.55f, 1.7f, -0.85f), new Vector3(0.06f, 0.7f, 0.06f),
+                new Color(0.2f, 0.2f, 0.22f));
+
+            var bar = PartFactory.Create(PrimitiveType.Cube, "LightBarBase", parent,
+                new Vector3(0f, 1.58f, 0.15f), new Vector3(1.15f, 0.12f, 0.38f),
+                new Color(0.12f, 0.12f, 0.14f));
+            var left = PartFactory.Create(PrimitiveType.Cube, "LightRed", parent,
+                new Vector3(-0.32f, 1.72f, 0.15f), new Vector3(0.48f, 0.16f, 0.32f),
+                new Color(1f, 0.15f, 0.15f));
+            var right = PartFactory.Create(PrimitiveType.Cube, "LightBlue", parent,
+                new Vector3(0.32f, 1.72f, 0.15f), new Vector3(0.48f, 0.16f, 0.32f),
+                new Color(0.2f, 0.45f, 1f));
+            var blink = bar.AddComponent<LightBarBlink>();
+            blink.Bind(left.GetComponent<MeshRenderer>(), right.GetComponent<MeshRenderer>());
+
+            AddWheels(parent, length * 0.32f, 0.95f);
+            AddLights(parent, length / 2f + 0.02f, 0.62f);
         }
 
         static void BuildFireTruck(Transform parent, Color bodyColor)

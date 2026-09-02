@@ -2,7 +2,7 @@
 
 Bu dosya, Mete'nin Oyunu'nun **şu ana kadarki tüm kararlarını, kod durumunu ve Mac test döngüsünü** tek yerde tutar. Yeni bir oturum / ajan buradan başlayabilir.
 
-Son güncelleme: **2026-09-02** — M4 Garaj: 7 araç, satın al, 8 renk, menü/şehir geçişi.
+Son güncelleme: **2026-09-02** — Garaj: 8. araç **polis** + yalnızca poliste **hırsız kovalama** görevi.
 
 Repo: `https://github.com/catikur/Mete_game1`  
 Dal şablonu: `cursor/<kısa-ad>-26ab`  
@@ -85,7 +85,7 @@ Editör: **W** gaz, **A/D** dönüş, **S** geri, **H** korna. Game görünümü
 
 ## Görevler
 
-Türler: **Kurye, Taksi, Kayıp hayvan, Okul servisi, Hızlı teslimat**.
+Türler: **Kurye, Taksi, Kayıp hayvan, Okul servisi, Hızlı teslimat**. Polis seçiliyken ayrıca **Hırsız kovalama** (~%60): kaçan koyu araba (turuncu tavan ışığı, kırmızı ışığa uymaz, ~11.5 m/s). Yaklaşınca (~9 m) yakalanır — çarpışma/şiddet yok. Sonra karakol halkasına teslim. HUD süre etiketleri **YAKALA** / **KARAKOL**. Diğer araçlara bu tür sızmaz.
 
 Akış: teklif (BAŞLA) → alış halkası → kargo çatıya biner → bırakış halkası → kutlama → yeni teklif.
 
@@ -112,7 +112,7 @@ Formül (`MissionClock` / `GameConfig`):
 - İkisi de zamanında: **seri** artar, `+5 × seri` altın. Bir bacak gecikirse seri sıfırlanır.
 - HUD sağ üst: `SERİ ×N` (N≥2). Ana menüde rekor seri.
 
-Alışta toast: `ZAMANINDA! ALDIN!` veya `ALDIN!`. Başlangıçta `HADİ!` + ding.
+Alışta toast: `ZAMANINDA! ALDIN!` veya `ALDIN!` (kovalamada `YAKALADIN!`). Başlangıçta `HADİ!` + ding.
 
 Yönlendirme: büyük sarı HUD oku + metre; 12 m içinde `HEMEN YANINDA!`. Hedefte halka + ışık sütunu. Araç üstünde 3D ok **yok** (karışıyordu). Sol üst: sikke + **ALTIN**, yıldız + **YILDIZ**.
 
@@ -122,7 +122,7 @@ Yönlendirme: büyük sarı HUD oku + metre; 12 m içinde `HEMEN YANINDA!`. Hede
 
 Menüde turuncu **GARAJ**, şehirde sağ üst **GARAJ**. Görev sırasında şehirden çıkılmaz (“Önce görevi bitir”).
 
-- 7 araç: taksi (ücretsiz), minibüs 300, kamyonet 600, ambulans 900, itfaiye 1200, dondurma 1500, yarış 2000.
+- 8 araç: taksi (ücretsiz), minibüs 300, kamyonet 600, ambulans 900, **polis 1000**, itfaiye 1200, dondurma 1500, yarış 2000. Polisin tavan lambası kırmızı/mavi yanıp söner.
 - Podyumda döner; oklarla gez; kilitli koyu siluet.
 - **SATIN AL / SEÇ / SEÇİLİ**. **SÜR!** şehre seçili araçla gider.
 - 8 renk; varsayılan ücretsiz, ekstra **50 altın**.
@@ -155,7 +155,7 @@ Assets/Scripts/
   Vehicle/      VehicleDef, VehicleCatalog, VehicleController, VehicleFactory
   Controls/     DriveInput
   CameraRig/    FollowCamera
-  Missions/     Mission, MissionClock, MissionGenerator, MissionManager, MissionMarker, CargoBob
+  Missions/     Mission, MissionClock, MissionGenerator, MissionManager, MissionMarker, CargoBob, ThiefCar
   Garage/       GarageBootstrap
   UI/           HudController, SteerJoystick, HoldButton, UIFactory, MainMenuController
 Assets/Editor/  ProjectSetup.cs (Boot + City + Garage sahneleri)
@@ -178,7 +178,7 @@ Sahneler Play'de koddan: `Boot` menü, `City` oyun, `Garage` podyum. Sahne yoksa
 | #6 | İki aşamalı görev süreleri, zorluk, seri, tempo |
 | #7 | Sol GAZ/GERİ/BİP + sağ şeffaf yön joystick’i |
 
-Playtest sırası: boş şehir → Compass → ok → dokunmatik → ikonlar → süreler → joystick → **garaj (bu dal)**.
+Playtest sırası: boş şehir → Compass → ok → dokunmatik → ikonlar → süreler → joystick → **garaj + polis kovalama (bu dal)**.
 
 ---
 
@@ -191,9 +191,12 @@ Playtest sırası: boş şehir → Compass → ok → dokunmatik → ikonlar →
 
 ---
 
-## Bu dalda değişen dosyalar (garaj)
+## Bu dalda değişen dosyalar (garaj + polis)
 
-- `VehicleCatalog` / `VehicleDef` / `VehicleFactory` siluetleri
+- `VehicleCatalog` / `VehicleDef` / `VehicleFactory` siluetleri (polis, hırsız arabası)
+- `LightBarBlink`, `BeaconPulse`
 - `GarageShop`, `SceneFlow`, `GarageBootstrap`
 - Menü + HUD **GARAJ**, kayıt `paints`
 - `ProjectSetup` Garage sahnesi
+- `MissionType.ThiefChase`, `ThiefCar`, `MissionManager` kovalama ayağı
+- `CityLayout.SnapToLane`

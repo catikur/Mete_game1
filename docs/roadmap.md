@@ -48,7 +48,7 @@ Bağlam özeti: [progress.md](progress.md). Tasarım: [game-design.md](game-desi
 
 ## M4 — Garaj ✅
 
-- [x] Araç tanımları (katalog: 7 araç, fiyat/hız/boyut/siluet)
+- [x] Araç tanımları (katalog: 8 araç, fiyat/hız/boyut/siluet; polis + hırsız kovalama)
 - [x] Garaj sahnesi: podyum, araç seçimi, satın alma
 - [x] Renk özelleştirme (8 renk paleti, 50 altın/renk)
 - [x] Kayıt: açılmış araçlar, seçili araç, boyalar

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MeteGame.Vehicle
 {
-    /// <summary>Yedi araçlık katalog — fiyat, hız ve siluet burada dengelenir.</summary>
+    /// <summary>Sekiz araçlık katalog — fiyat, hız ve siluet burada dengelenir.</summary>
     public static class VehicleCatalog
     {
         public static readonly VehicleDef[] All =
@@ -75,6 +75,23 @@ namespace MeteGame.Vehicle
                 ColliderSize = new Vector3(2.1f, 1.8f, 4.9f),
                 ColliderCenter = new Vector3(0f, 1.0f, 0f),
                 CargoLocalPosition = new Vector3(0f, 2.55f, -0.3f)
+            },
+            new VehicleDef
+            {
+                Id = "polis",
+                Name = "Polis",
+                Blurb = "Hırsızı yakala, karakola götür!",
+                Price = 1000,
+                Style = VehicleStyle.Police,
+                DefaultColorIndex = 4,
+                MaxForwardSpeed = 17.5f,
+                MaxReverseSpeed = 5.5f,
+                Acceleration = 12f,
+                MaxSteerDegPerSec = 200f,
+                Mass = 1250f,
+                ColliderSize = new Vector3(2.05f, 1.25f, 4.5f),
+                ColliderCenter = new Vector3(0f, 0.7f, 0f),
+                CargoLocalPosition = new Vector3(0f, 2.05f, -0.2f)
             },
             new VehicleDef
             {

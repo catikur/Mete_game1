@@ -8,6 +8,7 @@ namespace MeteGame.Vehicle
         Minibus,
         Pickup,
         Ambulance,
+        Police,
         FireTruck,
         IceCream,
         Race
