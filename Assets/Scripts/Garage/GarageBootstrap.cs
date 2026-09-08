@@ -34,6 +34,7 @@ namespace MeteGame.Garage
             BuildUi();
             RefreshPreview();
             RefreshUi();
+            GameAudio.PlayMenu(transform);
         }
 
         void BuildWorld()

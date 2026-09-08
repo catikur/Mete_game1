@@ -14,6 +14,7 @@ Rengarenk, low-poly bir şehirde araba sürersin. Şiddet yok, kaybetme yok:
 - **Şehir hayatı:** Başka arabalar, yayalar, trafik lambaları, yaya geçitleri. Kırmızıda durmak zorunlu değil; durursan küçük bir yıldız ödülü var.
 - **Ödüller:** Altın, yıldız, zamanında seri.
 - **Garaj:** Altınla 8 araç aç (polis dahil), renk seç, şehirde onunla sür.
+- **Ses:** Menüde ve şehirde neşeli döngü müziği; hızlanınca motor vınlar. Duraklatınca susar.
 - **Çıkış / kayıt:** Oynarken sağ üst **MENÜ** → ana menü. Kaldığın yer kaydolur; sonraki açılışta **DEVAM ET**.
 
 ## Hızlı Başlangıç (Mac)

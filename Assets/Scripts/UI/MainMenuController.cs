@@ -10,6 +10,7 @@ namespace MeteGame.UI
         {
             CreateMenuCamera();
             BuildMenu();
+            GameAudio.PlayMenu(transform);
         }
 
         void CreateMenuCamera()

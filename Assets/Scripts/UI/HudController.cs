@@ -344,6 +344,7 @@ namespace MeteGame.UI
             DriveInput.ResetTouch();
             _onSave?.Invoke();
             Time.timeScale = 0f;
+            AudioListener.pause = true;
             _pausePanel.SetActive(true);
             _pausePanel.transform.SetAsLastSibling();
         }
@@ -354,6 +355,7 @@ namespace MeteGame.UI
                 return;
             _paused = false;
             Time.timeScale = 1f;
+            AudioListener.pause = false;
             DriveInput.Locked = _lockedBeforePause || (_offerPanel != null && _offerPanel.activeSelf);
             DriveInput.ResetTouch();
             if (_pausePanel != null)
@@ -363,6 +365,7 @@ namespace MeteGame.UI
         void GoToMenu()
         {
             Time.timeScale = 1f;
+            AudioListener.pause = false;
             _paused = false;
             DriveInput.Locked = false;
             _onSave?.Invoke();
@@ -372,6 +375,7 @@ namespace MeteGame.UI
         void OnDisable()
         {
             Time.timeScale = 1f;
+            AudioListener.pause = false;
             DriveInput.Locked = false;
             DriveInput.ResetTouch();
         }

@@ -2,7 +2,7 @@
 
 Bu dosya, Mete'nin Oyunu'nun **şu ana kadarki tüm kararlarını, kod durumunu ve Mac test döngüsünü** tek yerde tutar. Yeni bir oturum / ajan buradan başlayabilir.
 
-Son güncelleme: **2026-09-08** — Tek el sürüş: gaz/geri kalktı, joystick itince araç o yöne gider.
+Son güncelleme: **2026-09-08** — Tek el sürüş + döngü müziği ve hıza göre motor sesi.
 
 Repo: `https://github.com/catikur/Mete_game1`  
 Dal şablonu: `cursor/<kısa-ad>-26ab`  
@@ -148,7 +148,7 @@ Menüde turuncu **GARAJ**, şehirde sağ üst **GARAJ**. Görev sırasında şeh
 
 ```
 Assets/Scripts/
-  Core/         GameBootstrap, GameConfig, SaveManager, SaveData, GarageShop, SceneFlow, PartFactory, MaterialLibrary, Sfx, ConfettiBurst
+  Core/         GameBootstrap, GameConfig, SaveManager, SaveData, GarageShop, SceneFlow, PartFactory, MaterialLibrary, Sfx, ConfettiBurst, GameAudio
   City/         CityBuilder, CityLayout, CardinalDir (UnityEngine.Compass ile çakışmasın diye Compass değil)
   Traffic/      TrafficSystem, TrafficCar, Pedestrian
   Vehicle/      VehicleDef, VehicleCatalog, VehicleController, VehicleFactory
@@ -185,7 +185,7 @@ Playtest sırası: joystick+gaz (eski) Mete’ye zor geldi → **tek çubuk (bu 
 
 ## Bilinçli olarak henüz yok
 
-- Kenney/Meshy modeller, döngü müziği, motor sesi (M5)
+- Kenney/Meshy modeller (M5)
 - TestFlight / Made for Kids başvurusu (M6)
 - Görev başarısızlığı, can, kaza fiziği, kırmızı ışık cezası — **yapılmayacak**
 - İki elli gaz + direksiyon — playtest’te kalktı; tek joystick kaldı
@@ -194,11 +194,9 @@ Playtest sırası: joystick+gaz (eski) Mete’ye zor geldi → **tek çubuk (bu 
 
 ## Sıradaki plan (playtest sırası)
 
-1. **Bu dal** — tek joystick (Mete’nin zorlandığı yer). Mac’te dene.
-2. **Kutlama konfetisi** — bu dalda da var; görev bitince renkli parçalar uçar.
-3. **Ses cilası** — kısa döngü müziği + hıza göre motor vınlaması (hâlâ dosyasız / prosedürel olabilir).
-4. **Kenney/Meshy** — Mac’te asset indirip primitive’lerin yerine koymak (Cloud Agent model üretemez).
-5. **iOS** — ikon, açılış ekranı, TestFlight, Made for Kids.
+1. **Bu dal** — tek joystick + müzik/motor. Mac’te Mete ile dene.
+2. **Kenney/Meshy** — Mac’te asset indirip primitive’lerin yerine koymak (Cloud Agent model üretemez).
+3. **iOS** — ikon, açılış ekranı, TestFlight, Made for Kids.
 
 Bir anda bir playtest konusu: önce Mete’nin tek elle sürüp sürmediği.
 
@@ -209,4 +207,5 @@ Bir anda bir playtest konusu: önce Mete’nin tek elle sürüp sürmediği.
 - `DriveInput`, `VehicleController`: it = o yöne yürü, bırak = dur
 - HUD: GAZ/GERİ kalktı, BİP solda, joystick büyüdü
 - `ConfettiBurst` görev kutlamasında
+- `GameAudio`: menü/garaj müziği, şehirde hıza göre motor; MENÜ sesi durdurur
 - dokümanlar (kontroller + sıradaki plan)

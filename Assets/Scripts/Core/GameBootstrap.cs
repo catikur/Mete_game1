@@ -42,6 +42,7 @@ namespace MeteGame.Core
 
             CreateSun();
             CreateCamera(vehicle);
+            GameAudio.PlayCity(transform, vehicle);
 
             var hud = HudController.Build(vehicle.transform);
 

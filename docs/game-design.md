@@ -175,8 +175,8 @@ Satın alınca seçilir. 8 boya; aracın varsayılan rengi ücretsiz, diğerleri
 
 ## 12. Ses ve Müzik
 
-Şimdilik dosyasız prosedürel ses: korna (BİP), alış ding, teslimat akoru, BAŞLA tonu.
-M5'te: neşeli döngü müziği, motor vınlaması (hıza göre pitch), konfeti.
+Şehirde neşeli döngü müziği + hıza göre motor vınlaması (dosyasız, prosedürel).
+Korna (BİP), alış ding, teslimat akoru, BAŞLA tonu. Duraklatınca ses durur.
 
 ## 13. Erişilebilirlik
 

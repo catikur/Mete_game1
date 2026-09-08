@@ -58,8 +58,8 @@ Bağlam özeti: [progress.md](progress.md). Tasarım: [game-design.md](game-desi
 ## M5 — İçerik ve Cila 🔜
 
 - [x] Görev bitince konfeti (prosedürel küpler)
+- [x] Ses: döngü müziği + hıza göre motor (dosyasız)
 - [ ] Kenney/Meshy modelleriyle görsel yükseltme (araçlar, binalar, dekorlar) — Mac’te asset
-- [ ] Ses: müzik, motor sesi (prosedürel ding'lerin üzerine)
 - [ ] Performans: draw call azaltma (static batching / mesh birleştirme)
 
 ## M6 — iOS Yayın 🔜
