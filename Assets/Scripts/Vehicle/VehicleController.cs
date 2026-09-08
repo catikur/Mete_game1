@@ -77,7 +77,8 @@ namespace MeteGame.Vehicle
             Body.MoveRotation(Body.rotation * Quaternion.Euler(0f, step, 0f));
 
             Vector3 want = new Vector3(dir.x, 0f, dir.y) * (maxForwardSpeed * mag);
-            horizontal = Vector3.MoveTowards(horizontal, want, acceleration * 1.35f * dt);
+            // Arcade: kütle yok sayılır; katalog ivmesi doğrudan m/s² hissi verir.
+            horizontal = Vector3.MoveTowards(horizontal, want, acceleration * 1.9f * dt);
             CurrentSpeed = horizontal.magnitude;
             Body.linearVelocity = new Vector3(horizontal.x, vel.y, horizontal.z);
         }
@@ -89,7 +90,7 @@ namespace MeteGame.Vehicle
             _hitCooldown = Time.time + 0.28f;
 
             Vector3 vel = Body.linearVelocity;
-            Vector3 horizontal = new Vector3(vel.x, 0f, vel.z) * 0.45f;
+            Vector3 horizontal = new Vector3(vel.x, 0f, vel.z) * 0.62f;
             CurrentSpeed = horizontal.magnitude;
             Body.linearVelocity = new Vector3(horizontal.x, vel.y, horizontal.z);
         }

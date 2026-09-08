@@ -111,4 +111,4 @@ Yayına hazırlanırken (M5):
 | Her şey pembe/mor görünüyor | URP ataması eksik: **Mete Oyunu → Projeyi Kur (Setup)** menüsünü çalıştır. Kenney araç/bina pembeyse **Mete Oyunu → Kenney Materyallerini URP'ye Çevir**. |
 | Şehir hâlâ kutu ev / kutu araba | FBX henüz import olmamış olabilir. Unity’yi kapatıp aç; Hierarchy’de `Kenney_taxi` var mı bak. Konsolda `Kenney modelleri yüklendi` beklenir. |
 | Kenney `.meta` dosyaları | İlk import sonrası `git add Assets/Resources/Kenney` ile meta’ları commit et. |
-| Xcode "Signing" hatası | Team seçtiğinden ve cihazda Geliştirici Modu'nun açık olduğundan emin ol. |
+| iPhone’da ses yok (Mac’te var) | Yan sessiz anahtar Unity’de oyunu keserdi; bu sürümde **Mute Other Audio Sources** açık. Unity’yi aç (ayar yazılır), **yeniden iOS Build** al. Ses hâlâ yoksa telefonun kendi sesini aç. |

@@ -12,10 +12,10 @@ namespace MeteGame.Core
         public const int CitySeed = 20260831; // Sabit: şehir her oyunda aynı kalır.
 
         // Araç
-        public const float MaxForwardSpeed = 15f;
+        public const float MaxForwardSpeed = 16.5f;
         public const float MaxReverseSpeed = 5f;
-        public const float Acceleration = 9f;
-        public const float BrakeDeceleration = 22f;
+        public const float Acceleration = 18f;
+        public const float BrakeDeceleration = 28f;
         public const float MaxSteerDegPerSec = 180f;
 
         // Görevler
