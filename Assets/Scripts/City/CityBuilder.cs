@@ -5,7 +5,7 @@ namespace MeteGame.City
 {
     /// <summary>
     /// Grid tabanlı prosedürel şehir: yollar, şerit çizgileri, kaldırımlı bloklar,
-    /// pastel binalar, ağaçlı parklar ve şehri çevreleyen çit.
+    /// Kenney (veya primitive) binalar, ağaçlı parklar ve şehri çevreleyen çit.
     /// Sabit tohum kullanır — şehir her oyunda aynıdır.
     /// </summary>
     public static class CityBuilder
@@ -134,6 +134,23 @@ namespace MeteGame.City
             float height = Mathf.Lerp(4f, 16f, (float)rng.NextDouble());
             Color color = GameConfig.BuildingPalette[rng.Next(GameConfig.BuildingPalette.Length)];
 
+            var holder = new GameObject("Building");
+            holder.transform.SetParent(parent, false);
+            holder.transform.position = new Vector3(x, 0f, z);
+
+            if (KenneyLibrary.TryAttachBuilding(holder.transform, rng, width))
+            {
+                if (KenneyLibrary.TryGetLocalBounds(holder.transform, out var bounds))
+                {
+                    var box = holder.AddComponent<BoxCollider>();
+                    box.center = bounds.center;
+                    box.size = bounds.size;
+                }
+
+                return;
+            }
+
+            Object.DestroyImmediate(holder);
             PartFactory.Create(PrimitiveType.Cube, "Building", parent,
                 new Vector3(x, 0.06f + height / 2f, z), new Vector3(width, height, depth),
                 color, withBoxCollider: true);
@@ -161,6 +178,11 @@ namespace MeteGame.City
         static void BuildTree(Transform parent, float x, float z, System.Random rng)
         {
             float s = 0.8f + (float)rng.NextDouble() * 0.6f;
+            bool large = rng.NextDouble() < 0.45;
+            float height = (large ? 7.2f : 5.4f) * s;
+            if (KenneyLibrary.TryAttachTree(parent, new Vector3(x, 0f, z), large, height))
+                return;
+
             PartFactory.Create(PrimitiveType.Cylinder, "Trunk", parent,
                 new Vector3(x, 0.8f * s, z), new Vector3(0.4f * s, 0.8f * s, 0.4f * s),
                 GameConfig.TreeTrunk);
@@ -278,10 +300,17 @@ namespace MeteGame.City
             Color body = GameConfig.CarPalette[rng.Next(GameConfig.CarPalette.Length)];
             var car = new GameObject("ParkedCar");
             car.transform.SetParent(parent, false);
-            car.transform.SetPositionAndRotation(pos + Vector3.up * 0.36f, CardinalUtil.Rotation(facing));
+            car.transform.SetPositionAndRotation(pos, CardinalUtil.Rotation(facing));
 
             var box = car.AddComponent<BoxCollider>();
             box.size = new Vector3(1.8f, 1.1f, 4.0f);
+            box.center = new Vector3(0f, 0.55f, 0f);
+
+            if (KenneyLibrary.TryAttachNamedVehicle(car.transform, KenneyLibrary.ParkedModelName(rng),
+                    new Vector3(1.8f, 1.1f, 4.0f), body))
+                return;
+
+            car.transform.position = pos + Vector3.up * 0.36f;
             box.center = new Vector3(0f, 0.2f, 0f);
 
             PartFactory.Create(PrimitiveType.Cube, "Body", car.transform,

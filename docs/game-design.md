@@ -161,8 +161,8 @@ Satın alınca seçilir. 8 boya; aracın varsayılan rengi ücretsiz, diğerleri
 - Sahneler: `Boot` (ana menü) → `City` (oyun) → `Garage` (garaj).
 - Sahne dosyaları neredeyse boştur; şehir, araç, kamera ve UI **çalışma zamanında koddan üretilir**.
   Böylece tüm oyun mantığı kod incelemesiyle takip edilebilir ve sahne birleştirme (merge) sorunları yaşanmaz.
-- İlk prototip görselleri Unity primitive'leri (kutu, silindir, küre) ile kurulur;
-  M5'te Kenney/Meshy modelleriyle değiştirilir ([asset-pipeline.md](asset-pipeline.md)).
+- Araç, bina ve ağaç görselleri Kenney CC0 FBX; yüklenmezse Unity primitive yedeği.
+  Özel Meshy modeli yok (hesap yok). Ayrıntı: [asset-pipeline.md](asset-pipeline.md), [asset-licenses.md](asset-licenses.md).
 - Girdi: eski Input Manager (dokunma UI + klavye) — sıfır yapılandırma.
 - Cloud Agent Unity Editor çalıştırmaz; görsel playtest Mac'te yapılır.
 

@@ -63,6 +63,7 @@ namespace MeteGame.EditorTools
             SetupScenes();
             SetupBuildScenes();
             SetupPlayerSettings();
+            UpgradeKenneyMaterials();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -71,7 +72,85 @@ namespace MeteGame.EditorTools
                 EditorSceneManager.OpenScene(CityScenePath);
 
             Debug.Log("[Mete Oyunu] Kurulum tamam! City sahnesi açıldı — Play'e basıp sürebilirsin. " +
-                      "Kontroller: Sol/Sağ ok (veya A/D) direksiyon, Aşağı ok/S/Boşluk geri vites.");
+                      "Kontroller: WASD/oklar = joystick yönü, H korna, Esc menü.");
+        }
+
+        [MenuItem("Mete Oyunu/Kenney Materyallerini URP'ye Çevir")]
+        public static void UpgradeKenneyMaterialsFromMenu()
+        {
+            UpgradeKenneyMaterials();
+            AssetDatabase.SaveAssets();
+            Debug.Log("[Mete Oyunu] Kenney materyalleri URP Lit olarak güncellendi.");
+        }
+
+        /// <summary>
+        /// Kenney Standard/pembe materyallerini URP Lit'e çevirir; colormap'i _BaseMap'e taşır.
+        /// Import sonrası ve kurulum menüsünden çağrılır.
+        /// </summary>
+        public static void UpgradeKenneyMaterials()
+        {
+            var shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null)
+                return;
+
+            string[] folders = { "Assets/Resources/Kenney" };
+            if (!AssetDatabase.IsValidFolder(folders[0]))
+                return;
+
+            string[] materialGuids = AssetDatabase.FindAssets("t:Material", folders);
+            int converted = 0;
+            for (int i = 0; i < materialGuids.Length; i++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(materialGuids[i]);
+                var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (material == null)
+                    continue;
+
+                Texture tex = material.mainTexture;
+                if (tex == null && material.HasProperty("_MainTex"))
+                    tex = material.GetTexture("_MainTex");
+                if (tex == null && material.HasProperty("_BaseMap"))
+                    tex = material.GetTexture("_BaseMap");
+
+                bool needsShader = material.shader == null
+                                    || material.shader.name == "Hidden/InternalErrorShader"
+                                    || material.shader.name == "Standard"
+                                    || material.shader.name.StartsWith("Legacy")
+                                    || !material.shader.name.Contains("Universal Render Pipeline");
+
+                bool dirty = false;
+                if (needsShader)
+                {
+                    material.shader = shader;
+                    converted++;
+                    dirty = true;
+                }
+
+                if (tex != null && material.HasProperty("_BaseMap") && material.GetTexture("_BaseMap") != tex)
+                {
+                    material.SetTexture("_BaseMap", tex);
+                    converted++;
+                    dirty = true;
+                }
+
+                if (material.HasProperty("_Smoothness") && !Mathf.Approximately(material.GetFloat("_Smoothness"), 0.22f))
+                {
+                    material.SetFloat("_Smoothness", 0.22f);
+                    dirty = true;
+                }
+
+                if (!material.enableInstancing)
+                {
+                    material.enableInstancing = true;
+                    dirty = true;
+                }
+
+                if (dirty)
+                    EditorUtility.SetDirty(material);
+            }
+
+            if (converted > 0)
+                Debug.Log("[Mete Oyunu] " + converted + " Kenney materyali URP Lit yapıldı.");
         }
 
         static void EnsureFolders()

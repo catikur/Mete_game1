@@ -5,7 +5,7 @@ namespace MeteGame.Vehicle
 {
     /// <summary>
     /// Primitive parçalardan oyuncu, önizleme ve NPC araçlarını kurar.
-    /// Garaj kataloğu oyuncu siluetini seçer; NPC'ler basit gövde çeşitleri kullanır.
+    /// Kenney modeli varsa onu kullanır; yoksa primitive siluete düşer.
     /// </summary>
     public static class VehicleFactory
     {
@@ -64,12 +64,17 @@ namespace MeteGame.Vehicle
             collider.center = new Vector3(0f, 0.65f, 0f);
 
             Color paint = new Color(0.18f, 0.16f, 0.2f);
-            BuildBasicCar(root.transform, paint, 4.0f, 0.62f, 0.5f, taxiSign: false);
-            PartFactory.Create(PrimitiveType.Cube, "Stripe", root.transform,
-                new Vector3(0f, 0.72f, 0f), new Vector3(1.98f, 0.16f, 3.6f),
-                new Color(0.55f, 0.12f, 0.14f));
+            var kenneySize = new Vector3(1.9f, 1.15f, 4.1f);
+            if (!KenneyLibrary.TryAttachNamedVehicle(root.transform, "sedan-sports", kenneySize, paint))
+            {
+                BuildBasicCar(root.transform, paint, 4.0f, 0.62f, 0.5f, taxiSign: false);
+                PartFactory.Create(PrimitiveType.Cube, "Stripe", root.transform,
+                    new Vector3(0f, 0.72f, 0f), new Vector3(1.98f, 0.16f, 3.6f),
+                    new Color(0.55f, 0.12f, 0.14f));
+            }
+
             var beacon = PartFactory.Create(PrimitiveType.Sphere, "Beacon", root.transform,
-                new Vector3(0f, 1.7f, -0.15f), Vector3.one * 0.55f,
+                new Vector3(0f, BeaconHeight(root.transform), -0.15f), Vector3.one * 0.55f,
                 new Color(1f, 0.55f, 0.12f));
             beacon.AddComponent<BeaconPulse>();
             PartFactory.Create(PrimitiveType.Cylinder, "ChaseBeam", root.transform,
@@ -92,12 +97,21 @@ namespace MeteGame.Vehicle
             collider.size = new Vector3(1.9f, 1.15f, bodyType == 2 ? 3.6f : 4.2f);
             collider.center = new Vector3(0f, 0.65f, 0f);
 
-            BuildNpcVisual(root.transform, color, bodyType);
+            var size = new Vector3(1.9f, 1.15f, bodyType == 2 ? 3.6f : 4.2f);
+            if (!KenneyLibrary.TryAttachNamedVehicle(root.transform, KenneyLibrary.NpcModelName(bodyType), size, color))
+                BuildNpcVisual(root.transform, color, bodyType);
             return root;
         }
 
         static void BuildCatalogVisual(Transform parent, VehicleDef def, Color bodyColor)
         {
+            if (KenneyLibrary.TryAttachCatalogVehicle(parent, def, bodyColor))
+            {
+                if (def.Style == VehicleStyle.IceCream)
+                    AddIceCreamTopper(parent);
+                return;
+            }
+
             switch (def.Style)
             {
                 case VehicleStyle.Minibus:
@@ -235,6 +249,27 @@ namespace MeteGame.Vehicle
             AddWheels(parent, 1.7f, 1.0f);
             AddWheels(parent, 0.15f, 1.0f);
             AddLights(parent, length / 2f, 0.75f);
+        }
+
+        static float BeaconHeight(Transform parent)
+        {
+            if (KenneyLibrary.TryGetLocalBounds(parent, out var bounds))
+                return bounds.max.y + 0.35f;
+            return 1.7f;
+        }
+
+        static void AddIceCreamTopper(Transform parent)
+        {
+            float roofY = 2.15f;
+            if (KenneyLibrary.TryGetLocalBounds(parent, out var bounds))
+                roofY = bounds.max.y + 0.12f;
+
+            PartFactory.Create(PrimitiveType.Sphere, "Scoop", parent,
+                new Vector3(0f, roofY, -0.35f), Vector3.one * 0.7f,
+                new Color(1f, 0.85f, 0.9f));
+            PartFactory.Create(PrimitiveType.Cylinder, "Cone", parent,
+                new Vector3(0f, roofY - 0.38f, -0.35f), new Vector3(0.38f, 0.28f, 0.38f),
+                new Color(0.92f, 0.7f, 0.35f));
         }
 
         static void BuildIceCream(Transform parent, Color bodyColor)

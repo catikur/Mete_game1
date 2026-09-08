@@ -59,7 +59,7 @@ Bağlam özeti: [progress.md](progress.md). Tasarım: [game-design.md](game-desi
 
 - [x] Görev bitince konfeti (prosedürel küpler)
 - [x] Ses: döngü müziği + hıza göre motor (dosyasız)
-- [ ] Kenney/Meshy modelleriyle görsel yükseltme (araçlar, binalar, dekorlar) — Mac’te asset
+- [x] Kenney CC0: araç, bina, ağaç (`KenneyLibrary` + primitive yedek). Meshy hesap yok; dondurma = van + top
 - [ ] Performans: draw call azaltma (static batching / mesh birleştirme)
 
 ## M6 — iOS Yayın 🔜
