@@ -29,7 +29,6 @@ namespace MeteGame.Traffic
         readonly List<MeshRenderer> _ewLamps = new List<MeshRenderer>();
 
         float _honkCooldown;
-        AudioClip _honkClip;
         bool _courtesyGiven;
 
         public static TrafficSystem Spawn(Transform parent, CityLayout layout, VehicleController player, HudController hud)
@@ -151,7 +150,7 @@ namespace MeteGame.Traffic
                 return;
 
             _honkCooldown = 0.35f;
-            PlayHonk();
+            Sfx.Honk();
             Vector3 from = _player.position;
             for (int i = 0; i < _peds.Count; i++)
             {
@@ -160,30 +159,6 @@ namespace MeteGame.Traffic
                 if ((Flat(_peds[i].transform.position) - Flat(from)).sqrMagnitude < 14f * 14f)
                     _peds[i].Startle();
             }
-        }
-
-        void PlayHonk()
-        {
-            if (_honkClip == null)
-                _honkClip = BuildHonkClip();
-            AudioSource.PlayClipAtPoint(_honkClip, _player.position, 0.85f);
-        }
-
-        static AudioClip BuildHonkClip()
-        {
-            const int hz = 22050;
-            int n = (int)(hz * 0.22f);
-            var clip = AudioClip.Create("honk", n, 1, hz, false);
-            var data = new float[n];
-            for (int i = 0; i < n; i++)
-            {
-                float t = i / (float)hz;
-                float freq = t < 0.11f ? 420f : 330f;
-                float env = 1f - i / (float)n;
-                data[i] = Mathf.Sign(Mathf.Sin(2f * Mathf.PI * freq * t)) * 0.28f * env;
-            }
-            clip.SetData(data, 0);
-            return clip;
         }
 
         void TickCourtesy()

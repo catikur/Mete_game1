@@ -45,7 +45,10 @@ namespace MeteGame.Controls
             if (mag < StickDeadzone)
                 return false;
 
-            magnitude = Mathf.Clamp01(mag);
+            // Ölü bölgeden sonra 0–1'e yay; orta itişte de gaz olsun
+            // (çocuklar çubuğu halka kenarına kadar itemez).
+            float t = Mathf.InverseLerp(StickDeadzone, 1f, mag);
+            magnitude = Mathf.Pow(Mathf.Clamp01(t), 0.55f);
             direction = stick / mag;
             return true;
         }

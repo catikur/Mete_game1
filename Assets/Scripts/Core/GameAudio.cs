@@ -7,31 +7,39 @@ namespace MeteGame.Core
     /// <summary>
     /// Dosyasız müzik + motor. Menü/garajda sadece müzik; şehirde hıza göre vınlama.
     /// Duraklatınca AudioListener.pause ile susar.
+    /// iPhone sessiz anahtarı: PlayerSettings.muteOtherAudioSources (Playback oturumu).
     /// </summary>
     public class GameAudio : MonoBehaviour
     {
         VehicleController _vehicle;
         AudioSource _music;
         AudioSource _engine;
+        bool _wantEngine;
 
         static AudioClip _musicClip;
         static AudioClip _engineClip;
 
         public static void PlayCity(Transform parent, VehicleController vehicle)
         {
+            PrepareListener();
             var audio = Create(parent);
             audio._vehicle = vehicle;
-            audio._music.volume = 0.12f;
+            audio._wantEngine = true;
+            audio._music.volume = 0.22f;
             audio.EnsureEngine();
-            audio._music.Play();
-            audio._engine.Play();
         }
 
         public static void PlayMenu(Transform parent)
         {
+            PrepareListener();
             var audio = Create(parent);
-            audio._music.volume = 0.09f;
-            audio._music.Play();
+            audio._music.volume = 0.18f;
+        }
+
+        public static void PrepareListener()
+        {
+            AudioListener.pause = false;
+            AudioListener.volume = 1f;
         }
 
         static GameAudio Create(Transform parent)
@@ -44,8 +52,38 @@ namespace MeteGame.Core
             audio._music.loop = true;
             audio._music.playOnAwake = false;
             audio._music.spatialBlend = 0f;
-            audio._music.priority = 200;
+            audio._music.priority = 32;
+            audio._music.bypassListenerEffects = true;
+            audio._music.bypassReverbZones = true;
             return audio;
+        }
+
+        void Start()
+        {
+            PrepareListener();
+            if (_music != null && !_music.isPlaying)
+                _music.Play();
+            if (_wantEngine && _engine != null && !_engine.isPlaying)
+                _engine.Play();
+        }
+
+        void OnApplicationPause(bool paused)
+        {
+            if (paused)
+                return;
+            if (Time.timeScale < 0.01f)
+                return;
+            PrepareListener();
+            if (_music != null && !_music.isPlaying)
+                _music.Play();
+            if (_wantEngine && _engine != null && !_engine.isPlaying)
+                _engine.Play();
+        }
+
+        void OnApplicationFocus(bool focused)
+        {
+            if (focused)
+                OnApplicationPause(false);
         }
 
         void EnsureEngine()
@@ -55,7 +93,9 @@ namespace MeteGame.Core
             _engine.loop = true;
             _engine.playOnAwake = false;
             _engine.spatialBlend = 0f;
-            _engine.priority = 180;
+            _engine.priority = 48;
+            _engine.bypassListenerEffects = true;
+            _engine.bypassReverbZones = true;
             _engine.volume = 0f;
         }
 
@@ -66,7 +106,7 @@ namespace MeteGame.Core
 
             float max = Mathf.Max(4f, _vehicle.maxForwardSpeed);
             float t = Mathf.Clamp01(Mathf.Abs(_vehicle.CurrentSpeed) / max);
-            float wantVol = DriveInput.Locked ? 0f : Mathf.Lerp(0.03f, 0.20f, t);
+            float wantVol = DriveInput.Locked ? 0f : Mathf.Lerp(0.06f, 0.36f, t);
             float wantPitch = Mathf.Lerp(0.86f, 1.48f, t);
             _engine.volume = Mathf.MoveTowards(_engine.volume, wantVol, Time.unscaledDeltaTime * 2.2f);
             _engine.pitch = Mathf.MoveTowards(_engine.pitch, wantPitch, Time.unscaledDeltaTime * 1.6f);
@@ -103,7 +143,6 @@ namespace MeteGame.Core
             for (int i = 0; i < n; i++)
                 data[i] = Mathf.Clamp(data[i], -0.9f, 0.9f);
 
-            // Döngü tıklamasını kes.
             int fade = Mathf.Min(400, n / 8);
             for (int i = 0; i < fade; i++)
             {

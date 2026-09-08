@@ -10,13 +10,64 @@ namespace MeteGame.Core
         static AudioClip _go;
 
         public static void Ding(Vector3 position) =>
-            AudioSource.PlayClipAtPoint(DingClip(), position, 0.7f);
+            Play2D(DingClip(), 0.85f);
 
         public static void Success(Vector3 position) =>
-            AudioSource.PlayClipAtPoint(SuccessClip(), position, 0.78f);
+            Play2D(SuccessClip(), 0.9f);
 
         public static void Go(Vector3 position) =>
-            AudioSource.PlayClipAtPoint(GoClip(), position, 0.62f);
+            Play2D(GoClip(), 0.8f);
+
+        public static void Honk() =>
+            Play2D(HonkClip(), 0.92f);
+
+        static AudioSource _bus;
+
+        static AudioSource Bus()
+        {
+            if (_bus != null)
+                return _bus;
+
+            var go = new GameObject("SfxBus");
+            Object.DontDestroyOnLoad(go);
+            _bus = go.AddComponent<AudioSource>();
+            _bus.playOnAwake = false;
+            _bus.spatialBlend = 0f;
+            _bus.priority = 40;
+            _bus.bypassListenerEffects = true;
+            _bus.bypassReverbZones = true;
+            return _bus;
+        }
+
+        public static void Play2D(AudioClip clip, float volume)
+        {
+            if (clip == null)
+                return;
+            GameAudio.PrepareListener();
+            Bus().PlayOneShot(clip, volume);
+        }
+
+        static AudioClip _honk;
+
+        static AudioClip HonkClip()
+        {
+            if (_honk != null)
+                return _honk;
+            const int hz = 22050;
+            int n = (int)(hz * 0.22f);
+            var clip = AudioClip.Create("honk", n, 1, hz, false);
+            var data = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = i / (float)hz;
+                float freq = t < 0.11f ? 420f : 330f;
+                float env = 1f - i / (float)n;
+                data[i] = Mathf.Sign(Mathf.Sin(2f * Mathf.PI * freq * t)) * 0.42f * env;
+            }
+            clip.SetData(data, 0);
+            _honk = clip;
+            return _honk;
+        }
 
         static AudioClip DingClip()
         {

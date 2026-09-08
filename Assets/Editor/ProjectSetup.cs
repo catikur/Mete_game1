@@ -33,6 +33,8 @@ namespace MeteGame.EditorTools
         {
             EditorApplication.delayCall += () =>
             {
+                if (!PlayerSettings.muteOtherAudioSources)
+                    PlayerSettings.muteOtherAudioSources = true;
                 if (!IsSetupComplete())
                     RunSetup();
             };
@@ -246,6 +248,8 @@ namespace MeteGame.EditorTools
             PlayerSettings.productName = "Mete'nin Oyunu";
             PlayerSettings.bundleVersion = "0.1.0";
             PlayerSettings.colorSpace = ColorSpace.Linear;
+            // iPhone sessiz anahtarı (yan düğme) oyunu susturmasın — oyun Playback oturumu kullanır.
+            PlayerSettings.muteOtherAudioSources = true;
 
             // Yatay (landscape) yönelim — sürüş oyunu için doğru format.
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;

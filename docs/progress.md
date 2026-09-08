@@ -2,7 +2,7 @@
 
 Bu dosya, Mete'nin Oyunu'nun **şu ana kadarki tüm kararlarını, kod durumunu ve Mac test döngüsünü** tek yerde tutar. Yeni bir oturum / ajan buradan başlayabilir.
 
-Son güncelleme: **2026-09-08** — Kenney CC0 görseller (araç, bina, ağaç) + primitive yedek.
+Son güncelleme: **2026-09-08** — Taksi ivmesi + iPhone sesi (sessiz anahtar).
 
 Repo: `https://github.com/catikur/Mete_game1`  
 Dal şablonu: `cursor/<kısa-ad>-26ab`  
@@ -198,6 +198,13 @@ Cloud Agent Unity açamaz ama Kenney zip’ini OpenGameArt’tan indirdi (CC0).
 
 ---
 
+Playtest (Kenney + iPhone): görseller beğenildi; taksi ivmesi yavaş, telefonda ses yoktu.
+
+- İvme: taksi 9→18 m/s² (tam hıza ~0.5 sn), araç türüne göre kademe (itfaiye yavaş, yarış/polis hızlı). Joystick orta itişte de gaz (eğri).
+- Ses: iPhone sessiz anahtarı Ambient oturumunu kesiyordu → `muteOtherAudioSources`. SFX 2D (kuşbakışı kamerada 3D clip duyulmuyordu). Müzik/motor sesi yükseltildi.
+
+---
+
 ## Bilinçli olarak henüz yok
 
 - Meshy özel modeller (hesap/API yok; kanca hazır)
@@ -209,9 +216,9 @@ Cloud Agent Unity açamaz ama Kenney zip’ini OpenGameArt’tan indirdi (CC0).
 
 ## Sıradaki plan (playtest sırası)
 
-1. **Kenney dalı** — Mac’te Play: şehir ev gibi mi, araçlar tanınır mı, pembe var mı, Mete tanıyor mu.
+1. **Bu dal** — taksi ivmesi + iPhone ses. Unity aç → iOS Build → Xcode → telefon.
 2. İsteğe bağlı Meshy dondurma kamyonu (`Resources/Vehicles/dondurma`).
-3. **iOS** — ikon, açılış ekranı, TestFlight, Made for Kids.
+3. **iOS cila** — ikon, açılış ekranı, TestFlight, Made for Kids.
 
 ---
 

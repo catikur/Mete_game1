@@ -23,6 +23,7 @@ namespace MeteGame.Core
             DriveInput.Locked = false;
             DriveInput.ResetTouch();
             SceneFlow.ResumeTime();
+            GameAudio.PrepareListener();
 
             var layout = CityBuilder.Build(transform);
             Vector3 spawn = layout.PlayerSpawnPosition;
