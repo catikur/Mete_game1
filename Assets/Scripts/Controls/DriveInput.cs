@@ -3,19 +3,14 @@ using UnityEngine;
 namespace MeteGame.Controls
 {
     /// <summary>
-    /// Sürüş girdisi: sol başparmak gaz/geri/bip, sağ başparmak yön joystick'i.
-    /// Editörde klavye yedek (W gaz, A/D dönüş, S geri, H korna).
+    /// Tek el sürüş: sağ joystick (veya WASD) hem yön hem gaz.
+    /// Çubuğu ittiğin dünya yönüne araç yürür; bırakınca durur.
+    /// Sol BİP korna. Editörde H korna, Esc duraklatma.
     /// </summary>
     public static class DriveInput
     {
-        /// <summary>Joystick: x sağ, y yukarı (ekran / dünya kuzeyi). 0 = ortada.</summary>
+        /// <summary>Joystick: x sağ (doğu), y yukarı (kuzey). 0 = ortada.</summary>
         public static Vector2 TouchStick;
-
-        /// <summary>GAZ butonuna basılı mı?</summary>
-        public static bool TouchThrottle;
-
-        /// <summary>GERİ butonuna basılı mı?</summary>
-        public static bool TouchReverse;
 
         /// <summary>Korna butonuna basılı mı?</summary>
         public static bool HonkHeld;
@@ -23,62 +18,52 @@ namespace MeteGame.Controls
         /// <summary>Görev teklifi açıkken oyuncu aracı durur; şehir yaşamaya devam eder.</summary>
         public static bool Locked;
 
-        public const float StickDeadzone = 0.22f;
+        public const float StickDeadzone = 0.18f;
 
         public static void ResetTouch()
         {
             TouchStick = Vector2.zero;
-            TouchThrottle = false;
-            TouchReverse = false;
             HonkHeld = false;
         }
 
-        public static bool Throttle
-        {
-            get
-            {
-                if (Locked)
-                    return false;
-                return TouchThrottle
-                       || Input.GetKey(KeyCode.UpArrow)
-                       || Input.GetKey(KeyCode.W);
-            }
-        }
-
         /// <summary>
-        /// Joystick yönü varsa aracı o dünyaya (ekran yukarı = kuzey) çevir.
-        /// Yoksa false — klavye A/D ile göreli dönüş kullanılır.
+        /// Dünya düzleminde gidiş. x = doğu, y = kuzey. magnitude 0–1 (itme miktarı).
+        /// Yoksa false — araç frenler.
         /// </summary>
-        public static bool TryGetAimYaw(out float yawDegrees)
+        public static bool TryGetMove(out Vector2 direction, out float magnitude)
         {
-            yawDegrees = 0f;
+            direction = Vector2.zero;
+            magnitude = 0f;
             if (Locked)
                 return false;
-            if (TouchStick.sqrMagnitude < StickDeadzone * StickDeadzone)
+
+            Vector2 stick = TouchStick;
+            if (stick.sqrMagnitude < StickDeadzone * StickDeadzone)
+                stick = KeyboardStick();
+
+            float mag = stick.magnitude;
+            if (mag < StickDeadzone)
                 return false;
-            yawDegrees = Mathf.Atan2(TouchStick.x, TouchStick.y) * Mathf.Rad2Deg;
+
+            magnitude = Mathf.Clamp01(mag);
+            direction = stick / mag;
             return true;
         }
 
-        public static float Steer
+        static Vector2 KeyboardStick()
         {
-            get
-            {
-                if (Locked)
-                    return 0f;
-                float keyboard = 0f;
-                if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
-                    keyboard -= 1f;
-                if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
-                    keyboard += 1f;
-                return Mathf.Clamp(keyboard, -1f, 1f);
-            }
+            Vector2 key = Vector2.zero;
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+                key.y += 1f;
+            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+                key.y -= 1f;
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+                key.x += 1f;
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+                key.x -= 1f;
+            if (key.sqrMagnitude > 1f)
+                key.Normalize();
+            return key;
         }
-
-        public static bool Reverse =>
-            !Locked && (
-                TouchReverse
-                || Input.GetKey(KeyCode.DownArrow)
-                || Input.GetKey(KeyCode.S));
     }
 }

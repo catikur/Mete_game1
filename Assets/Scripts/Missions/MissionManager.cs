@@ -191,6 +191,7 @@ namespace MeteGame.Missions
             ClearThief();
 
             Sfx.Success(_vehicle.transform.position);
+            ConfettiBurst.Play(_vehicle.transform.position);
             _hud.ShowCelebration(coins, stars, perfect, data.currentStreak);
 
             StartCoroutine(OfferAfterDelay(2.6f));

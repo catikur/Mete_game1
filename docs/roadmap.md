@@ -12,10 +12,10 @@ Bağlam özeti: [progress.md](progress.md). Tasarım: [game-design.md](game-desi
 ## M1 — Sürülebilir Prototip ✅
 
 - [x] Prosedürel şehir: yollar, şerit çizgileri, kaldırımlar, binalar, parklar, çevre çiti
-- [x] Arcade araç: GAZ basılı = hızlan, bırak = fren; joystick ile yön; geri vites; yumuşak çarpışma
+- [x] Arcade araç: **tek joystick** itince o yöne gider, bırakınca durur; yumuşak çarpışma
 - [x] Primitive'lerden araç gövdesi (kasa, kabin, tekerlekler, farlar)
 - [x] Kuzeyi sabit, eğimli takip kamerası (look-ahead + hızda FOV)
-- [x] Sol alt GAZ / GERİ / BİP + sağ alt şeffaf yön joystick'i (ekran yönü = araç burnu); editörde klavye
+- [x] Sağ alt sürüş joystick'i + sol **BİP**; editörde WASD
 
 ## M2 — Görev Sistemi ✅
 
@@ -55,11 +55,11 @@ Bağlam özeti: [progress.md](progress.md). Tasarım: [game-design.md](game-desi
 - [x] Ana menüden ve şehirden garaja geçiş (görev sırasında kilitli)
 - [x] Oynarken **MENÜ** / duraklatma, ana menüye çıkış, kaldığın yerden devam
 
-## M5 — İçerik ve Cila 🔜 *(sıradaki büyük özellik)*
+## M5 — İçerik ve Cila 🔜
 
-- [ ] Kenney/Meshy modelleriyle görsel yükseltme (araçlar, binalar, dekorlar)
-- [ ] Ses: müzik, motor sesi, kutlama jingle'ı (prosedürel ding'lerin üzerine)
-- [ ] Konfeti/partikül kutlamaları
+- [x] Görev bitince konfeti (prosedürel küpler)
+- [x] Ses: döngü müziği + hıza göre motor (dosyasız)
+- [ ] Kenney/Meshy modelleriyle görsel yükseltme (araçlar, binalar, dekorlar) — Mac’te asset
 - [ ] Performans: draw call azaltma (static batching / mesh birleştirme)
 
 ## M6 — iOS Yayın 🔜

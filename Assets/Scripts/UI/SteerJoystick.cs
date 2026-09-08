@@ -6,9 +6,8 @@ using UnityEngine.UI;
 namespace MeteGame.UI
 {
     /// <summary>
-    /// Sağ alt şeffaf yön joystick'i. Kamera kuzeyi sabit olduğu için
-    /// çubuk yukarı = kuzey, sağ = doğu: araç burnu o yöne döner.
-    /// İleride aynı yere direksiyon konabilir.
+    /// Sağ alt sürüş joystick'i: ittiğin yön = gidiş yönü (ekran yukarı = kuzey).
+    /// Bırakınca araç durur. Tek el yeter.
     /// </summary>
     public class SteerJoystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
@@ -20,25 +19,25 @@ namespace MeteGame.UI
 
         public static SteerJoystick Build(Transform parent)
         {
-            const float size = 360f;
-            const float knobSize = 140f;
+            const float size = 420f;
+            const float knobSize = 168f;
 
             var range = UIFactory.CreateIcon("SteerJoystick", parent,
                 new Vector2(1f, 0f), new Vector2(1f, 0f),
-                new Vector2(-214f, 214f), new Vector2(size, size),
-                UIFactory.CircleSprite, new Color(1f, 1f, 1f, 0.18f));
+                new Vector2(-250f, 250f), new Vector2(size, size),
+                UIFactory.CircleSprite, new Color(1f, 1f, 1f, 0.28f));
             range.raycastTarget = true;
 
             // Dört yön işareti: ekran yukarı/aşağı/sağ/sol = dünya kuzey/güney/doğu/batı.
-            PlacePip(range.transform, 0f, 122f, 0f);
-            PlacePip(range.transform, 0f, -122f, 180f);
-            PlacePip(range.transform, 122f, 0f, -90f);
-            PlacePip(range.transform, -122f, 0f, 90f);
+            PlacePip(range.transform, 0f, 148f, 0f);
+            PlacePip(range.transform, 0f, -148f, 180f);
+            PlacePip(range.transform, 148f, 0f, -90f);
+            PlacePip(range.transform, -148f, 0f, 90f);
 
             var knob = UIFactory.CreateIcon("Knob", range.transform,
                 new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
                 Vector2.zero, new Vector2(knobSize, knobSize),
-                UIFactory.CircleSprite, new Color(1f, 1f, 1f, 0.42f));
+                UIFactory.CircleSprite, new Color(0.35f, 0.85f, 0.45f, 0.72f));
             knob.raycastTarget = false;
 
             var stick = range.gameObject.AddComponent<SteerJoystick>();

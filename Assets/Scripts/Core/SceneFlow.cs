@@ -56,6 +56,7 @@ namespace MeteGame.Core
         public static void ResumeTime()
         {
             Time.timeScale = 1f;
+            AudioListener.pause = false;
         }
 
         static bool ApplicationCanLoad(string sceneName)
