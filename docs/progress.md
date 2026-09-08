@@ -2,7 +2,7 @@
 
 Bu dosya, Mete'nin Oyunu'nun **şu ana kadarki tüm kararlarını, kod durumunu ve Mac test döngüsünü** tek yerde tutar. Yeni bir oturum / ajan buradan başlayabilir.
 
-Son güncelleme: **2026-09-08** — Tek el sürüş + döngü müziği ve hıza göre motor sesi.
+Son güncelleme: **2026-09-08** — Kenney CC0 görseller (araç, bina, ağaç) + primitive yedek.
 
 Repo: `https://github.com/catikur/Mete_game1`  
 Dal şablonu: `cursor/<kısa-ad>-26ab`  
@@ -35,7 +35,7 @@ Sahip: catikur. Dil: Türkçe (oyuncu metinleri ve bu dokümanlar).
 | İlk Mac açılışı | `Assets/Editor/ProjectSetup.cs` (menü: **Mete Oyunu → Projeyi Kur**) |
 | Girdi | Eski Input Manager + UI (Input System yok) |
 | Kayıt | `Application.persistentDataPath/save.json` |
-| Görsel | Şimdilik Unity primitive'leri; Kenney + Meshy sonra (M5) |
+| Görsel | Kenney CC0 FBX (`Resources/Kenney/…`); yoksa primitive. Meshy yok (hesap yok) |
 
 Cloud Agent **Unity açamaz**. Değişiklikler kod + doküman; görsel doğrulama Mac'te Play ile yapılır.
 
@@ -50,6 +50,8 @@ Cloud Agent **Unity açamaz**. Değişiklikler kod + doküman; görsel doğrulam
 4. `City` sahnesi, Game view **16:9 landscape**, **Play**. Ana menüden **GARAJ** veya şehirde sağ üst.
 
 İlk açılışta Garage sahnesi yoksa **Mete Oyunu → Projeyi Kur** (otomatik de ekler). Sahne olmasa bile garaj koddan kurulur.
+
+Kenney FBX ilk import’ta `.meta` üretir — bunları commit et. Pembe Kenney: **Mete Oyunu → Kenney Materyallerini URP'ye Çevir**. Konsolda `Kenney modelleri yüklendi` yoksa primitive yedek çalışıyordur (oyun yine oynanır).
 
 Editör kontrolleri: **WASD / oklar** = çubuk (ittiğin yön = gidiş), **H** korna, **Esc** duraklat. Game’de sağ alttaki yeşil topu sürükle.
 
@@ -148,7 +150,7 @@ Menüde turuncu **GARAJ**, şehirde sağ üst **GARAJ**. Görev sırasında şeh
 
 ```
 Assets/Scripts/
-  Core/         GameBootstrap, GameConfig, SaveManager, SaveData, GarageShop, SceneFlow, PartFactory, MaterialLibrary, Sfx, ConfettiBurst, GameAudio
+  Core/         GameBootstrap, GameConfig, SaveManager, SaveData, GarageShop, SceneFlow, PartFactory, MaterialLibrary, KenneyLibrary, Sfx, ConfettiBurst, GameAudio
   City/         CityBuilder, CityLayout, CardinalDir (UnityEngine.Compass ile çakışmasın diye Compass değil)
   Traffic/      TrafficSystem, TrafficCar, Pedestrian
   Vehicle/      VehicleDef, VehicleCatalog, VehicleController, VehicleFactory
@@ -157,8 +159,8 @@ Assets/Scripts/
   Missions/     Mission, MissionClock, MissionGenerator, MissionManager, MissionMarker, CargoBob, ThiefCar
   Garage/       GarageBootstrap
   UI/           HudController, SteerJoystick, HoldButton, UIFactory, MainMenuController
-Assets/Editor/  ProjectSetup.cs (Boot + City + Garage sahneleri)
-docs/           game-design, roadmap, mac-setup, asset-pipeline, progress (bu dosya)
+Assets/Editor/  ProjectSetup.cs, KenneyAssetPostprocessor.cs
+docs/           game-design, roadmap, mac-setup, asset-pipeline, asset-licenses, progress (bu dosya)
 ```
 
 Sahneler Play'de koddan: `Boot` menü, `City` oyun, `Garage` podyum. Sahne yoksa garaj yerinde kurulur.
@@ -179,13 +181,26 @@ Sahneler Play'de koddan: `Boot` menü, `City` oyun, `Garage` podyum. Sahne yoksa
 | #8 | Garaj, 8 araç, polis, hırsız kovalama |
 | #9 | MENÜ / duraklatma, kaydet, kaldığın yerden devam |
 
-Playtest sırası: joystick+gaz (eski) Mete’ye zor geldi → **tek çubuk (bu dal)**.
+Playtest sırası: joystick+gaz (eski) Mete’ye zor geldi → **tek çubuk**. Kenney görseller ayrı dalda (joystick’in üstünde).
+
+---
+
+## Kenney görseller (M5, bu dal)
+
+Cloud Agent Unity açamaz ama Kenney zip’ini OpenGameArt’tan indirdi (CC0).
+
+- `KenneyLibrary`: `Resources.Load`, collider/parsel ölçeği, boya property block, import collider silme.
+- Katalog eşlemesi: taksi→taxi, minibüs→van, kamyonet→truck-flat, ambulans, polis, itfaiye, yarış→race, dondurma→van+külah.
+- NPC sedan/suv/hatchback; hırsız sedan-sports; park karışık.
+- Bina `building-type-a`–`u`, ağaç large/small. Yollar hâlâ prosedürel.
+- Meshy: hesap yok, model uydurulmadı. Özel FBX ileride `Resources/Vehicles/<id>`.
+- İlk Mac Play: FBX import + `.meta` commit. Pembe → URP çevir menüsü.
 
 ---
 
 ## Bilinçli olarak henüz yok
 
-- Kenney/Meshy modeller (M5)
+- Meshy özel modeller (hesap/API yok; kanca hazır)
 - TestFlight / Made for Kids başvurusu (M6)
 - Görev başarısızlığı, can, kaza fiziği, kırmızı ışık cezası — **yapılmayacak**
 - İki elli gaz + direksiyon — playtest’te kalktı; tek joystick kaldı
@@ -194,18 +209,15 @@ Playtest sırası: joystick+gaz (eski) Mete’ye zor geldi → **tek çubuk (bu 
 
 ## Sıradaki plan (playtest sırası)
 
-1. **Bu dal** — tek joystick + müzik/motor. Mac’te Mete ile dene.
-2. **Kenney/Meshy** — Mac’te asset indirip primitive’lerin yerine koymak (Cloud Agent model üretemez).
+1. **Kenney dalı** — Mac’te Play: şehir ev gibi mi, araçlar tanınır mı, pembe var mı, Mete tanıyor mu.
+2. İsteğe bağlı Meshy dondurma kamyonu (`Resources/Vehicles/dondurma`).
 3. **iOS** — ikon, açılış ekranı, TestFlight, Made for Kids.
-
-Bir anda bir playtest konusu: önce Mete’nin tek elle sürüp sürmediği.
 
 ---
 
-## Bu dalda değişen dosyalar (tek joystick)
+## Bu dalda değişen dosyalar (Kenney)
 
-- `DriveInput`, `VehicleController`: it = o yöne yürü, bırak = dur
-- HUD: GAZ/GERİ kalktı, BİP solda, joystick büyüdü
-- `ConfettiBurst` görev kutlamasında
-- `GameAudio`: menü/garaj müziği, şehirde hıza göre motor; MENÜ sesi durdurur
-- dokümanlar (kontroller + sıradaki plan)
+- `Assets/Resources/Kenney/` — Car Kit + Suburban FBX (alt küme) + colormap
+- `KenneyLibrary`, `VehicleFactory`, `CityBuilder`
+- `KenneyAssetPostprocessor`, `ProjectSetup` URP çevirme
+- `docs/asset-licenses.md`, asset-pipeline, progress, README

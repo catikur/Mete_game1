@@ -14,6 +14,7 @@ Rengarenk, low-poly bir şehirde araba sürersin. Şiddet yok, kaybetme yok:
 - **Şehir hayatı:** Başka arabalar, yayalar, trafik lambaları, yaya geçitleri. Kırmızıda durmak zorunlu değil; durursan küçük bir yıldız ödülü var.
 - **Ödüller:** Altın, yıldız, zamanında seri.
 - **Garaj:** Altınla 8 araç aç (polis dahil), renk seç, şehirde onunla sür.
+- **Görsel:** Kenney low-poly araç/bina/ağaç (CC0). Model yüklenmezse kutu-silindir yedek. Dondurma kamyonu: van + külah.
 - **Ses:** Menüde ve şehirde neşeli döngü müziği; hızlanınca motor vınlar. Duraklatınca susar.
 - **Çıkış / kayıt:** Oynarken sağ üst **MENÜ** → ana menü. Kaldığın yer kaydolur; sonraki açılışta **DEVAM ET**.
 
@@ -47,7 +48,8 @@ Tek el: çubuğu çevirdiğin yere araç gider. Gaz / geri butonu yok.
 | [docs/game-design.md](docs/game-design.md) | Oyun tasarımı: görevler, süreler, ekonomi, güvenlik |
 | [docs/roadmap.md](docs/roadmap.md) | Yol haritası (M0–M4 bitti, sırada cila) |
 | [docs/mac-setup.md](docs/mac-setup.md) | Mac kurulumu, iOS build ve TestFlight |
-| [docs/asset-pipeline.md](docs/asset-pipeline.md) | Kenney ve Meshy ile 3D model üretim akışı |
+| [docs/asset-pipeline.md](docs/asset-pipeline.md) | Kenney bağlama + Meshy kancası |
+| [docs/asset-licenses.md](docs/asset-licenses.md) | Kenney CC0 (ve ileride Meshy) |
 
 ## Proje Yapısı
 
@@ -64,6 +66,7 @@ Assets/
 │   ├── Missions/    Görev üretici, iki aşamalı süre, işaretler
 │   ├── Garage/      Garaj: podyum, satın al, boya
 │   └── UI/          Kod ile üretilen arayüz (HUD, menü, butonlar)
+├── Resources/       Kenney CC0 FBX (Vehicles + City) + Materials
 ├── Scenes/          Boot, City, Garage — otomatik oluşturulur
 └── Settings/        URP render ayarları — otomatik oluşturulur
 docs/                Tasarım, ilerleme ve kurulum dokümanları
@@ -72,5 +75,5 @@ docs/                Tasarım, ilerleme ve kurulum dokümanları
 ## Teknoloji
 
 - **Unity 6.3 LTS** (6000.3.x) + **URP** (mobil performans)
-- Şehir, araçlar ve arayüz tamamen **koddan üretilir** — ilk prototip hiçbir 3D model dosyasına ihtiyaç duymaz; görsel yükseltme [asset pipeline](docs/asset-pipeline.md) ile yapılır.
+- Şehir ızgarası ve arayüz **koddan üretilir**. Araç/bina/ağaç Kenney FBX (yoksa primitive). [asset pipeline](docs/asset-pipeline.md), [lisanslar](docs/asset-licenses.md).
 - Çocuk güvenliği: reklam yok, uygulama içi satın alma yok, internet bağlantısı gerekmez, veri toplanmaz.

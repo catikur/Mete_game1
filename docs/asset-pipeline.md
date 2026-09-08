@@ -1,75 +1,79 @@
 # Asset Üretim Akışı (Kenney + Meshy)
 
-İlk prototip tamamen Unity primitive'leriyle (kutu, silindir, küre) çalışır — hiçbir model
-dosyası gerekmez. Bu doküman, **M5**'te görselleri gerçek 3D modellerle değiştirme akışını anlatır.
+İlk prototip Unity primitive'leriyle çalışır. **M5** ile Kenney CC0 modelleri `Resources` altına kondu;
+yüklenemezse primitive'e düşülür. Meshy özel araçları aynı kancaya takılır.
 
 ## Strateji
 
-1. **Temel set: Kenney (ücretsiz, CC0)** — şehir, yol ve araç modellerinin ana kaynağı.
-2. **Özel araçlar: Meshy (AI ile üretim)** — katalogda olmayan, oyuna özgü sevimli araçlar için.
-3. Kod tarafı hazır: araç ve şehir üreticileri primitive yerine prefab kullanacak şekilde
-   genişletilecek (bkz. `VehicleFactory`, `CityBuilder`).
+1. **Temel set: Kenney (CC0)** — araç, bina, ağaç. Cloud Agent bu paketleri indirdi.
+2. **Özel araçlar: Meshy** — hesap gerekir. Şu an dosya yok; dondurma kamyonu Kenney van + primitive top.
+3. Kod: `KenneyLibrary` → `VehicleFactory` / `CityBuilder`. Prefab yoksa primitive.
 
-## 1. Kenney Paketleri (kenney.nl)
+Lisans özeti: [asset-licenses.md](asset-licenses.md).
 
-[Kenney](https://kenney.nl/assets) tüm paketlerini **CC0** (kaynak gösterme gerektirmez,
-ticari kullanım serbest) lisansla dağıtır. Önerilen paketler:
+## 1. Kenney (repoda)
 
-| Paket | İçerik |
+| Katalog id | Kenney FBX |
 |---|---|
-| **Car Kit** | ~50 low-poly araç: taksi, ambulans, itfaiye, polis, yarış arabası... |
-| **City Kit (Roads)** | Modüler yol parçaları, kavşaklar |
-| **City Kit (Suburban)** / **Commercial** | Binalar, evler, dükkânlar |
-| **Nature Kit** | Ağaçlar, çalılar, park öğeleri |
+| `taksi` | `taxi` |
+| `minibus` | `van` |
+| `kamyonet` | `truck-flat` |
+| `ambulans` | `ambulance` |
+| `polis` | `police` |
+| `itfaiye` | `firetruck` |
+| `dondurma` | `van` + primitive külah/top (pakette dondurma kamyonu yok) |
+| `yaris` | `race` |
 
-### İçe aktarma
+NPC: `sedan` / `suv` / `hatchback-sports`. Hırsız: `sedan-sports`. Park: taksi/sedan/suv/van/hatchback.
 
-1. Paketi indir, zip içinden `Models/FBX format/` klasörünü bul.
-2. Unity'de `Assets/Art/Kenney/<PaketAdı>/` klasörüne sürükle.
-3. Model import ayarları: **Scale Factor** kontrol et (Kenney modelleri genelde 1 birim = 1 m),
-   **Generate Colliders** kapalı kalsın (collider'ları kod ekliyor).
-4. Materyaller: model başına tek renk paleti tekstürü gelir — URP'ye otomatik dönüşmezse
-   model seçiliyken **Materials → Extract Materials** yap, shader'ı `Universal Render Pipeline/Lit` seç.
+Binalar: `building-type-a` … `u`. Ağaçlar: `tree-large`, `tree-small`.
 
-## 2. Meshy ile Özel Araç Üretimi (meshy.ai)
+Yollar **prosedürel kalır** (City Kit Roads alınmadı — grid zaten kodda).
 
-[Meshy](https://www.meshy.ai) metinden 3D model üretir. Ücretsiz katman deneme için yeterli;
-üretilen modellerin ticari kullanım hakları için mevcut plan koşullarını kontrol et.
+Klasör:
 
-### Prompt şablonu
+```
+Assets/Resources/Kenney/Vehicles/*.fbx + Textures/colormap.png
+Assets/Resources/Kenney/City/*.fbx + Textures/colormap.png
+```
 
-Tutarlı bir görsel dil için hep aynı stil kalıbını kullan:
+### Mac'te ilk açılış
+
+1. Unity 6.3 LTS projeyi açar; FBX import edilir (`.meta` oluşur — commit et).
+2. `KenneyAssetPostprocessor`: collider kapalı, ölçek 1, colormap nokta örnekleme, URP.
+3. Pembe model: **Mete Oyunu → Projeyi Kur** veya **Kenney Materyallerini URP'ye Çevir**.
+4. Play. Konsol: `[Mete Oyunu] Kenney modelleri yüklendi.`
+5. FBX henüz yoksa / import kırıkssa primitive görünür; oyun oynanır.
+
+Kenney araçları collider boyutuna ölçeklenir. Binalar parsel genişliğine, ağaçlar hedef yüksekliğe sığar.
+
+Garaj boyası colormap’i yumuşak çarpar (`MaterialPropertyBlock`). Cam da biraz boyanır — primitive boya kadar temiz değil, kabul.
+
+## 2. Meshy (Mac + hesap)
+
+Cloud Agent Meshy modeli üretemez. Mac’te:
+
+1. [meshy.ai](https://www.meshy.ai) Text to 3D → Refine → FBX, 10 binden az üçgen.
+2. Prompt kalıbı:
 
 ```
 cute cartoon low-poly <ARAÇ>, bright cheerful colors, toy-like proportions,
 rounded edges, simple flat shading, game-ready asset, single mesh, no background
 ```
 
-Örnekler: `ice cream truck`, `school bus`, `tow truck with hook`, `little fire truck`.
+3. `Assets/Resources/Vehicles/<araç-id>` (ör. `dondurma`) olarak koy. Aynı id Kenney’den önce yüklenir.
+4. Ölçek: `KenneyLibrary` collider kutusuna sığdırır.
+5. Lisansı `docs/asset-licenses.md` tablosuna yaz.
 
-### Üretim adımları
+## 3. Bağlama (yapıldı)
 
-1. **Text to 3D** ile üret → beğendiğin varyantı seç → **Refine**.
-2. Poligon hedefi: araç başına **< 10.000 üçgen** (mobil bütçesi).
-3. **FBX** formatında dışa aktar (Unity glTF/GLB'yi doğrudan okumaz).
-4. `Assets/Art/Meshy/Vehicles/` klasörüne at; tekstürü aynı klasöre koy.
-5. Ölçek kontrolü: araç uzunluğu ~4 m olacak şekilde import Scale Factor ayarla
-   (sahneye at, primitive taksiyle karşılaştır).
+- `Resources/Vehicles/<id>` **veya** `Resources/Kenney/Vehicles/<model>` varsa o kullanılır.
+- `CityBuilder` bina/ağaç/park araçlarında Kenney arar.
+- Yoksa primitive (oyun bozulmaz).
 
-## 3. Modellerin Oyuna Bağlanması (M5'te yapılacak)
+## 4. Kontrol listesi (yeni model)
 
-Plan şu şekilde:
-
-- `Assets/Resources/Vehicles/<araç-id>.prefab` varsa `VehicleFactory` primitive gövde yerine
-  bu prefabı yükleyecek; yoksa primitive'e düşecek (fallback).
-- `CityBuilder` bina/ağaç üretiminde aynı desenle `Resources/City/` prefablarını arayacak.
-- Böylece modeller **teker teker, oyunu hiç bozmadan** eklenebilir.
-
-## 4. Kontrol Listesi (her yeni model için)
-
-- [ ] Üçgen sayısı bütçede mi? (araç < 10k, bina < 2k, ağaç < 500)
-- [ ] Ölçek doğru mu? (araç ~4 m, bina katı ~3 m)
-- [ ] Pivot noktası modelin **alt-merkezinde** mi?
-- [ ] Materyal URP Lit mi? (pembe görünüyorsa değildir)
-- [ ] Tek materyal/tekstür mü? (draw call bütçesi)
-- [ ] Lisans notu `docs/asset-licenses.md` dosyasına eklendi mi? (dosyayı ilk modelle birlikte oluştur)
+- [ ] Üçgen bütçesi (araç 10k altı, bina 2k altı, ağaç 500 altı)
+- [ ] Pivot alt-merkez (Kenney böyle)
+- [ ] Materyal URP Lit (pembe değil)
+- [ ] `docs/asset-licenses.md` güncel
