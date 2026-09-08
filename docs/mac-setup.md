@@ -47,11 +47,10 @@ git clone https://github.com/catikur/Mete_game1.git
 
 ### Editörde test kontrolleri
 
-- Gaz: **W** veya Yukarı ok; Game görünümünde sol alttaki **GAZ** butonu
-- Yön: **A/D** veya sağ alttaki şeffaf joystick'i fareyle sürükle (çubuk yönü = araç burnu)
-- Fren: gazı / W'yu bırak
-- Geri: **S** veya Aşağı ok, ya da **GERİ** butonu
+- Sürüş: **WASD** veya oklar (ittiğin yön = gidiş); Game’de sağ alttaki **yeşil top**u sürükle
+- Fren: çubuğu / tuşu bırak
 - Korna: **H** veya **BİP**
+- Duraklat: **Esc** veya **MENÜ**
 - Garaj: ana menü **GARAJ** veya şehirde sağ üst. Oklar: A/D, Esc geri, Space satın al/seç
 - Game penceresinin en-boy oranını **16:9 Landscape** yapmayı unutma.
 

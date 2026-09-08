@@ -9,7 +9,7 @@ namespace MeteGame.UI
 {
     /// <summary>
     /// Oyun içi arayüz: sayaçlar, görev oku, iki aşamalı süre,
-    /// sol gaz/geri/bip, sağ yön joystick'i, görev teklifi ve kutlama.
+    /// sol BİP, sağ sürüş joystick'i, görev teklifi ve kutlama.
     /// </summary>
     public class HudController : MonoBehaviour
     {
@@ -211,39 +211,18 @@ namespace MeteGame.UI
             _hintText = UIFactory.CreateText("Hint", root,
                 new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
                 new Vector2(0f, 430f), new Vector2(1500f, 70f),
-                "Sol: gaz / geri / bip    •    Sağ: yön", 36,
+                "Sağ çubuğu it: araç o yöne gider    •    Bırak: durur", 36,
                 new Color(1f, 1f, 1f, 0.9f));
-
-            // Sol alt küme: GERİ + BİP üstte, büyük GAZ altta.
-            var reverse = UIFactory.CreateIcon("ReverseButton", root,
-                new Vector2(0f, 0f), new Vector2(0f, 0f),
-                new Vector2(108f, 360f), new Vector2(150f, 150f),
-                UIFactory.CircleSprite, new Color(0.95f, 0.35f, 0.3f, 0.58f));
-            UIFactory.CreateText("ReverseLabel", reverse.transform,
-                Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
-                "GERİ", 32, Color.white);
-            var reverseHold = reverse.gameObject.AddComponent<HoldButton>();
-            reverseHold.StateChanged = pressed => DriveInput.TouchReverse = pressed;
 
             var honk = UIFactory.CreateIcon("HonkButton", root,
                 new Vector2(0f, 0f), new Vector2(0f, 0f),
-                new Vector2(278f, 360f), new Vector2(150f, 150f),
-                UIFactory.CircleSprite, new Color(1f, 0.82f, 0.2f, 0.72f));
+                new Vector2(150f, 160f), new Vector2(170f, 170f),
+                UIFactory.CircleSprite, new Color(1f, 0.82f, 0.2f, 0.78f));
             UIFactory.CreateText("HonkLabel", honk.transform,
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
-                "BİP", 34, new Color(0.2f, 0.15f, 0.05f));
+                "BİP", 40, new Color(0.2f, 0.15f, 0.05f));
             var honkHold = honk.gameObject.AddComponent<HoldButton>();
             honkHold.StateChanged = pressed => DriveInput.HonkHeld = pressed;
-
-            var gas = UIFactory.CreateIcon("GasButton", root,
-                new Vector2(0f, 0f), new Vector2(0f, 0f),
-                new Vector2(192f, 158f), new Vector2(260f, 260f),
-                UIFactory.CircleSprite, new Color(0.24f, 0.78f, 0.38f, 0.62f));
-            UIFactory.CreateText("GasLabel", gas.transform,
-                Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
-                "GAZ", 56, Color.white);
-            var gasHold = gas.gameObject.AddComponent<HoldButton>();
-            gasHold.StateChanged = pressed => DriveInput.TouchThrottle = pressed;
 
             SteerJoystick.Build(root);
         }

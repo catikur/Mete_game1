@@ -29,14 +29,14 @@ Ayrıntılı kurulum ve iPhone/iPad'e yükleme: [docs/mac-setup.md](docs/mac-set
 
 ## Kontroller
 
-| Platform | Gaz | Yön | Fren | Geri | Korna |
-|---|---|---|---|---|---|
-| iPhone/iPad | Sol alt **GAZ** | Sağ alt şeffaf **joystick** (çubuk yönü = araç burnu) | GAZ'ı bırak | Sol alt **GERİ** | Sol alt **BİP** |
-| Editör (test) | W veya Yukarı ok | A/D veya joystick'i sürükle | tuşu bırak | S veya Aşağı ok | **H** |
+| Platform | Sürüş | Fren | Korna |
+|---|---|---|---|
+| iPhone/iPad | Sağ alt **joystick** (it = o yöne git) | Çubuğu bırak | Sol alt **BİP** |
+| Editör (test) | WASD veya oklar | tuşu bırak | **H** |
 
 Oynarken sağ üst **MENÜ** (editörde **Esc**): **DEVAM** veya **ANA MENÜ**. Ana menüde kayıt varsa **DEVAM ET**.
 
-Sol el: gaz / geri / bip. Sağ el: yön. Tam ekran kaydırma yok.
+Tek el: çubuğu çevirdiğin yere araç gider. Gaz / geri butonu yok.
 
 ## Dokümantasyon
 

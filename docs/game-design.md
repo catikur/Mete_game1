@@ -2,13 +2,13 @@
 
 ## 1. Vizyon
 
-5-12 yaş arası çocukların **iki başparmakla** oynayabildiği, yukarıdan bakışlı (GTA 2 kamera tarzı,
+5-12 yaş arası çocukların **tek elle** oynayabildiği, yukarıdan bakışlı (GTA 2 kamera tarzı,
 ama tamamen çocuk dostu) bir şehir sürüş oyunu. Oyuncu şehirde araba sürer, yardımseverlik
 temalı görevleri tamamlar, altın ve yıldız kazanır, garajında yeni araçlar açar.
 
 **Tasarım sütunları:**
 
-1. **Kolay kontrol** — sol başparmak gaz/geri, sağ başparmak yön (şeffaf joystick).
+1. **Kolay kontrol** — sağ başparmak joystick: ittiğin yöne araç gider, bırakınca durur.
    Okuma bilmeyen 5 yaş bile oynayabilmeli.
 2. **Kaybetmek yok** — görevler asla "başarısız" olmaz. Süre bitse de teslim edilir; ödülün
    zamanında kısmı kaçar, görev batmaz. Çarpışmada ceza yok, araç yavaşlar ve devam eder.
@@ -42,15 +42,13 @@ flowchart LR
 
 | Girdi | Aksiyon |
 |---|---|
-| Sol alt **GAZ** (basılı tut) | Hızlan. Bırakınca yavaşlayıp durur. |
-| Sol alt **GERİ** (basılı tut) | Geri git. Bırakınca çabuk durur. |
+| Sağ alt **joystick** | Çubuğu it: araç **o yöne gider**. Ne kadar itersen o kadar hızlı. Bırakınca durur. Ekran yukarı = kuzey. |
 | Sol alt **BİP** | Korna — yakındaki yayalar zıplar |
 | Sağ üst **MENÜ** | Duraklat. **DEVAM** veya **ANA MENÜ** (kaldığın yer kaydolur). |
-| Sağ alt **joystick** (şeffaf) | Çubuğu yukarı/aşağı/sağ/sol it: araç burnu o yöne döner (ekran yukarı = kuzey). İleride aynı yere direksiyon konabilir. |
 
-Editörde test için: **W / Yukarı ok** gaz, A-D direksiyon, S geri, **H** korna, **Esc** duraklatma. Game görünümünde sağ alttaki joystick de fareyle sürüklenir.
+Editörde test için: **WASD / oklar** = çubuk (ittiğin yön = gidiş), **H** korna, **Esc** duraklatma. Game görünümünde sağ alttaki yeşil topu fareyle sürükle.
 
-Tasarım notu: iki başparmak, yatay telefon. Tam ekran kaydırarak dönmek iPhone'da zordu; gaz ve yön ayrıldı.
+Tasarım notu: gaz + joystick iki el Mete’ye zor geldi. Tek el, tek çubuk. Geri vites yok; aşağı itmek güneye gitmektir.
 
 ## 5. Kamera
 

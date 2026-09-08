@@ -2,7 +2,7 @@
 
 Bu dosya, Mete'nin Oyunu'nun **şu ana kadarki tüm kararlarını, kod durumunu ve Mac test döngüsünü** tek yerde tutar. Yeni bir oturum / ajan buradan başlayabilir.
 
-Son güncelleme: **2026-09-02** — Duraklatma **MENÜ**, ana menüye çıkış, kaldığın yerden **DEVAM ET**.
+Son güncelleme: **2026-09-08** — Tek el sürüş: gaz/geri kalktı, joystick itince araç o yöne gider.
 
 Repo: `https://github.com/catikur/Mete_game1`  
 Dal şablonu: `cursor/<kısa-ad>-26ab`  
@@ -18,7 +18,7 @@ Sahip: catikur. Dil: Türkçe (oyuncu metinleri ve bu dokümanlar).
 
 **Tasarım sütunları (değişmez):**
 
-1. İki başparmak kontrol (sol gaz, sağ yön) — okuma bilmeyen 5 yaş oynayabilmeli.
+1. Tek el kontrol (sağ joystick: it = o yöne git) — okuma bilmeyen 5 yaş oynayabilmeli.
 2. Görev asla başarısız olmaz. Süre bitince de teslim edilir; bonus kaçar, ceza yok.
 3. Kısa döngü, sürekli ödül (kutlama yazısı, ses, yıldız, yeni araç).
 4. Güvenli içerik.
@@ -51,7 +51,7 @@ Cloud Agent **Unity açamaz**. Değişiklikler kod + doküman; görsel doğrulam
 
 İlk açılışta Garage sahnesi yoksa **Mete Oyunu → Projeyi Kur** (otomatik de ekler). Sahne olmasa bile garaj koddan kurulur.
 
-Editör kontrolleri: **W** gaz, **A/D** direksiyon, **S** geri, **H** korna. Game penceresine tıklayıp basılı tutmak da gazdır.
+Editör kontrolleri: **WASD / oklar** = çubuk (ittiğin yön = gidiş), **H** korna, **Esc** duraklat. Game’de sağ alttaki yeşil topu sürükle.
 
 ---
 
@@ -59,15 +59,13 @@ Editör kontrolleri: **W** gaz, **A/D** direksiyon, **S** geri, **H** korna. Gam
 
 | Girdi | Aksiyon |
 |---|---|
-| Sol alt **GAZ** | Basılı tut = hızlan, bırak = yavaşlayıp dur |
-| Sol alt **GERİ** | Basılı tut = geri git, bırak = çabuk dur |
+| Sağ alt **joystick** (yeşil top) | İttiğin yöne araç **doğrudan gider** (ekran yukarı = kuzey). Ne kadar itersin, o kadar hızlı. Bırakınca durur. Geri vites yok: aşağı itmek güneye gitmektir. |
 | Sol alt **BİP** | Korna — yakındaki yayalar zıplar |
 | Sağ üst **MENÜ** | Duraklat → **DEVAM** veya **ANA MENÜ** (kayıt) |
-| Sağ alt şeffaf **joystick** | Yukarı/aşağı/sağ/sol: araç o yöne döner (ekran yukarı = kuzey) |
 
-Playtest: tam ekran kaydırarak dönmek iPhone'da zordu; gaz ve yön ayrıldı. İleride sağ alta direksiyon da konabilir. HUD ipucu: `Sol: gaz / geri / bip • Sağ: yön`.
+Playtest: gaz + joystick iki el Mete’ye zor geldi; tek çubuğa indirgendi.
 
-Editör: **W** gaz, **A/D** dönüş, **S** geri, **H** korna, **Esc** duraklat. Game görünümünde joystick fareyle de sürüklenir.
+Editör: **WASD / oklar** gidiş yönü, **H** korna, **Esc** duraklat. Game görünümünde joystick fareyle sürüklenir.
 
 ---
 
@@ -150,7 +148,7 @@ Menüde turuncu **GARAJ**, şehirde sağ üst **GARAJ**. Görev sırasında şeh
 
 ```
 Assets/Scripts/
-  Core/         GameBootstrap, GameConfig, SaveManager, SaveData, GarageShop, SceneFlow, PartFactory, MaterialLibrary, Sfx
+  Core/         GameBootstrap, GameConfig, SaveManager, SaveData, GarageShop, SceneFlow, PartFactory, MaterialLibrary, Sfx, ConfettiBurst
   City/         CityBuilder, CityLayout, CardinalDir (UnityEngine.Compass ile çakışmasın diye Compass değil)
   Traffic/      TrafficSystem, TrafficCar, Pedestrian
   Vehicle/      VehicleDef, VehicleCatalog, VehicleController, VehicleFactory
@@ -178,37 +176,37 @@ Sahneler Play'de koddan: `Boot` menü, `City` oyun, `Garage` podyum. Sahne yoksa
 | #5 | Araç üstü ok kaldırıldı; ALTIN / YILDIZ etiketli ikonlar |
 | #6 | İki aşamalı görev süreleri, zorluk, seri, tempo |
 | #7 | Sol GAZ/GERİ/BİP + sağ şeffaf yön joystick’i |
+| #8 | Garaj, 8 araç, polis, hırsız kovalama |
+| #9 | MENÜ / duraklatma, kaydet, kaldığın yerden devam |
 
-Playtest sırası: boş şehir → Compass → ok → dokunmatik → ikonlar → süreler → joystick → **garaj + polis kovalama (bu dal)**.
+Playtest sırası: joystick+gaz (eski) Mete’ye zor geldi → **tek çubuk (bu dal)**.
 
 ---
 
 ## Bilinçli olarak henüz yok
 
-- Sağ altta direksiyon (şimdilik joystick; istenince değiştirilir)
-- Kenney/Meshy modeller, müzik, motor sesi, konfeti (M5)
+- Kenney/Meshy modeller, döngü müziği, motor sesi (M5)
 - TestFlight / Made for Kids başvurusu (M6)
 - Görev başarısızlığı, can, kaza fiziği, kırmızı ışık cezası — **yapılmayacak**
+- İki elli gaz + direksiyon — playtest’te kalktı; tek joystick kaldı
 
 ---
 
-## Bu dalda değişen dosyalar (garaj + polis)
+## Sıradaki plan (playtest sırası)
 
-- `VehicleCatalog` / `VehicleDef` / `VehicleFactory` siluetleri (polis, hırsız arabası)
-- `LightBarBlink`, `BeaconPulse`
-- `GarageShop`, `SceneFlow`, `GarageBootstrap`
-- Menü + HUD **GARAJ**, kayıt `paints`
-- `ProjectSetup` Garage sahnesi
-- `MissionType.ThiefChase`, `ThiefCar`, `MissionManager` kovalama ayağı
-- `CityLayout.SnapToLane`
+1. **Bu dal** — tek joystick (Mete’nin zorlandığı yer). Mac’te dene.
+2. **Kutlama konfetisi** — bu dalda da var; görev bitince renkli parçalar uçar.
+3. **Ses cilası** — kısa döngü müziği + hıza göre motor vınlaması (hâlâ dosyasız / prosedürel olabilir).
+4. **Kenney/Meshy** — Mac’te asset indirip primitive’lerin yerine koymak (Cloud Agent model üretemez).
+5. **iOS** — ikon, açılış ekranı, TestFlight, Made for Kids.
+
+Bir anda bir playtest konusu: önce Mete’nin tek elle sürüp sürmediği.
 
 ---
 
-## Duraklatma ve devam (bu dal)
+## Bu dalda değişen dosyalar (tek joystick)
 
-Oynarken uygulamayı öldürmek zorunda kalınmasın:
-
-- Sağ üst **MENÜ** → duraklatma (şehir ve süre durur). **DEVAM** veya **ANA MENÜ**.
-- Ana menüde oturum varsa **DEVAM ET**; araç konumu + yarım görev (kovalama dahil) geri gelir.
-- Garaja çıkınca konum kaydolur; **SÜR!** aynı yerden devam.
-- iPhone ana ekrana alınca da oturum yazılır.
+- `DriveInput`, `VehicleController`: it = o yöne yürü, bırak = dur
+- HUD: GAZ/GERİ kalktı, BİP solda, joystick büyüdü
+- `ConfettiBurst` görev kutlamasında
+- dokümanlar (kontroller + sıradaki plan)
